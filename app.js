@@ -4,6 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+require('./passport.js')(app);
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -14,6 +18,13 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.use(session({ 
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -27,9 +38,10 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/students', students);
 
+
 //connect to mysql database
 var mysql = require("mysql");
-var connection = mysql.createConnection({
+connection = mysql.createConnection({
   host: "tviw6wn55xwxejwj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
   user: "bop7yvld7w5mu7l5",
   password: "jx4tgef1odp9ie7h",
@@ -62,13 +74,66 @@ connection.query('SELECT * FROM students',function(err,rows){
 });
 */
 
+app.get('/login', function(req, res) {
+  res.render('login');
+});
+
+app.post('/login', passport.authenticate('local', {failureRedirect: '/loginFailure'}), function(req, res) {
+  req.session.save(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/');
+  })
+});
+
+app.get('/loginFailure', function(req, res, next) {
+  res.send('Failed to authenticate');
+});
+
+app.get('/loginSuccess', function(req, res, next) {
+  res.send('Successfully authenticated');
+});
+
+//empty passport
+/*
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  connection.query('SELECT * FROM Users WHERE UserID = ?', [user.UserID], function(err, user) {
+    if (user) {
+      done(err, user);  
+    }
+  });
+});
+
+passport.use(new LocalStrategy(function(username, password, done) {
+  connection.query('SELECT * FROM Users WHERE Username = ?', [username], function(err, user) {
+    if (err) {
+      return done(err);
+    }
+    if (!user) {
+      return done(null, false, {
+        message: 'Incorrect username.'
+      });
+    }
+    if (user[0].Password != password) {
+      return done(null, false);
+    }
+
+    return done(null, user[0]);
+  });
+}));
+*/
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
-
 // error handlers
 
 // development error handler

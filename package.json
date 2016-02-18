@@ -19,6 +19,9 @@
     "better-js-class": "*",
     "cps": "*",
     "mysql": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "express-session": "1.13.0",
+    "passport-local": "1.0.0",
+    "passport": "0.3.2"
   }
 }

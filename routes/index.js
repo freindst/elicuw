@@ -25,8 +25,21 @@ router.get('/initiate', function(req, res) {
 	})
 });
 
-router.get('/test/:param', function(req, res) {
-	res.send(req.params.param);
-})
+router.get('/test', function(req, res) {
+	console.log('in test');
+	res.send(req.isAuthenticated());
+});
+
+function isAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
+		next();
+	} else {
+		res.redirect('/login');
+	}
+}
+
+router.get('/try', isAuthenticated, function(req, res, next) {
+	res.render('index', {title: "login"});
+});
 
 module.exports = router;
