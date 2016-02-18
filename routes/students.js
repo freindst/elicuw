@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
 
-		res.render('students/index', {
+		res.render('students/index.jade', {
 			title: 'Student List',
 			students: students
 		});
