@@ -30,10 +30,10 @@ app.use('/students', students);
 //connect to mysql database
 var mysql = require("mysql");
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "3ou7p6",
-  database: "eli"
+  host: "tviw6wn55xwxejwj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+  user: "bop7yvld7w5mu7l5",
+  password: "jx4tgef1odp9ie7h",
+  database: "c1hgc7522xdpfe66"
 });
 
 connection.connect(function(err) {
