@@ -26,8 +26,10 @@ router.get('/initiate', function(req, res) {
 });
 
 router.get('/test', function(req, res) {
-	console.log('in test');
-	res.send(req.isAuthenticated());
+  console.log('in test');
+  res.render('interviews/create', {
+  	title: "interviews"
+  })
 });
 
 function isAuthenticated(req, res, next) {
