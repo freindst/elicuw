@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  form(action = '/students/create' method = 'post')
+    label(for='Student_number') Student Number:
+    input#Student_number(type='text', name='Student_number', value='')
+    br
+    label(for='First_name') First Name:
+    input#First_name(type='text', name='First_name', value='')
+    br
+    label(for='Last_name') Last Name:
+    input#Last_name(type='text', name='Last_name', value='')
+    br
+    label(for='Major') Major:
+    input#Major(type='text', name='Major', value='')
+    br
+    input(type='submit', value='Submit') 

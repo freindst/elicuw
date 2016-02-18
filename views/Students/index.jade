@@ -1,0 +1,28 @@
+extends layout
+
+var editlink = '/students/edit/' + student.Student_id
+
+block content
+  h1= title
+  a(href='/students/create') Create
+  table
+    tr
+      th Student Number
+      th First Name
+      th Last Name
+      th Major
+      th
+    if students
+      each student in students
+        tr
+          td= student.Student_number
+          td= student.First_name
+          td= student.Last_name
+          td= student.Major
+          td
+            a(href= '/students/edit/' + student.Student_id) edit
+          td
+            a(href= '/students/delete/' + student.Student_id) delete
+    else
+      tr
+        td Empty

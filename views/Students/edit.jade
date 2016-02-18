@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  form(action = '/students/edit/' + student.Student_id method = 'post')
+    label(for='Student_number') Student Number:
+    input#Student_number(type='text' name='Student_number' value=student.Student_number)
+    br
+    label(for='First_name') First Name:
+    input#First_name(type='text' name='First_name' value=student.First_name)
+    br
+    label(for='Last_name') Last Name:
+    input#Last_name(type='text' name='Last_name' value=student.Last_name)
+    br
+    label(for='Major') Major:
+    input#Major(type='text' name='Major' value= student.Major)
+    br
+    input(type='submit', value='Update') 
