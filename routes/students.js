@@ -17,7 +17,7 @@ router.get('/', function(req, res) {
 
 //Create a new student profile
 router.get('/create', function(req, res) {
-	res.render('students/create', {
+	res.render('Students/create', {
 		title: 'Create Student Profile'
 	});
 });
@@ -47,7 +47,7 @@ router.get('/edit/:Student_id', function(req, res) {
 	connection.query('SELECT * FROM Students WHERE Student_id = "' + Student_id + '"', function(err, student) {
 		if (err) throw err;
 
-		res.render('students/edit', {
+		res.render('Students/edit', {
 			title: 'Edit Student File',
 			student: student[0]
 		});
