@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  h1 Student Info
+  table
+    tr
+      td Student Number
+      td= student.Student_number
+    tr
+      td First Name
+      td= student.First_name
+    tr
+      td Last name
+      td= student.Last_name
+    tr
+      td Major
+      td= student.Major
+  
+  h1= title
+  form(action = '/semesters/create/' + student.Student_id method = 'post')
+    label(for='Year') School Year:
+    input#Year(type='number' name='Year')
+    br
+    label(for='Season') Semster:
+    select(name='Season')
+      option(value='spring') Spring
+      option(value='summber') Summber
+      option(value='fall') Fall
+    br
+    label(for='Term') Term:
+    select(name='Term')
+      option(value='1') 1
+      option(value='2') 2
+    br
+    label(for='Level') level
+    select(name='Level')
+      option(value='Basic') Basic
+      option(value='Intemediate') Intemediate
+      option(value='Advanced') Advanced
+    br
+    label(for='Section') Section
+    select(name='Section')
+      option(value='1') 1
+      option(value='2') 2
+      option(value='3') 3
+    br
+    input(type='submit', value='Submit') 

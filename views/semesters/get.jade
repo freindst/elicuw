@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  h1 Student Info
+  table
+    tr
+      td Student Number
+      td= student.Student_number
+    tr
+      td First Name
+      td= student.First_name
+    tr
+      td Last name
+      td= student.Last_name
+    tr
+      td Major
+      td= student.Major
+  
+  h1 Semester List
+  a(href='/semesters/create/' + student.Student_id) Create a new semester item
+  table
+    tr
+      th Year
+      th Semester
+      th Term
+      th Level
+      th Section
+    
+    each row in rows
+      tr
+        td= row.Year
+        td= row.Season
+        td= row.Term
+        td= row.Level
+        td= row.Section
+        td
+          a(href='/semesters/edit/' + row.Semester_id) edit
+        td
+          a(href='/semesters/delete/' + row.Semester_id) delete

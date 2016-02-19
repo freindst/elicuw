@@ -1,6 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
+//define student class
+/*
+Student_id int NOT NULL AUTO-INCREMENT,
+Student_number varchar(9),
+First_name varchar(100),
+Last_name varchar(100),
+Major varchar(100),
+PRIMARY KEY Student_id,
+*/
+
 /* GET home page. */
 router.get('/', function(req, res) {
 	var connection = req.app.get('connection');

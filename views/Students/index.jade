@@ -1,7 +1,5 @@
 extends layout
 
-var editlink = '/students/edit/' + student.Student_id
-
 block content
   h1= title
   a(href='/students/create') Create
@@ -23,6 +21,8 @@ block content
             a(href= '/students/edit/' + student.Student_id) edit
           td
             a(href= '/students/delete/' + student.Student_id) delete
+          td
+            a(href='/semesters/get/' + student.Student_id) semester
     else
       tr
         td Empty

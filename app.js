@@ -13,6 +13,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var students = require('./routes/students');
 var interviews = require('./routes/interviews');
+var semesters = require('./routes/semesters');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/students', students);
+app.use('/semesters', semesters);
 app.use('/interviews', interviews);
 
 //connect to mysql database
