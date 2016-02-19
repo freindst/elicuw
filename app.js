@@ -14,6 +14,7 @@ var users = require('./routes/users');
 var students = require('./routes/students');
 var interviews = require('./routes/interviews');
 var semesters = require('./routes/semesters');
+var webforms = require('./routes/webforms');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use('/users', users);
 app.use('/students', students);
 app.use('/semesters', semesters);
 app.use('/interviews', interviews);
+app.use('/webforms', webforms);
 
 //connect to mysql database
 var mysql = require("mysql");
