@@ -1,18 +1,60 @@
 extends layout
 
 block content
+  h1 Student Info
+  table
+    tr
+      td Student Number
+      td= student.Student_number
+    tr
+      td First Name
+      td= student.First_name
+    tr
+      td Last name
+      td= student.Last_name
+    tr
+      td Major
+      td= student.Major
+  
   h1= title
-  form(action = '/students/edit/' + student.Student_id method = 'post')
-    label(for='Student_number') Student Number:
-    input#Student_number(type='text' name='Student_number' value=student.Student_number)
+  form(action = '/semesters/edit/' + student.Student_id + '/' + semester.Semester_id method = 'post')
+    label(for='Year') School Year:
+    input#Year(type='number' name='Year' value= semester.Year)
     br
-    label(for='First_name') First Name:
-    input#First_name(type='text' name='First_name' value=student.First_name)
+    label(for='Season') Semster:
+    select(name='Season')
+      if semester.Season=='spring' 
+        option(value='spring' selected='selected') Spring
+        option(value='summer') Summer
+        option(value='fall') Fall
+      else if semester.Season=='summer'
+        option(value='spring') Spring
+        option(value='summer' selected='selected') Summer
+        option(value='fall') Fall
+      else if semester.Season='fall'
+        option(value='spring') Spring
+        option(value='summer') Summer
+        option(value='fall' selected='selected') Fall
+      else
+        option(value='spring') Spring
+        option(value='summber') Summer
+        option(value='fall') Fall
     br
-    label(for='Last_name') Last Name:
-    input#Last_name(type='text' name='Last_name' value=student.Last_name)
+    label(for='Term') Term:
+    select(name='Term')
+      option(value='1') 1
+      option(value='2') 2
     br
-    label(for='Major') Major:
-    input#Major(type='text' name='Major' value= student.Major)
+    label(for='Level') level
+    select(name='Level')
+      option(value='Basic') Basic
+      option(value='Intemediate') Intemediate
+      option(value='Advanced') Advanced
+    br
+    label(for='Section') Section
+    select(name='Section')
+      option(value='1') 1
+      option(value='2') 2
+      option(value='3') 3
     br
     input(type='submit', value='Update') 

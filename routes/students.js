@@ -84,8 +84,6 @@ router.post('/edit/:Student_id', function(req, res) {
 router.get('/delete/:Student_id', function(req, res) {
 	var Student_id = req.params.Student_id;
 
-	console.log("student id is " + Student_id);
-
 	var connection = req.app.get('connection');
 	connection.query('DELETE FROM Students WHERE Student_id = ?', [Student_id], function(err, result) {
 		if(err) throw err;

@@ -34,6 +34,6 @@ block content
         td= row.Level
         td= row.Section
         td
-          a(href='/semesters/edit/' + row.Semester_id) edit
+          a(href='/semesters/edit/'+ student.Student_id + '/' + row.Semester_id) edit
         td
-          a(href='/semesters/delete/' + row.Semester_id) delete
+          a(href='/semesters/delete/' + student.Student_id + '/' + row.Semester_id) delete
