@@ -39,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/students', students);
+app.use('/interviews', interviews);
 
 //connect to mysql database
 var mysql = require("mysql");

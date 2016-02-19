@@ -6,3 +6,5 @@ router.get('/', function(req, res) {
 		title: "interviews"
 	});
 });
+
+module.exports = router;
