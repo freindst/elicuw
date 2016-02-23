@@ -1,8 +1,35 @@
-extends layout
+extends ../../layout
 
 block content
   h1= title
-  form
+  h2 Student Information
+  table
+    tr
+      td First Name
+      td= result.First_name
+    tr
+      td Last Name
+      td= result.Last_name
+    tr
+      td Student ID
+      td= result.Student_number
+    tr
+      td School Year
+      td= result.Year
+    tr
+      td Semester
+      td= result.Season
+    tr
+      td Term
+      td= result.Term
+    tr
+      td Level
+      td= result.Level
+    tr
+      td Section
+      td= result.Section
+
+  form(action='/webforms/interviews/' + result.Semester_id, method='post')
   h2 Speaking Test
   h3 Speaking Pronuonciation
   input(type='radio', name='Pronunciation', value='0', checked='')
