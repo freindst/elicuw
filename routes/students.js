@@ -3,7 +3,7 @@ var router = express.Router();
 
 //define student class
 /*
-Student_id int NOT NULL AUTO-INCREMENT,
+Student_id int NOT NULL AUTO_INCREMENT,
 Student_number varchar(9),
 First_name varchar(100),
 Last_name varchar(100),

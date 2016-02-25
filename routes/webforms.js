@@ -21,6 +21,21 @@ router.get('/lists/:Semester_id', function(req, res) {
 	});
 });
 
+//define interview class
+/*
+Interview_id int NOT NULL AUTO_INCREMENT,
+Pronunciation int,
+Fluency int,
+Comprehension int,
+Repetition int,
+Comments varchar(400),
+Recommendation int,
+IsVerified bool,
+Semester_id int,
+PRIMARY KEY (Interview_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+*/
+
 router.get('/interviews/:Semester_id', function(req, res) {
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
@@ -30,9 +45,28 @@ router.get('/interviews/:Semester_id', function(req, res) {
 			title: "Interviews",
 			result: results[0]
 		});
-
-	})
-
+	});
 });
+
+router.post('/interviews/:Semesters_id', function(req, res) {
+	var query = "INSERT INTO Interviews SET ?";
+	var semester = {
+		Pronunciation: req.body.Pronunciation,
+		Fluency: req.body.Fluency,
+		Comprehension: req.body.Comprehension,
+		Repetition: req.body.Repetition,
+		Comments: req.body.Comments,
+		Recommendation: req.body.Recommendation,
+		IsVerified: false,
+		Semester_id: req.params.Semesters_id
+	};
+	connection.query(query, semester, function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/');
+	});
+});
+
+
 
 module.exports = router;

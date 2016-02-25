@@ -11,7 +11,7 @@ Level varchar(10),
 Section varchar(10),
 Student_id int,
 PRIMARY KEY (Semester_id),
-FOREIGN KEY (Student_id) REFERENCEs Students(Student_id)
+FOREIGN KEY (Student_id) REFERENCES Students(Student_id)
 */
 
 router.get('/index', function(req, res) {
