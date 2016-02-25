@@ -48,7 +48,7 @@ router.get('/interviews/:Semester_id', function(req, res) {
 	});
 });
 
-router.post('/interviews/:Semesters_id', function(req, res) {
+router.post('/interviews/:Semester_id', function(req, res) {
 	var query = "INSERT INTO Interviews SET ?";
 	var semester = {
 		Pronunciation: req.body.Pronunciation,
@@ -58,7 +58,7 @@ router.post('/interviews/:Semesters_id', function(req, res) {
 		Comments: req.body.Comments,
 		Recommendation: req.body.Recommendation,
 		IsVerified: false,
-		Semester_id: req.params.Semesters_id
+		Semester_id: req.params.Semester_id
 	};
 	connection.query(query, semester, function(err, result) {
 		if (err) throw err;
@@ -67,6 +67,47 @@ router.post('/interviews/:Semesters_id', function(req, res) {
 	});
 });
 
+router.get('/interviews/edit/:Semester_id', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Semesters.Semester_id = ?";
 
+	connection.query(query, [req.params.Semester_id], function(err, results) {
+		if (err) throw err;
+
+		console.log(results[0]);
+
+		res.render('webforms/interviews/edit', {
+			title: "Verify Interview",
+			result: results[0]
+		});
+	});
+});
+
+router.post('/interviews/edit/:Semester_id', function(req, res) {
+	var query = "UPDATE Interviews SET ? WHERE Semester_id = ?"
+	var semester = {
+		Pronunciation: req.body.Pronunciation,
+		Fluency: req.body.Fluency,
+		Comprehension: req.body.Comprehension,
+		Repetition: req.body.Repetition,
+		Comments: req.body.Comments,
+		Recommendation: req.body.Recommendation,
+		IsVerified: true,
+		Semester_id: req.params.Semester_id
+	};
+
+	connection.query(query, [req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('verificationis/interview');
+	});
+});
+
+router.get('/interviews/delete/:Semester_id', function(req, res) {
+	connection.query("DELETE FROM Interviews WHERE Semester_id = ", [req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('verificationis/interview');
+	});
+});
 
 module.exports = router;

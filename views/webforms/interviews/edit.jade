@@ -1,0 +1,88 @@
+extends ../layout
+
+block content
+  h1= title
+  table
+    tr
+      td First Name
+      td= result.First_name
+    tr
+      td Last Name
+      td= result.Last_name
+    tr
+      td Student ID
+      td= result.Student_number
+    tr
+      td School Year
+      td= result.Year
+    tr
+      td Semester
+      td= result.Season
+    tr
+      td Term
+      td= result.Term
+    tr
+      td Level
+      td= result.Level
+    tr
+      td Section
+      td= result.Section
+
+  form(action='/webforms/interviews/edit/' + result.Semester_id, method='post')
+    h2 Speaking Test
+    label Speaking-Pronuonciation
+    input(type='text', name='Pronunciation', value= result.Pronunciation)
+    p 0 Constant pronunciation and stress errors that cause speech to be completely unintelligible.
+    br
+    p 1 Frequent pronunciation and stress errors that cause speech to be occasionally unintelligible.
+    br
+    p 2 Consistent pronunciation and stress errors but speech is generally intelligible.
+    br
+    p 3 Some pronunciation and stress errors but speech is consistently intelligible.
+    br
+    label Speaking-Fluency
+    input(type='text', name='Fluency', value= result.Fluency)
+    p 0 Speech is so slow or fragmented that speech is completely unintelligible.
+    br
+    p 1 Speech is so slow or has so many pauses that speech is occasionally unintelligible.
+    br
+    p 2 Speech has frequent pauses but is intelligible.
+    br
+    p 3 Speech has some pauses but is consistently intelligible.
+    br
+    label Listening-Initial Comprehension
+    input(type='text' name='Comprehension' value= result.Comprehension)
+    p 0 Student understands 0%-50% of what is initially said.
+    br
+    p 1 Student understands 50% -70% of what is initially said.
+    br
+    p 2 Student understands 70% =-85% of what is initially said.
+    br
+    p 3 Student understands 85% -100% of what is initially said.
+    br
+    label Listening-Need for Repetition
+    input(type='text', name='Repetition', value= result.Repetition)
+    p 0 Student needs constant repetition.
+    br
+    p 1 Student needs significant repetition.
+    br
+    p 2 Student needs some repetition.
+    br
+    p 3 Student needs little or no repetition.
+    br
+    label Comments:
+    input(type='text', name='Comments', value= result.Comments)
+    br
+    label Final Interview Recommendation
+    input(type='text', name='Recommendation', value= result.Recommendation)
+    p 0 is clearly not ready for academic study.
+    br
+    p 1 may be ready for academic study but will have significant difficulties with listening & speaking tasks.
+    br
+    p 2 is ready for academic study but will have some difficulties with listening and speaking tasks.
+    br
+    p 3 is clearly ready for academic study and will have only minor difficulties with listening and speaking tasks.
+    br
+    input(type='submit' value='Comfirm')
+    input(type='button' onclick="window.location.href=\'/verifications/interview\'" value='Cancel')
+    input(type='button' onclick="window.location.href=\'/webforms/interviews/delete/" + result.Semester_id +"\'" value='Delete')
