@@ -1,0 +1,39 @@
+extends ../layout
+
+block content
+  h1= title
+  h2 Student Information
+  table
+    tr
+      td First Name
+      td= result.First_name
+    tr
+      td Last Name
+      td= result.Last_name
+    tr
+      td Student ID
+      td= result.Student_number
+    tr
+      td School Year
+      td= result.Year
+    tr
+      td Semester
+      td= result.Season
+    tr
+      td Term
+      td= result.Term
+    tr
+      td Level
+      td= result.Level
+    tr
+      td Section
+      td= result.Section
+
+  form(action='/webforms/readings/' + result.Semester_id, method='post')
+    h2 Grades for Reading & Vocabulary
+    label Please input grades (A: 4.0, B:3.0, C:2.0)
+    br
+    input(type='text', name='Reading_score')
+    br
+    input(type='submit', value='Submit')
+    input(type='button' onclick="window.location.href=\'/webforms/lists/" + result.Semester_id + "\'" value='Cancel')

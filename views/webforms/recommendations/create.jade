@@ -1,0 +1,73 @@
+extends ../layout
+
+block content
+  h1= title
+  h2 Student Information
+  table
+    tr
+      td First Name
+      td= result.First_name
+    tr
+      td Last Name
+      td= result.Last_name
+    tr
+      td Student ID
+      td= result.Student_number
+    tr
+      td School Year
+      td= result.Year
+    tr
+      td Semester
+      td= result.Season
+    tr
+      td Term
+      td= result.Term
+    tr
+      td Level
+      td= result.Level
+    tr
+      td Section
+      td= result.Section
+
+  form(action='/webforms/writings/' + result.Semester_id, method='post')
+    label Teacher Name:
+    br
+    input(type='text', name='Teacher_name')
+    h3 Effort
+    label Attendence:
+    br
+    input(type='text', name='Attendence')
+    br
+    label Completion Of Homework:
+    br
+    input(type='text', name='Completion')
+    br
+    label Quality Of Class Participation:
+    br
+    select(name='Participation')
+      option(value='Strong') Stong
+      option(value='Average') Average
+      option(value='Weak') Weak
+      option(value='Cannot Evaluate') Cannot Evaluate
+    br
+    label Attitude Towards English Study:
+    select(name='Attitude')
+      option(value='Strong') Stong
+      option(value='Average') Average
+      option(value='Weak') Weak
+      option(value='Cannot Evaluate') Cannot Evaluate
+    br
+    h3 Recommendation Of Subsequent Student:
+    select(name='Recommendation_level')
+      option(value='0') Repeat Current ELI Level
+      option(value='1') Advance To Next ELI Level
+      option(value='2') Bridge Take both ELI and Academic Classes
+      option(value='3') Exit ELI (Some Teacher Concern)
+      option(value='4') Exit ELI (Few Or No Teacher Concern)
+    br
+    label Comments For Students File(To inform/assist academic program professor)
+    br
+    input(type='text', name='Comments')
+    br
+    input(type='submit', value='Submit')
+    input(type='button' onclick="window.location.href=\'/webforms/lists/" + result.Semester_id + "\'" value='Cancel')

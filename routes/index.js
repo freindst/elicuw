@@ -26,10 +26,7 @@ router.get('/initiate', function(req, res) {
 });
 
 router.get('/test', function(req, res) {
-  console.log('in test');
-  res.render('interviews/create', {
-  	title: "interviews"
-  })
+  res.redirect('verifications/interview')
 });
 
 function isAuthenticated(req, res, next) {
