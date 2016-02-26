@@ -55,4 +55,16 @@ router.get('/writing', function(req, res) {
 	});
 });
 
+router.get('/recommendation', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.IsVerified = FALSE";
+	connection.query(query, function(err, results) {
+		if (err) throw err;
+
+		res.render('verifications/recommendation', {
+			title: 'Unverified Recommendation List',
+			rows: results
+		});
+	});
+});
+
 module.exports = router;

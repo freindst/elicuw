@@ -29,7 +29,7 @@ block content
       td Section
       td= result.Section
 
-  form(action='/webforms/writings/' + result.Semester_id, method='post')
+  form(action='/webforms/recommendations/' + result.Semester_id, method='post')
     label Teacher Name:
     br
     input(type='text', name='Teacher_name')
@@ -51,6 +51,7 @@ block content
       option(value='Cannot Evaluate') Cannot Evaluate
     br
     label Attitude Towards English Study:
+    br
     select(name='Attitude')
       option(value='Strong') Stong
       option(value='Average') Average

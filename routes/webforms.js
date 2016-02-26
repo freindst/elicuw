@@ -335,6 +335,8 @@ PRIMARY KEY (Toefl_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
+
+
 //define recommendation class
 /*
 Recommendation_id int NOT NULL AUTO_INCREMENT,
@@ -342,7 +344,7 @@ Teacher_name varchar(255),
 Attendence varchar(10),
 Completion varchar(10),
 Participation varchar(20),
-Attitude varchar(10),
+Attitude varchar(20),
 Recommendation_level int,
 Comments varchar(255),
 IsVerified bool,
@@ -362,6 +364,67 @@ router.get('/recommendations/:Semester_id', function(req, res) {
 	});
 });
 
+router.post('/recommendations/:Semester_id', function(req, res) {
+	var query = "INSERT INTO Recommendations SET ?";
+	var recommendation = {
+		Teacher_name: req.body.Teacher_name,
+		Attendence: req.body.Attendence,
+		Completion: req.body.Completion,
+		Participation: req.body.Participation,
+		Attitude: req.body.Attitude,
+		Recommendation_level: req.body.Recommendation_level,
+		Comments: req.body.Comments,
+		IsVerified: false,
+		Semester_id: req.params.Semester_id
+	};
+
+	connection.query(query, recommendation, function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/');
+	});
+});
+
+router.get('/recommendations/edit/:Recommendation_id', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
+
+	connection.query(query, [req.params.Recommendation_id], function(err, results) {
+		if (err) throw err;
+
+		res.render('webforms/recommendations/edit', {
+			title: "Verify Teacher Recommendation",
+			result: results[0]
+		});
+	});
+});
+
+router.post('/recommendations/edit/:Recommendation_id', function(req, res) {
+	var query = "UPDATE Recommendations SET ? WHERE Recommendation_id = ?"
+	var recommendation = {
+		Teacher_name: req.body.Teacher_name,
+		Attendence: req.body.Attendence,
+		Completion: req.body.Completion,
+		Participation: req.body.Participation,
+		Attitude: req.body.Attitude,
+		Recommendation_level: req.body.Recommendation_level,
+		Comments: req.body.Comments,
+		IsVerified: true
+	};
+
+	connection.query(query, [recommendation, req.params.Recommendation_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/verifications/recommendation')
+	});
+});
+
+router.get('/recommendations/delete/:Recommendation_id', function(req, res) {
+	connection.query("DELETE FROM Recommendations WHERE Recommendation_id = ?", [req.params.Recommendation_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/verifications/recommendation')
+	});
+});
 
 //define timed_writing class
 /*

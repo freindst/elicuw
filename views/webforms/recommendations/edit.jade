@@ -1,0 +1,74 @@
+extends ../layout
+
+block content
+  h1= title
+  table
+    tr
+      td First Name
+      td= result.First_name
+    tr
+      td Last Name
+      td= result.Last_name
+    tr
+      td Student ID
+      td= result.Student_number
+    tr
+      td School Year
+      td= result.Year
+    tr
+      td Semester
+      td= result.Season
+    tr
+      td Term
+      td= result.Term
+    tr
+      td Level
+      td= result.Level
+    tr
+      td Section
+      td= result.Section
+
+  form(action='/webforms/recommendations/edit/' + result.Recommendation_id, method='post')
+    label Teacher Name:
+    br
+    input(type='text', name='Teacher_name', value= result.Teacher_name)
+    h3 Effort
+    label Attendence:
+    br
+    input(type='text', name='Attendence', value= result.Attendence)
+    br
+    label Completion Of Homework:
+    br
+    input(type='text', name='Completion', value= result.Completion)
+    br
+    label Quality Of Class Participation:
+    br
+    input(type='text', name='Participation', value= result.Participation)
+    br
+    p Strong
+    p Average
+    p Weak
+    P Cannot Evaluate
+    br
+    label Attitude Towards English Study:
+    br
+    input(type='text', name='Attitude', value= result.Attitude)
+    p Strong
+    p Average
+    p Weak
+    P Cannot Evaluate
+    h3 Recommendation Of Subsequent Student:
+    input(type='text', name='Recommendation_level', value= result.Recommendation_level)
+    p 0 Repeat Current ELI Level
+    p 1 Advance To Next ELI Level
+    p 2 Bridge Take both ELI and Academic Classes
+    p 3 Exit ELI (Some Teacher Concern)
+    p 4 Exit ELI (Few Or No Teacher Concern)
+    br
+    label Comments For Students File(To inform/assist academic program professor)
+    br
+    input(type='text', name='Comments', value= result.Comments)
+    br
+    input(type='submit' value='Comfirm')
+    input(type='button' onclick="window.location.href=\'/verifications/recommendation\'" value='Cancel')
+    input(type='button' onclick="window.location.href=\'/webforms/recommendations/delete/" + result.Recommendation_id +"\'" value='Delete')
