@@ -12,10 +12,10 @@ require('./passport.js')(app);
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var students = require('./routes/students');
-var interviews = require('./routes/interviews');
 var semesters = require('./routes/semesters');
 var webforms = require('./routes/webforms');
 var verifications = require('./routes/verifications');
+var reports = require('./routes/reports');
 
 var app = express();
 
@@ -43,9 +43,9 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/students', students);
 app.use('/semesters', semesters);
-app.use('/interviews', interviews);
 app.use('/webforms', webforms);
 app.use('/verifications', verifications);
+app.use('/reports', reports);
 
 //connect to mysql database
 var mysql = require("mysql");

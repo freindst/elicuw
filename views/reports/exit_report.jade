@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  h1= title
+  button(type='button', onclick="window.location.href=\'/reports/refresh/\';") Refresh
+  table
+    tr
+      th
+      th Student ID
+      th First Name
+      th Last Name
+      th Year
+      th Semester
+      th Term
+      th Level
+      th Section
+      th Teacher Recommendation
+      th Timed Writing
+      th Grades
+      th Interview
+      th TOEFL
+      th Result
+    each row in rows
+      tr
+        td
+          a(href='/') export report
+        td= row.Student_number
+        td= row.First_name
+        td= row.Last_name
+        td= row.Year
+        td= row.Season
+        td= row.Term
+        td= row.Level
+        td= row.Section
+        td= row.Teacher_recommendation
+        td= row.Timed_writing
+        td= row.Grades
+        td= row.Interview
+        td= row.Toefl
+        td= row.Result

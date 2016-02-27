@@ -1,0 +1,46 @@
+extends ../layout
+
+block content
+  h1= title
+  table
+    tr
+      td First Name
+      td= result.First_name
+    tr
+      td Last Name
+      td= result.Last_name
+    tr
+      td Student ID
+      td= result.Student_number
+    tr
+      td School Year
+      td= result.Year
+    tr
+      td Semester
+      td= result.Season
+    tr
+      td Term
+      td= result.Term
+    tr
+      td Level
+      td= result.Level
+    tr
+      td Section
+      td= result.Section
+
+  form(action='/webforms/toefls/edit/' + result.Semester_id, method='post')
+    label Grammar Raw Score
+    br
+    input(type='text' name='Grammar' value=result.Grammar)
+    br
+    label Listening Raw Score
+    br
+    input(type='text' name='Listening' value= result.Listening)
+    br
+    label Reading Raw Score
+    br
+    input(type='text' name='Reading' value= result.Reading)
+    br
+    input(type='submit' value='Comfirm')
+    input(type='button' onclick="window.location.href=\'/verifications/toefl\'" value='Cancel')
+    input(type='button' onclick="window.location.href=\'/webforms/toefls/delete/" + result.Semester_id +"\'" value='Delete')

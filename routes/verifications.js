@@ -55,6 +55,18 @@ router.get('/writing', function(req, res) {
 	});
 });
 
+router.get('/toefl', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.IsVerified = FALSE";
+	connection.query(query, function(err, results) {
+		if (err) throw err;
+
+		res.render('verifications/toelf', {
+			title: 'Unverified TOEFL Score List',
+			rows: results
+		});
+	});
+});
+
 router.get('/recommendation', function(req, res) {
 	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.IsVerified = FALSE";
 	connection.query(query, function(err, results) {
@@ -62,6 +74,18 @@ router.get('/recommendation', function(req, res) {
 
 		res.render('verifications/recommendation', {
 			title: 'Unverified Recommendation List',
+			rows: results
+		});
+	});
+});
+
+router.get('/timed_writing', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.IsVerified = FALSE";
+	connection.query(query, function(err, results) {
+		if (err) throw err;
+
+		res.render('verifications/Timed_writing', {
+			title: 'Unverified Timed Writing List',
 			rows: results
 		});
 	});
