@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 
 block content
   h1 Student Info
@@ -18,7 +18,7 @@ block content
   
   h1= title
   form(action = '/semesters/create/' + student.Student_id method = 'post')
-    label(for='Year') School Year:
+    label(for='Year') Calendar Year:
     input#Year(type='number' name='Year')
     br
     label(for='Season') Semster:
@@ -34,14 +34,22 @@ block content
     br
     label(for='Level') level
     select(name='Level')
-      option(value='Basic') Basic
-      option(value='Intemediate') Intemediate
-      option(value='Advanced') Advanced
+      option(value='Beginning A') Beginning A
+      option(value='Beginning B') Beginning B
+      option(value='Basic A') Basic A
+      option(value='Basic B') Basic B
+      option(value='Intemediate A') Intemediate A
+      option(value='Intemediate B') Intemediate B
+      option(value='Advanced A') Advanced A
+      option(value='Advanced B') Advanced B
     br
     label(for='Section') Section
     select(name='Section')
-      option(value='1') 1
+      option(value='0') 0
       option(value='2') 2
       option(value='3') 3
+      option(value='4') 4
+      option(value='5') 5
+      option(value='6') 6
     br
     input(type='submit', value='Submit') 

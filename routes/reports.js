@@ -33,6 +33,54 @@ router.get('/exit_report', function(req, res) {
 	});
 });
 
+router.get('/test', function(req, res) {
+	var query = connection.query('SELECT Semester_id FROM Semesters');
+	query.on('result', function(semesters) {
+		for (var i in semesters) {
+			connection.query('SELECT * FROM Recommendations WHERE Semester_id = ?', [semesters[i]], function(err, results) {
+				if (results.length != 0)
+				{
+					var raw_score = '';
+					var score = 0;
+					for (var n in results) {
+						raw_score += parseFloat(results[n].Recommendation_level);
+						if (n < (results.length -1))
+						{
+							raw_score += ',';
+						}
+						score += (parseFloat((results[n].Recommendation_level)/results.length));
+					}
+					var recommendation = {
+						Semester_id: semesters[i],
+						Raw_score: '[' + raw_score +']',
+						Final_score: score
+					};
+/*
+create table Final_Recommendation 
+(Final_Recommendation_id int NOT NULL AUTO_INCREMENT,
+Semester_id int,
+Raw_score varchar(255),
+Final_score varchar(10),
+PRIMARY KEY (Final_Recommendation_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
+*/
+					connection.query('INSERT INTO Final_Recommendation SET ? ON DUPLICATE KEY UPDATE Raw_score = ? AND Final_score = ?', [recommendation, recommendation.Raw_score, recommendation.Final_score], function(err, result) {
+						if (err) throw err;
+					});
+
+				}				
+				
+			});
+		}
+	})
+	.on('end', function() {
+		res.send('in testing');
+	})
+	
+});
+
+
 router.get('/refresh', function(req, res) {
 	var query = connection.query('SELECT Semester_id FROM Semesters');
 	query
