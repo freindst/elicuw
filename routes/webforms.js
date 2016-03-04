@@ -37,6 +37,11 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
 router.get('/interviews/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM Interviews WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			res.redirect('edit/' + req.params.Semester_id);
+		}
+	});
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
@@ -119,6 +124,11 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
 router.get('/readings/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM Readings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			res.redirect('edit/' + req.params.Semester_id);
+		}
+	});
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
@@ -191,6 +201,11 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
 router.get('/speakings/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM Speakings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			res.redirect('edit/' + req.params.Semester_id);
+		}
+	});
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
@@ -262,6 +277,11 @@ PRIMARY KEY (Writing_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 router.get('/writings/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM Writings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			res.redirect('edit/' + req.params.Semester_id);
+		}
+	});
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
@@ -336,6 +356,11 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
 router.get('/toefls/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM Toefls WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			res.redirect('edit/' + req.params.Semester_id);
+		}
+	});
 	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
@@ -501,6 +526,11 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
 router.get('/timed_writings/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM Timed_writings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			res.redirect('edit/' + req.params.Semester_id);
+		}
+	});
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;

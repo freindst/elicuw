@@ -1,0 +1,86 @@
+extends ../layout
+
+block content
+  h1 End-of-term Results for Concordia University Wisconsin English Language Institue
+
+  h2 Student Information
+  table
+    tr
+      td First Name
+      td= row.First_name
+    tr
+      td Last Name
+      td= row.Last_name
+    tr
+      td Student ID
+      td= row.Student_number
+    tr
+      td School Year
+      td= row.Year
+    tr
+      td Semester
+      td= row.Season
+    tr
+      td Term
+      td= row.Term
+    tr
+      td Level
+      td= row.Level
+    tr
+      td Section
+      td= row.Section
+
+   p Institutional TOEFL Results
+   table
+     tr
+       td Subject
+       td Raw Score
+       td Converted Score
+     tr
+       td Listening
+       td= row.Listening
+       td
+     tr
+       td Reading
+       td= row.Reading
+       td
+     tr
+       td Grammar
+       td= row.Grammar
+       td
+     tr
+       td Total Score
+       td= row.Listening + row.Reading + row.Grammar
+       td
+
+    p CUW ELI Exit Criteria
+    table
+      tr
+        td Item
+        td Converted Score (out of 20)
+      tr
+        td Teacher Recommendations
+        td= row.Final_score
+      tr
+        td Grades
+        td= parseInt(row.Final_grade)
+      tr
+        td Timed Writing
+        td= row.Score
+      tr
+        td Interview
+        td= row.Recommendation
+      tr
+        td TOEFL
+        td= parseInt(row.Listening + row.Reading + row.Grammar)/3
+      tr
+        td Total
+        td= parseInt(row.Final_score) + parseInt(row.Final_grade) + parseInt(row.Score) + parseInt(row.Recommendation) + parseInt(row.Listening)
+
+    p Students who earn 70 or more points are eligible to exit the English Language institue.
+    p You have made good progress this term, and you will move on to the next level in the ELI.
+
+    p Timothy Fojitk
+    p Director, English Language Insitute
+    p Concordia University Wisconsin
+    p= (new Date()).toLocaleDateString()

@@ -30,9 +30,40 @@ block content
 
   form(action='/webforms/readings/edit/' + result.Semester_id, method='post')
     h2 Grades for Reading & Vocabulary
-    label Please input grades (A: 4.0, B:3.0, C:2.0)
+    label Please input grades
     br
-    input(type='text', name='Reading_score' value= result.Reading_score)
+    input(type='radio' name='Reading_score' value='4.0' checked=result.Reading_score=='4.0')
+    | 4.0 A+/A
+    br
+    input(type='radio' name='Reading_score' value='3.7' checked=result.Reading_score=='3.7')
+    | 3.7 A-
+    br
+    input(type='radio' name='Reading_score' value='3.3' checked=result.Reading_score=='3.3')
+    | 3.3 B+
+    br
+    input(type='radio' name='Reading_score' value='3.0' checked=result.Reading_score=='3.0')
+    | 3.0 B
+    br
+    input(type='radio' name='Reading_score' value='2.7' checked=result.Reading_score=='2.7')
+    | 2.7 B-
+    br
+    input(type='radio' name='Reading_score' value='2.3' checked=result.Reading_score=='2.3')
+    | 2.3 C+
+    br
+    input(type='radio' name='Reading_score' value='2.0' checked=result.Reading_score=='2.0')
+    | 2.0 C
+    br
+    input(type='radio' name='Reading_score' value='1.7' checked=result.Reading_score=='1.7')
+    | 1.7 C-
+    br
+    input(type='radio' name='Reading_score' value='1.3' checked=result.Reading_score=='1.3')
+    | 1.3 D+
+    br
+    input(type='radio' name='Reading_score' value='1.0' checked=result.Reading_score=='1.0')
+    | 1.0 D
+    br
+    input(type='radio' name='Reading_score' value='0.0' checked=result.Reading_score=='0.0')
+    | 0.0 E/F
     br
     input(type='submit' value='Comfirm')
     input(type='button' onclick="window.location.href=\'/verifications/reading\'" value='Cancel')

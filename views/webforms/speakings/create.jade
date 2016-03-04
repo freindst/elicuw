@@ -31,9 +31,40 @@ block content
 
   form(action='/webforms/speakings/' + result.Semester_id, method='post')
     h2 Grades for Speaking & Listening
-    label Please input grades (A: 4.0, B:3.0, C:2.0)
+    label Please input grades
     br
-    input(type='text', name='Speaking_score')
+    input(type='radio' name='Speaking_score' value='4.0' checked)
+    | 4.0 A+/A
+    br
+    input(type='radio' name='Speaking_score' value='3.7')
+    | 3.7 A-
+    br
+    input(type='radio' name='Speaking_score' value='3.3')
+    | 3.3 B+
+    br
+    input(type='radio' name='Speaking_score' value='3.0')
+    | 3.0 B
+    br
+    input(type='radio' name='Speaking_score' value='2.7')
+    | 2.7 B-
+    br
+    input(type='radio' name='Speaking_score' value='2.3')
+    | 2.3 C+
+    br
+    input(type='radio' name='Speaking_score' value='2.0')
+    | 2.0 C
+    br
+    input(type='radio' name='Speaking_score' value='1.7')
+    | 1.7 C-
+    br
+    input(type='radio' name='Speaking_score' value='1.3')
+    | 1.3 D+
+    br
+    input(type='radio' name='Speaking_score' value='1.0')
+    | 1.0 D
+    br
+    input(type='radio' name='Speaking_score' value='0.0')
+    | 0.0 E/F
     br
     input(type='submit', value='Submit')
     input(type='button' onclick="window.location.href=\'/webforms/lists/" + result.Semester_id + "\'" value='Cancel')

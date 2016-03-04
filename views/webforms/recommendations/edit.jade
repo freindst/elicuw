@@ -43,27 +43,28 @@ block content
     br
     label Quality Of Class Participation:
     br
-    input(type='text', name='Participation', value= result.Participation)
-    br
-    p Strong
-    p Average
-    p Weak
-    P Cannot Evaluate
+    select(name='Participation')
+      option(value='Strong' selected=result.Participation=='Strong') Stong
+      option(value='Average' selected=result.Participation=='Average') Average
+      option(value='Weak' selected=result.Participation=='Weak') Weak
+      option(value='Cannot Evaluate' selected=result.Participation=='Cannot Evaluate') Cannot Evaluate
     br
     label Attitude Towards English Study:
     br
-    input(type='text', name='Attitude', value= result.Attitude)
-    p Strong
-    p Average
-    p Weak
-    P Cannot Evaluate
+    select(name='Attitude')
+      option(value='Strong' selected=result.Attitude=='Strong') Stong
+      option(value='Average' selected=result.Attitude=='Average') Average
+      option(value='Weak' selected=result.Attitude=='Weak') Weak
+      option(value='Cannot Evaluate' selected=result.Attitude=='Cannot Evaluate') Cannot Evaluate
+    br
     h3 Recommendation Of Subsequent Student:
-    input(type='text', name='Recommendation_level', value= result.Recommendation_level)
-    p 0 Repeat Current ELI Level
-    p 1 Advance To Next ELI Level
-    p 2 Bridge Take both ELI and Academic Classes
-    p 3 Exit ELI (Some Teacher Concern)
-    p 4 Exit ELI (Few Or No Teacher Concern)
+    br
+    select(name='Recommendation_level')
+      option(value='1' selected=result.Recommendation_level=='1') Repeat Current ELI Level
+      option(value='2' selected=result.Recommendation_level=='2') Advance To Next ELI Level
+      option(value='3' selected=result.Recommendation_level=='3') Exit ELI (Some Teacher Concern)
+      option(value='4' selected=result.Recommendation_level=='Cannot Evaluate') Exit ELI (Some Teacher Concern)
+      option(value='5' selected=result.Recommendation_level=='5') Exit ELI (Few Or No Teacher Concern)
     br
     label Comments For Students File(To inform/assist academic program professor)
     br

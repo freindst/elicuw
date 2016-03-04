@@ -23,7 +23,7 @@ block content
     each row in rows
       tr
         td
-          a(href='/') export report
+          a(href='/reports/individual/' + row.Semester_id) export report
         td= row.Student_number
         td= row.First_name
         td= row.Last_name
