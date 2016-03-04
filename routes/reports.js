@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 //exit criteria report
 /*
 Exit_report_id int NOT NULL AUTO_INCREMENT,
-Semester_id int,
+Semester_id int UNIQUE,
 Teacher_recommendation int,
 Timed_writing int,
 Grades int,
@@ -58,7 +58,7 @@ router.get('/test', function(req, res) {
 /*
 create table Final_Recommendation 
 (Final_Recommendation_id int NOT NULL AUTO_INCREMENT,
-Semester_id int,
+Semester_id int UNIQUE,
 Raw_score varchar(255),
 Final_score varchar(10),
 PRIMARY KEY (Final_Recommendation_id),
@@ -68,10 +68,49 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 					connection.query('INSERT INTO Final_Recommendation SET ? ON DUPLICATE KEY UPDATE Raw_score = ? AND Final_score = ?', [recommendation, recommendation.Raw_score, recommendation.Final_score], function(err, result) {
 						if (err) throw err;
 					});
-
 				}				
-				
 			});
+			connection.query('SELECT * FROM Readings INNER JOIN Speakings ON Readings.Semester_id = Speakings.Semester_id INNER JOIN Writings ON Speakings.Semester_id = Writings.Semester_id WHERE Writings.Semester_id = ?', [semesters[i]], function(err, results) {
+				if (results.length != 0)
+				{
+					var raw_grade = '{Reading_score:' + results[0].Reading_score + ';Speaking_score:' + results[0].Speaking_score + ';Writing_score:' + results[0].Writing_score+'}';
+					var grade = (parseFloat(results[0].Reading_score) + parseFloat(results[0].Speaking_score) + parseFloat(results[0].Writing_score))/3;
+/*
+create table Final_Grade
+(Final_Grade_id int NOT NULL AUTO_INCREMENT,
+Semester_id int UNIQUE,
+Raw_grade varchar(255),
+Final_grade varchar(10),
+PRIMARY KEY (Final_Grade_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
+*/
+					connection.query('INSERT INTO Final_Grade (Semester_id, Raw_grade, Final_grade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Raw_grade = ? AND Final_grade = ?', [semesters[i], raw_grade, grade, raw_grade, grade], function(err, result) {
+						if (err) throw err;
+					});
+				}
+			});
+			connection.query('SELECT Final_Grade.Semester_id, Final_Grade.Final_grade, Final_Recommendation.Final_score, Interviews.Recommendation, Timed_writings.Score, Toefls.Listening FROM Final_Grade INNER JOIN Final_Recommendation ON Final_Grade.Semester_id = Final_Recommendation.Semester_id INNER JOIN Interviews ON Final_Grade.Semester_id = Interviews.Semester_id INNER JOIN Timed_writings ON Final_Grade.Semester_id = Timed_writings.Semester_id INNER JOIN Toefls ON Final_Grade.Semester_id = Toefls.Semester_id WHERE Final_Grade.Semester_id = ?', [semesters[i]], function(err, results) {
+				if (err) throw err;
+				if (results.length != 0)
+				{
+					var total = parseFloat(results[0].Final_grade) + parseFloat(results[0].Final_score) + parseFloat(results[0].Recommendation) + parseFloat(results[0].Score) + parseFloat(results[0].Listening);
+					console.log(total);
+					var item = {
+						Semester_id: semesters[i],
+						Teacher_recommendation: results[0].Final_score,
+						Timed_writing: results[0].Score,
+						Grades: results[0].Final_grade,
+						Interview: results[0].Recommendation,
+						Toefl: results[0].Listening,
+						Result: total
+					};
+					console.log(item);
+					connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE ?', [item, item], function(err, result) {
+						if (err) throw err;
+					})
+				}
+			})
 		}
 	})
 	.on('end', function() {
@@ -83,98 +122,85 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 
 router.get('/refresh', function(req, res) {
 	var query = connection.query('SELECT Semester_id FROM Semesters');
-	query
-	  .on('result', function(semesters) {
-	  	for (var i in semesters) {
-	  		var result = [];
-	  		//recommendation
-	  		connection.query('SELECT * FROM Recommendations WHERE Semester_id = ?', [semesters[i]], function(err, results) {
-	  			console.log(results);
-					var raw_score = [];
+	query.on('result', function(semesters) {
+		for (var i in semesters) {
+			connection.query('SELECT * FROM Recommendations WHERE Semester_id = ?', [semesters[i]], function(err, results) {
+				if (results.length != 0)
+				{
+					var raw_score = '';
 					var score = 0;
 					for (var n in results) {
-						raw_score.push({recommendation_level: parseFloat(results[n])});
-						console.log(raw_score);
-						score += (parseFloat(results[n]/n));
-					};
-
+						raw_score += parseFloat(results[n].Recommendation_level);
+						if (n < (results.length -1))
+						{
+							raw_score += ',';
+						}
+						score += (parseFloat((results[n].Recommendation_level)/results.length));
+					}
 					var recommendation = {
 						Semester_id: semesters[i],
-						Raw_score: raw_score,
-						Final_score: score + ''
+						Raw_score: '[' + raw_score +']',
+						Final_score: score
 					};
-					console.log(recommendation)
 /*
 create table Final_Recommendation 
 (Final_Recommendation_id int NOT NULL AUTO_INCREMENT,
-Semester_id int,
+Semester_id int UNIQUE,
 Raw_score varchar(255),
 Final_score varchar(10),
 PRIMARY KEY (Final_Recommendation_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 );
 */
-					connection.query('INSERT INTO Final_Recommendation SET', recommendation, function(err, result) {
-						console.log(err);
-
+					connection.query('INSERT INTO Final_Recommendation SET ? ON DUPLICATE KEY UPDATE Raw_score = ? AND Final_score = ?', [recommendation, recommendation.Raw_score, recommendation.Final_score], function(err, result) {
+						if (err) throw err;
 					});
+				}				
 			});
-	  	}
-	  })
+			connection.query('SELECT * FROM Readings INNER JOIN Speakings ON Readings.Semester_id = Speakings.Semester_id INNER JOIN Writings ON Speakings.Semester_id = Writings.Semester_id WHERE Writings.Semester_id = ?', [semesters[i]], function(err, results) {
+				if (results.length != 0)
+				{
+					var raw_grade = '{Reading_score:' + results[0].Reading_score + ';Speaking_score:' + results[0].Speaking_score + ';Writing_score:' + results[0].Writing_score+'}';
+					var grade = (parseFloat(results[0].Reading_score) + parseFloat(results[0].Speaking_score) + parseFloat(results[0].Writing_score))/3;
+/*
+create table Final_Grade
+(Final_Grade_id int NOT NULL AUTO_INCREMENT,
+Semester_id int UNIQUE,
+Raw_grade varchar(255),
+Final_grade varchar(10),
+PRIMARY KEY (Final_Grade_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
+*/
+					connection.query('INSERT INTO Final_Grade (Semester_id, Raw_grade, Final_grade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Raw_grade = ? AND Final_grade = ?', [semesters[i], raw_grade, grade, raw_grade, grade], function(err, result) {
+						if (err) throw err;
+					});
+				}
+			});
+			connection.query('SELECT Final_Grade.Semester_id, Final_Grade.Final_grade, Final_Recommendation.Final_score, Interviews.Recommendation, Timed_writings.Score, Toefls.Listening FROM Final_Grade INNER JOIN Final_Recommendation ON Final_Grade.Semester_id = Final_Recommendation.Semester_id INNER JOIN Interviews ON Final_Grade.Semester_id = Interviews.Semester_id INNER JOIN Timed_writings ON Final_Grade.Semester_id = Timed_writings.Semester_id INNER JOIN Toefls ON Final_Grade.Semester_id = Toefls.Semester_id WHERE Final_Grade.Semester_id = ?', [semesters[i]], function(err, results) {
+				if (err) throw err;
+				if (results.length != 0)
+				{
+					var total = parseFloat(results[0].Final_grade) + parseFloat(results[0].Final_score) + parseFloat(results[0].Recommendation) + parseFloat(results[0].Score) + parseFloat(results[0].Listening);
+					var item = {
+						Semester_id: semesters[i],
+						Teacher_recommendation: results[0].Final_score,
+						Timed_writing: results[0].Score,
+						Grades: results[0].Final_grade,
+						Interview: results[0].Recommendation,
+						Toefl: results[0].Listening,
+						Result: total
+					};
+					connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE ?', [item, item], function(err, result) {
+						if (err) throw err;
+					});
+				}
+			});
+		}
+	})
 	  .on('end', function() {
 	  	res.redirect('/reports/exit_report');
-	  })
-	/*connection.query('SELECT Semester_id FROM Semesters', function(err, semesters) {
-		for (var i in semesters) {
-			var result = [];
-			//recommendation
-			connection.query('SELECT Reommndation FROM Recommendations WHERE Semester_id = ?', [semesters[i].Semester_id], function(err, results) {
-					var score = 0;
-					for (var n in results) {
-						score += parseFloat(results[n])/n;
-					};
-
-					result.push(Math.round(score));
-			});
-
-			//Timed_writing
-			connection.query('SELECT Score From Timed_writings WHERE Semester_id = ?', [semesters[i].Semester_id], function(err, results) {
-					var score = parseFloat(results[0]);
-					result.push(Math.round(score));
-			});
-
-			//Grades
-			connection.query('SELECT Readings.Reading_socre, Writings.Writing_score, Speaking.Speaking_score FROM Readings INNER JOIN Writings ON Readings.Semester_id = Writings.Semester_id INNER JOIN Speakings ON Writings.Semester_id = Speakings.Semester_id WHERE Readings.Semester_id = ?', [semesters[i].Semester_id], function(err, results) {
-				var score = (parseFloat(results[0].Reading_socre) + parseFloat(results[0].Writing_score) + parseFloat(results[0].Speaking_score))/3;
-				result.push(Math.round(score));
-			});
-
-			//Interview
-			connection.query('SELECT Recommendation FROM Interviews WHERE Interviews.Semester_id = ?', [semesters[i].Semester_id], function(err, results) {
-					var score = parseFloat(results[0].Recommendation);
-					result.push(Math.round(score));
-			});
-
-			//TOEFL
-			connection.query('SELECT Listening, Reading, Grammar FROM Toefls WHERE Toefls.Semester_id = ?', [semesters[i].Semester_id], function(err, results) {
-					var score = (parseFloat(results[0].Listening) + parseFloat(results[0].Reading) + parseFloat(results[0].Grammar))/3;
-					result.push(Math.round(score));
-			});
-
-			var final_score = result[0] + result[1] + result[2] + result[3] + result[4];
-			var item = {
-				Semester_id: semesters[i].Semester_id,
-				Teacher_recommendation: result[0],
-				Timed_writing: result[1],
-				Grades: result[2],
-				Interview: result[3],
-				Toefl: result[4],
-				Result: final_score
-			};
-			connection.query('INSERT INTO Exit_reports SET ?', item, function(err, respond) {});
-		}
-		res.redirect('/reports/exit_report');
-	});*/
+	  });
 });
 
 module.exports = router;
