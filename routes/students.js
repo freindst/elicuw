@@ -13,13 +13,13 @@ PRIMARY KEY Student_id,
 
 /* GET home page. */
 router.get('/', function(req, res) {
-	var connection = req.app.get('connection');
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
-
+		
 		res.render('students/index', {
 			title: 'Student List',
-			students: students
+			students: students,
+			url: req.originalUrl
 		});
 	});
 });
@@ -40,7 +40,6 @@ router.post('/create', function(req, res) {
 		Major: req.body.Major
 	};
 
-	var connection = req.app.get('connection');
 	connection.query('INSERT INTO Students SET ?', student, function(err, result) {
 		if (err) throw err;
 
@@ -52,7 +51,6 @@ router.post('/create', function(req, res) {
 router.get('/edit/:Student_id', function(req, res) {
 	var Student_id = req.params.Student_id;
 
-	var connection = req.app.get('connection');
 	connection.query('SELECT * FROM Students WHERE Student_id = "' + Student_id + '"', function(err, student) {
 		if (err) throw err;
 
@@ -72,7 +70,6 @@ router.post('/edit/:Student_id', function(req, res) {
 		Major: req.body.Major
 	};
 
-	var connection = req.app.get('connection');
 	connection.query('UPDATE Students SET ? WHERE Student_id = ?', [student, Student_id], function(err, result) {
 		if (err) throw err;
 
@@ -84,7 +81,6 @@ router.post('/edit/:Student_id', function(req, res) {
 router.get('/delete/:Student_id', function(req, res) {
 	var Student_id = req.params.Student_id;
 
-	var connection = req.app.get('connection');
 	connection.query('DELETE FROM Students WHERE Student_id = ?', [Student_id], function(err, result) {
 		if(err) throw err;
 

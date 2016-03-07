@@ -1,14 +1,16 @@
-extends layout
+extends ../layout
 
 block content
   h1= title
   a(href='/students/create') Create
-  table
+  table.table.table-striped
     tr
       th Student Number
       th First Name
       th Last Name
       th Major
+      th
+      th
       th
     if students
       each student in students

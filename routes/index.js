@@ -3,7 +3,19 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+	console.log(req.isAuthenticated());
+	console.log(req.session);
+	if (req.isAuthenticated()) {
+		var user = req.session.passport.user;
+	} else {
+		var user = null
+	}
+	console.log(user)
+	res.render('index', {
+		title: 'Home',
+		url: req.originalUrl,
+		user: user
+	});
 });
 
 router.get('/initiate', function(req, res) {

@@ -2,7 +2,16 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
 a {
   color: #00B7FF;
+}
+.index_page {
+  padding: 40px 15px;
+}
+.footer_eli {
+	color: grey;
+	text-align: right;
+}
+.alert {
+	margin-top: 20px;
 }
