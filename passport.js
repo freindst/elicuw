@@ -21,12 +21,12 @@ module.exports = function(app) {
 		    if (err) {
 		      return done(err);
 		    }
-		    if (!user) {
+		    if (user.length == 0) {
 		      return done(null, false, {
 		        message: 'Incorrect username.'
 		      });
 		    }
-		    if (user[0].Password != password) {
+		    else if (user[0].Password != password) {
 		      return done(null, false, {
 		      	message: 'Invalid password.'
 		      });

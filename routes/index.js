@@ -3,8 +3,6 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	console.log(req.isAuthenticated());
-	console.log(req.session);
 	if (req.isAuthenticated()) {
 		var user = req.session.passport.user;
 	} else {

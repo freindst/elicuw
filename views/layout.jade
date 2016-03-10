@@ -42,12 +42,16 @@ html(lang='en')
           ul.nav.navbar-nav.navbar-right
               if user
                 li
-                  a(href='/user/#{user.UserID}')
+                  a(href='/users/#{user.UserID}')
                     span.glyphicon.glyphicon-user
-                    | &nbsp#{user.Username}
+                    |   #{user.Username}
+                li
+                  a(href='/logout')
+                    span.glyphicon.glyphicon-log-out
+                    |   Log Out
               else
                 li
-                  a(href='#')
+                  a(href='/sign_up')
                     span.glyphicon.glyphicon-file
                     |  Sign Up
                 li
@@ -56,14 +60,19 @@ html(lang='en')
                     |  Login
         // /.nav-collapse
   body
-    .err
-      if error_message
-        .alert.alert-danger(role='alert')
-          span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
-          span.sr-only Error:
-          |   error_message
-    .success
-      if okay_message
+    .message
+      .err
+        if error_message
+          .alert.alert-danger(role='alert')
+            span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
+            span.sr-only Error:
+            |   !{error_message}
+      .success
+        if okay_message
+          .alert.alert-success(role='alert')
+            span.glyphicon.glyphicons-ok-sign(aria-hidden='true')
+            |   !{okay_message}
+
     .jumbotron
       .container
         block content

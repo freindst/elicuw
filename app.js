@@ -83,7 +83,9 @@ connection.query('SELECT * FROM students',function(err,rows){
 */
 
 app.get('/login', function(req, res) {
-  res.render('login');
+  res.render('login', {
+    title: 'Login'
+  });
 });
 
 app.post('/login', passport.authenticate('local', {failureRedirect: '/loginFailure'}), function(req, res) {
@@ -91,16 +93,52 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/loginFailu
     if (err) {
       return next(err);
     }
-    res.redirect('/');
-  })
+    res.redirect('/loginSuccess');
+  });
+});
+
+app.get('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      return res.redirect('/users/' + user.username);
+    });
+  })(req, res, next);
 });
 
 app.get('/loginFailure', function(req, res, next) {
-  res.send('Failed to authenticate');
+  res.render('login', {
+    title: 'Login',
+    error_message: 'Incorrect <strong>username</strong> and(or) <strong>password</strong>, please re-enter your username and passowrd.'
+  });
 });
 
 app.get('/loginSuccess', function(req, res, next) {
-  res.send('Successfully authenticated');
+  res.render('index', {
+    title: 'Home',
+    url: '/',
+    user: req.user,
+    okay_message: "You have logged in the system scuccessfully!"
+  });
+});
+
+app.get('/logout', function(req, res) {
+  req.logout();
+  res.render('logout', {
+    title: "Logout"
+  });
+});
+
+app.get('/sign_up', function(req, res) {
+  res.render('sign_up', {
+    title: "Sign Up"
+  });
+});
+
+app.post('/sign_up', function(req, res) {
+  res.send('test');
 });
 
 // catch 404 and forward to error handler
