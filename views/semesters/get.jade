@@ -1,39 +1,50 @@
 extends ../layout
 
 block content
-  h1 Student Info
-  table
-    tr
-      td Student Number
-      td= student.Student_number
-    tr
-      td First Name
-      td= student.First_name
-    tr
-      td Last name
-      td= student.Last_name
-    tr
-      td Major
-      td= student.Major
-  
-  h1 Semester List
-  a(href='/semesters/create/' + student.Student_id) Create a new semester item
-  table
-    tr
-      th Year
-      th Semester
-      th Term
-      th Level
-      th Section
-    
-    each row in rows
-      tr
-        td= row.Year
-        td= row.Season
-        td= row.Term
-        td= row.Level
-        td= row.Section
-        td
-          a(href='/semesters/edit/'+ student.Student_id + '/' + row.Semester_id) edit
-        td
-          a(href='/semesters/delete/' + student.Student_id + '/' + row.Semester_id) delete
+  .row
+    .col-md-4
+      .panel.panel-default
+        .panel-heading
+          h4 Student Information
+        .panel-body
+          table.table
+            tbody
+              tr
+                td Student Number
+                td= student.Student_number
+              tr
+                td First Name
+                td= student.First_name
+              tr
+                td Last name
+                td= student.Last_name
+              tr
+                td Major
+                td= student.Major
+
+    .col-md-8
+      .panel.panel-default
+        .panel-heading
+          h4 Semester List
+        .panel-body
+          a.btn.btn-primary(href='/semesters/create/' + student.Student_id) Create a new semester item
+          table.table.table-striped
+            thead
+              tr
+                th Year
+                th Semester
+                th Term
+                th Level
+                th Section
+            tbody
+              each row in rows
+                tr
+                  td= row.Year
+                  td= row.Season
+                  td= row.Term
+                  td= row.Level
+                  td= row.Section
+                  td
+                    a(href='/semesters/edit/#{student.Student_id}/#{row.Semester_id}') edit
+                  td
+                    a(href='/semesters/delete/#{student.Student_id}/#{row.Semester_id}') delete

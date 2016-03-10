@@ -1,18 +1,33 @@
 extends ../layout
 
 block content
-  h1= title
-  form(action = '/students/edit/' + student.Student_id method = 'post')
-    label(for='Student_number') Student Number:
-    input#Student_number(type='text' name='Student_number' value=student.Student_number)
-    br
-    label(for='First_name') First Name:
-    input#First_name(type='text' name='First_name' value=student.First_name)
-    br
-    label(for='Last_name') Last Name:
-    input#Last_name(type='text' name='Last_name' value=student.Last_name)
-    br
-    label(for='Major') Major:
-    input#Major(type='text' name='Major' value= student.Major)
-    br
-    input(type='submit', value='Update') 
+  .container-fluid
+    .row
+      .col-md-3
+      .col-md-6
+          h2.text-center= title
+          br
+          form.form-horizontal(action = '/students/edit/#{student.Student_id}' method = 'post')
+            .form-group
+              label.col-md-4.control-label(for='Student_number') Student Number:
+              .input-group.col-md-8
+                input#Student_number.form-control(type='text', name='Student_number', value=student.Student_number, aria-describeby='basic-addon1')
+
+            .form-group
+              label.col-md-4.control-label(for='First_name') First Name:
+              .input-group.col-md-8
+                input#First_name.form-control(type='text', name='First_name', value=student.First_name)
+
+            .form-group
+              label.col-md-4.control-label(for='Last_name') Last Name:
+              .input-group.col-md-8
+                input#Last_name.form-control(type='text', name='Last_name', value=student.Last_name)
+
+            .form-group
+              label.col-md-4.control-label(for='Major') Major:
+              .input-group.col-md-8
+                input#Major.form-control(type='text', name='Major', value=student.Major)
+
+            .form-group
+              .input-group.col-md-offset-4.col-md-8
+                input.btn.btn-primary.btn-block(type='submit', value='Update')

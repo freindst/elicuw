@@ -8,13 +8,13 @@ router.get('/', function(req, res, next) {
     } else {
         var user = null
     }
-    console.log(user)
     res.render('index', {
         title: 'Home',
         url: req.originalUrl,
         user: user
     });
 });
+
 
 router.get('/sign_up', function(req, res) {
     if (req.session.hasOwnProperty('error_message')) {

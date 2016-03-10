@@ -33,8 +33,30 @@ html(lang='en')
               a(href='/') Home
             li(class= url == '/students' ? 'active': '')
               a(href='/students') Student List
-            li(class= url == '/webforms' ? 'active': '')
-              a(href='/webforms') Fill Forms
+            li.dropdown(class= url == '/webforms' ? 'active': '')
+              a.dropdown-toggle(href='/webforms' data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false") Fill Forms
+              ul.dropdown-menu
+                li
+                  a(href='/webforms') Student List
+                li(role="separator" class="divider")
+                li.dropdown-header Grades
+                li
+                  a(href='#') Reading & Vocabulary
+                li
+                  a(href='#') Speaking & Listening
+                li
+                  a(href='#') Writing & Grammar
+                li
+                  a(href='#') TOEFL Prep
+                li
+                  a(href='#') Extensive Listening
+                li(role="separator" class="divider")
+                li
+                  a(href='#') Interview
+                li
+                  a(href='#') Teacher Recommendation
+                li
+                  a(href='#') Timed Writing
             li(class= url == 'verifications' ? 'active': '')
               a(href='/verifications') Verify
             li(class= url == 'reports' ? 'active': '')

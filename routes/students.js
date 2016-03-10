@@ -1,6 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+    	next();
+    } else {
+    	req.session.error_message = "Please login first to use the system.";
+        res.redirect('/login');
+    }
+}
+
 //define student class
 /*
 Student_id int NOT NULL AUTO_INCREMENT,
@@ -12,29 +22,31 @@ PRIMARY KEY Student_id,
 */
 
 /* GET home page. */
-router.get('/', function(req, res) {
+router.get('/', isAuthenticated, function(req, res, next) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
-		
+
 		res.render('students/index', {
 			title: 'Student List',
 			students: students,
-			url: req.originalUrl
+			url: "/students",
+			user: req.user[0] || null
 		});
 	});
 });
 
 //Create a new student profile
-router.get('/create', function(req, res) {
+router.get('/create', isAuthenticated, function(req, res, next) {
 	res.render('students/create', {
-		title: 'Create Student Profile'
+		title: 'Create Student Profile',
+		user: req.user[0] || null
 	});
 });
 
 //Receive a student profile
 router.post('/create', function(req, res) {
 	var student = {
-		Student_number: req.body.Student_number,
+		Student_number: 'F' + req.body.Student_number,
 		First_name: req.body.First_name,
 		Last_name: req.body.Last_name,
 		Major: req.body.Major
@@ -47,8 +59,21 @@ router.post('/create', function(req, res) {
 	})
 });
 
+router.get('/add_semester', isAuthenticated, function(req, res, next) {
+	connection.query('SELECT * FROM Students', function(err, students) {
+		if (err) throw err;
+		
+		res.render('students/add_semester', {
+			title: 'Student List',
+			students: students,
+			url: "/students",
+			user: req.user[0] || null
+		});
+	});
+});
+
 //Update a student profile
-router.get('/edit/:Student_id', function(req, res) {
+router.get('/edit/:Student_id', isAuthenticated, function(req, res, next) {
 	var Student_id = req.params.Student_id;
 
 	connection.query('SELECT * FROM Students WHERE Student_id = "' + Student_id + '"', function(err, student) {
@@ -56,7 +81,9 @@ router.get('/edit/:Student_id', function(req, res) {
 
 		res.render('students/edit', {
 			title: 'Edit Student File',
-			student: student[0]
+			student: student[0],
+			url: "/students",
+			user: req.user[0] || null
 		});
 	});
 });
@@ -78,7 +105,7 @@ router.post('/edit/:Student_id', function(req, res) {
 });
 
 //Delete a student profile
-router.get('/delete/:Student_id', function(req, res) {
+router.get('/delete/:Student_id', isAuthenticated, function(req, res, next) {
 	var Student_id = req.params.Student_id;
 
 	connection.query('DELETE FROM Students WHERE Student_id = ?', [Student_id], function(err, result) {
