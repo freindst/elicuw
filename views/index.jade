@@ -2,14 +2,63 @@ extends layout
 
 
 block content
-    .index_page
-      h1 English Language Institute
-      a(href='/login') Login
-      br
-      a(href='/students') Student List
-      br
-      a(href='/webforms') Fill In Forms
-      br
-      a(href='/verifications') Verify the data
-      br
-      a(href='/reports') Browsing report
+  .index_page
+    h2.text-center English Language Institute
+    br
+    .row
+      .col-md-4
+        .row
+          .panel.panel-default
+            .panel-heading.text-center Students
+            .panel-body
+              ul
+                li
+                  a(href='/students/create') Add a new student
+                li
+                  a(href='/students') Browse student list
+                li
+                  a(href='/students/add') Add a new semester to a student
+
+        .row
+          .panel.panel-default
+            .panel-heading.text-center User
+            .panel-body
+              ul
+                li
+                  a(href='/users/') View your user profile
+                  
+      .col-md-4
+        .panel.panel-default
+          .panel-heading.text-center Webforms
+          .panel-body
+              bold Enter data through web forms
+            ul
+              li Grades
+                ul
+                  li
+                    a(href='#') Reading & Vocabulary
+                  li
+                    a(href='#') Speaking & Listening
+                  li
+                    a(href='#') Writing & Grammar
+                  li
+                    a(href='#') TOEFL Prep
+                  li
+                    a(href='#') Extensive Listening
+              li
+                a(href='#') Interview
+              li
+                a(href='#') Teacher Recommendation
+              li
+                a(href='#') Timed Writing
+      .col-md-4
+        .panel.panel-default
+          .panel-heading.text-center Administrator
+          .panel-body
+            ul
+              li
+                a(href='#') Verify registered user
+              li
+                a(href='/verifications') Verify input form
+              li
+                a(href='/reports') Check report

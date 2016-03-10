@@ -83,8 +83,18 @@ connection.query('SELECT * FROM students',function(err,rows){
 */
 
 app.get('/login', function(req, res) {
+  if (req.session.hasOwnProperty('okay_message')) {
+    var okay_message = req.session.okay_message;
+    delete req.session.okay_message;
+  }
+  if (req.session.hasOwnProperty('error_message')) {
+    var error_message = req.session.error_message;
+    delete req.session.error_message;
+  }
   res.render('login', {
-    title: 'Login'
+    title: 'Login',
+    okay_message: okay_message || null,
+    error_message: error_message || null
   });
 });
 
@@ -97,29 +107,16 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/loginFailu
   });
 });
 
-app.get('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user) { return res.redirect('/login'); }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      return res.redirect('/users/' + user.username);
-    });
-  })(req, res, next);
-});
-
 app.get('/loginFailure', function(req, res, next) {
-  res.render('login', {
-    title: 'Login',
-    error_message: 'Incorrect <strong>username</strong> and(or) <strong>password</strong>, please re-enter your username and passowrd.'
-  });
+  req.session.error_message = 'Incorrect <strong>username</strong> and(or) <strong>password</strong>, please re-enter your username and passowrd.';
+  res.redirect('/login');
 });
 
 app.get('/loginSuccess', function(req, res, next) {
   res.render('index', {
     title: 'Home',
     url: '/',
-    user: req.user,
+    user: req.user[0],
     okay_message: "You have logged in the system scuccessfully!"
   });
 });
@@ -131,6 +128,7 @@ app.get('/logout', function(req, res) {
   });
 });
 
+/*
 app.get('/sign_up', function(req, res) {
   res.render('sign_up', {
     title: "Sign Up"
@@ -140,6 +138,7 @@ app.get('/sign_up', function(req, res) {
 app.post('/sign_up', function(req, res) {
   res.send('test');
 });
+*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
