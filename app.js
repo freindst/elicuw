@@ -16,6 +16,7 @@ var semesters = require('./routes/semesters');
 var webforms = require('./routes/webforms');
 var verifications = require('./routes/verifications');
 var reports = require('./routes/reports');
+var tools = require('./routes/tools');
 
 var app = express();
 
@@ -46,6 +47,8 @@ app.use('/semesters', semesters);
 app.use('/webforms', webforms);
 app.use('/verifications', verifications);
 app.use('/reports', reports);
+app.use('/tools', tools);
+
 
 //connect to mysql database
 var mysql = require("mysql");

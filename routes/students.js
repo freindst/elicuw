@@ -1,24 +1,19 @@
 var express = require('express');
 var router = express.Router();
 
-
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-    	next();
-    } else {
-    	req.session.error_message = "Please login first to use the system.";
-        res.redirect('/login');
-    }
-}
+//tools.js contains global functions
+var tools = require('./tools')();
 
 //define student class
 /*
-Student_id int NOT NULL AUTO_INCREMENT,
-Student_number varchar(9),
+CREATE TABLE Students(
+Student_id int NOT NULL UNIQUE AUTO_INCREMENT,
+Student_number varchar(9) UNIQUE,
 First_name varchar(100),
 Last_name varchar(100),
 Major varchar(100),
-PRIMARY KEY Student_id,
+PRIMARY KEY Student_id
+);
 */
 
 /* GET home page. */
