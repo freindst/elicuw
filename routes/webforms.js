@@ -9,10 +9,12 @@ router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
 });
 
+//choose a form to input
 router.get('/', function(req, res, next) {
 	renderWebformsIndex('lists', req, res);
 });
 
+//list all semester records
 router.get('/lists/:Semester_id', function(req, res, next) {
 	var Semester_id = req.params.Semester_id;
 	res.render('webforms/list', {
@@ -23,11 +25,13 @@ router.get('/lists/:Semester_id', function(req, res, next) {
 	});
 });
 
+//another portal to go to webform input, by choosing webform type first
 router.get('/:webformType', function(req, res, next) {
 	var webformType = req.params.webformType;
 	renderWebformsIndex(webformType, req, res);
 })
 
+//intervbiew: Each item is related to a semester item by Semester_id
 //define interview class
 /*
 Interview_id int NOT NULL AUTO_INCREMENT,
@@ -44,6 +48,7 @@ PRIMARY KEY (Interview_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
+//if there is no existed record to a semester record open a create page
 router.get('/interviews/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Interviews WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
 		if (counts.length != 0) {
@@ -61,6 +66,7 @@ router.get('/interviews/:Semester_id', function(req, res) {
 	});
 });
 
+//save records to database
 router.post('/interviews/:Semester_id', function(req, res) {
 	var query = "INSERT INTO Interviews SET ?";
 	var semester = {
@@ -81,6 +87,7 @@ router.post('/interviews/:Semester_id', function(req, res) {
 	});
 });
 
+//if there is an existed record of interview, take it back and open an edit page
 router.get('/interviews/edit/:Semester_id', function(req, res) {
 	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Semesters.Semester_id = ?";
 
@@ -94,6 +101,7 @@ router.get('/interviews/edit/:Semester_id', function(req, res) {
 	});
 });
 
+//update the existed record
 router.post('/interviews/edit/:Semester_id', function(req, res) {
 	var query = "UPDATE Interviews SET ? WHERE Semester_id = ?"
 	var interview = {
@@ -113,6 +121,7 @@ router.post('/interviews/edit/:Semester_id', function(req, res) {
 	});
 });
 
+//delete an exited record based on Semester_id
 router.get('/interviews/delete/:Semester_id', function(req, res) {
 	connection.query("DELETE FROM Interviews WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
 		if (err) throw err;
@@ -121,6 +130,7 @@ router.get('/interviews/delete/:Semester_id', function(req, res) {
 	});
 });
 
+//grade - reading
 //define Readings class
 /*
 Reading_id int NOT NULL AUTO_INCREMENT,
@@ -199,6 +209,7 @@ router.get('/readings/delete/:Semester_id', function(req, res) {
 	});
 });
 
+//grade-speaking
 //define speaking class
 /*
 Speaking_id int NOT NULL AUTO_INCREMENT,
@@ -277,6 +288,8 @@ router.get('/speakings/delete/:Semester_id', function(req, res) {
 	});
 });
 
+
+//grade - writing
 //define writing class
 /*
 Writing_id int NOT NULL AUTO_INCREMENT,
@@ -355,6 +368,7 @@ router.get('/writings/delete/:Semester_id', function(req, res) {
 	});
 });
 
+//grade - toofl prep
 //define Toefl_preps class
 /*
 CREATE TABLE Toefl_prep(
@@ -448,8 +462,8 @@ router.get('/toefl_preps/delete/:Semester_id', function(req, res) {
 		res.redirect('/verifications/toefl_prep')
 	});
 });
-//
 
+//grade extensive listening
 //define Extensive_listenings class
 /*
 CREATE TABLE Extensive_listenings(
@@ -543,8 +557,8 @@ router.get('/extensive_listenings/delete/:Semester_id', function(req, res) {
 		res.redirect('/verifications/extensive_listening')
 	});
 });
-//
 
+// toefl
 //define toefl class
 /*
 Toefl_id int NOT NULL AUTO_INCREMENT,
@@ -629,6 +643,7 @@ router.get('/toefls/delete/:Semester_id', function(req, res) {
 	});
 });
 
+//recommendation
 //define recommendation class
 /*
 Recommendation_id int NOT NULL AUTO_INCREMENT,
@@ -719,6 +734,8 @@ router.get('/recommendations/delete/:Recommendation_id', function(req, res) {
 	});
 });
 
+
+//timed writing
 //define timed_writing class
 /*
 Timed_writing_id int NOT NULL AUTO_INCREMENT,

@@ -36,6 +36,7 @@ router.get('/index',  function(req, res, next) {
 	});
 });
 
+//get all existed semester record related to a student_id
 router.get('/get/:Student_id',  function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
@@ -54,6 +55,7 @@ router.get('/get/:Student_id',  function(req, res, next) {
 	});
 });
 
+//create a semester item related to a student_id
 router.get('/create/:Student_id', function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
@@ -83,6 +85,7 @@ router.post('/create/:Student_id', function(req, res) {
 	});
 });
 
+//edit one semester record
 router.get('/edit/:Student_id/:Semester_id', function(req, res) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
@@ -116,6 +119,7 @@ router.post('/edit/:Student_id/:Semester_id', function(req, res) {
 	})
 })
 
+//delete a semester item
 router.get('/delete/:Student_id/:Semester_id', function(req, res) {
 	connection.query("DELETE FROM Semesters WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
 		if (err) throw err;

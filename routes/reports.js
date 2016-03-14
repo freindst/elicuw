@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+
 router.get('/', function(req, res) {
 	res.render('reports/index',
 	{
@@ -22,6 +23,7 @@ PRIMARY KEY (Exit_report_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
+//retrieve all records in exit report table
 router.get('/exit_report', function(req, res) {
 	connection.query('SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students on Semesters.Student_id=Students.Student_id', function(err, results) {
 		res.render('reports/exit_report',
@@ -32,13 +34,12 @@ router.get('/exit_report', function(req, res) {
 	});
 });
 
-router.get('/test', function(req, res) {
-	res.send('in testing');
-});
-
+//refresh the table of exit report
 router.get('/refresh', function(req, res) {
+	//get all semester records
 	var query = connection.query('SELECT Semester_id FROM Semesters');
 	query.on('result', function(semesters) {
+		//get all recommendations related to each semester records
 		for (var i in semesters) {
 			connection.query('SELECT * FROM Recommendations WHERE Semester_id = ?', [semesters[i]], function(err, results) {
 				if (results.length != 0)
@@ -68,11 +69,13 @@ PRIMARY KEY (Final_Recommendation_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 );
 */
+					//get the average score of recomendations and store in final recommendation table
 					connection.query('INSERT INTO Final_Recommendation SET ? ON DUPLICATE KEY UPDATE Raw_score = ? AND Final_score = ?', [recommendation, recommendation.Raw_score, recommendation.Final_score], function(err, result) {
 						if (err) throw err;
 					});
 				}				
 			});
+			//get all grades related to each semseter record
 			connection.query('SELECT * FROM Readings INNER JOIN Speakings ON Readings.Semester_id = Speakings.Semester_id INNER JOIN Writings ON Speakings.Semester_id = Writings.Semester_id WHERE Writings.Semester_id = ?', [semesters[i]], function(err, results) {
 				if (results.length != 0)
 				{
@@ -88,11 +91,13 @@ PRIMARY KEY (Final_Grade_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 );
 */
+					//store average grade in final grade table
 					connection.query('INSERT INTO Final_Grade (Semester_id, Raw_grade, Final_grade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE Raw_grade = ? AND Final_grade = ?', [semesters[i], raw_grade, grade, raw_grade, grade], function(err, result) {
 						if (err) throw err;
 					});
 				}
 			});
+			//make a join query to all records, and display each items on screen
 			connection.query('SELECT Final_Grade.Semester_id, Final_Grade.Final_grade, Final_Recommendation.Final_score, Interviews.Recommendation, Timed_writings.Score, Toefls.Listening FROM Final_Grade INNER JOIN Final_Recommendation ON Final_Grade.Semester_id = Final_Recommendation.Semester_id INNER JOIN Interviews ON Final_Grade.Semester_id = Interviews.Semester_id INNER JOIN Timed_writings ON Final_Grade.Semester_id = Timed_writings.Semester_id INNER JOIN Toefls ON Final_Grade.Semester_id = Toefls.Semester_id WHERE Final_Grade.Semester_id = ?', [semesters[i]], function(err, results) {
 				if (err) throw err;
 				if (results.length != 0)
@@ -119,6 +124,8 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 	  });
 });
 
+
+//get individual report
 router.get('/individual/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Final_Recommendation AS r INNER JOIN Final_Grade AS g ON r.Semester_id = g.Semester_id INNER JOIN Toefls AS t ON r.Semester_id = t.Semester_id INNER JOIN Timed_writings AS w ON r.Semester_id = w.Semester_id INNER JOIN Interviews AS i ON r.Semester_id = i.Semester_id INNER JOIN Semesters AS se ON r.Semester_id = se.Semester_id INNER JOIN Students AS s ON se.Student_id = s.Student_id WHERE r.Semester_id = ?' , [req.params.Semester_id], function(err, results) {
 		res.render('reports/individual', {
