@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .row
+    .col-md-4
+      .panel.panel-default
+        .panel-heading User Profile
+        .panel-body
+          table.table
+            tbody
+              tr
+                th Username
+                td= user.Username
+              tr
+                th User Group
+                td= user.User_group
+              tr
+                th Email
+                td= user.email
+              tr
+                th Verified?
+                if user.isVerified == '1'
+                  td(style="color:green;") Pass
+                else
+                  td(style="color:red;") Pending
+
+    .col-md-4
+      .panel.panel-default
+        .panel-heading User Account Function
+        .panel-body
+          bold Do your want to ..
+          ul
+            li
+              a(href='#') Change username
+            li
+              a(href='#') Change password
+            li
+              a(href='#') Change user group
+            li
+              a(href='#') Contact Administrator

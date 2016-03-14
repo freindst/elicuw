@@ -23,7 +23,12 @@ block content
             .panel-body
               ul
                 li
-                  a(href='/users/') View your user profile
+                  if user
+                    a(href='/users/#{user.UserID}') View your user profile
+                  else
+                    bold Please&nbsp
+                    a(href='/login') Login
+                    bold  to check your profile
                   
       .col-md-4
         .panel.panel-default
