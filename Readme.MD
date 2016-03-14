@@ -1,5 +1,5 @@
 # ELI CUW project
-WEB APP for English Language Insitute in Concordia University Wisconsin
+WEB APP for English Language Institute in Concordia University Wisconsin
 
 ## Table of Contents
 
