@@ -4,6 +4,11 @@ var router = express.Router();
 //tools.js contains global functions
 var tools = require('./tools')();
 
+//A Router-level middleware check user's authentication before using it
+router.use(function (req, res, next) {
+  isAuthenticated(req, res, next);
+});
+
 //define student class
 /*
 CREATE TABLE Students(
@@ -17,7 +22,7 @@ PRIMARY KEY Student_id
 */
 
 /* GET home page. */
-router.get('/', isAuthenticated, function(req, res, next) {
+router.get('/', function(req, res, next) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
 
@@ -31,7 +36,7 @@ router.get('/', isAuthenticated, function(req, res, next) {
 });
 
 //Create a new student profile
-router.get('/create', isAuthenticated, function(req, res, next) {
+router.get('/create', function(req, res, next) {
 	res.render('students/create', {
 		title: 'Create Student Profile',
 		user: req.user[0] || null
@@ -55,7 +60,7 @@ router.post('/create', function(req, res) {
 });
 
 //Directly add a semester record to a student by picking a student in the list
-router.get('/add_semester', isAuthenticated, function(req, res, next) {
+router.get('/add_semester', function(req, res, next) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
 		
@@ -69,7 +74,7 @@ router.get('/add_semester', isAuthenticated, function(req, res, next) {
 });
 
 //Update a student profile
-router.get('/edit/:Student_id', isAuthenticated, function(req, res, next) {
+router.get('/edit/:Student_id', function(req, res, next) {
 	var Student_id = req.params.Student_id;
 
 	connection.query('SELECT * FROM Students WHERE Student_id = "' + Student_id + '"', function(err, student) {
@@ -101,7 +106,7 @@ router.post('/edit/:Student_id', function(req, res) {
 });
 
 //Delete a student profile
-router.get('/delete/:Student_id', isAuthenticated, function(req, res, next) {
+router.get('/delete/:Student_id', function(req, res, next) {
 	var Student_id = req.params.Student_id;
 
 	connection.query('DELETE FROM Students WHERE Student_id = ?', [Student_id], function(err, result) {

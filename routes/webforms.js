@@ -4,11 +4,16 @@ var router = express.Router();
 //tools.js contains global functions
 var tools = require('./tools')();
 
-router.get('/', isAuthenticated, function(req, res, next) {
+//A router level middleware check user authentication first
+router.use(function (req, res, next) {
+  isAuthenticated(req, res, next);
+});
+
+router.get('/', function(req, res, next) {
 	renderWebformsIndex('lists', req, res);
 });
 
-router.get('/lists/:Semester_id', isAuthenticated, function(req, res, next) {
+router.get('/lists/:Semester_id', function(req, res, next) {
 	var Semester_id = req.params.Semester_id;
 	res.render('webforms/list', {
 		title: 'Webform List',
@@ -17,6 +22,11 @@ router.get('/lists/:Semester_id', isAuthenticated, function(req, res, next) {
 		url: "/webforms"
 	});
 });
+
+router.get('/:webformType', function(req, res, next) {
+	var webformType = req.params.webformType;
+	renderWebformsIndex(webformType, req, res);
+})
 
 //define interview class
 /*
@@ -29,13 +39,10 @@ Comments varchar(400),
 Recommendation int,
 IsVerified bool,
 Semester_id int,
+Person_in_charge varchar(255),
 PRIMARY KEY (Interview_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/interviews/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('interviews', req, res);
-});
 
 router.get('/interviews/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Interviews WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -114,19 +121,16 @@ router.get('/interviews/delete/:Semester_id', function(req, res) {
 	});
 });
 
-//define reading class
+//define Readings class
 /*
 Reading_id int NOT NULL AUTO_INCREMENT,
 Reading_score varchar(5),
 IsVerified bool,
 Semester_id int,
+Person_in_charge varchar(255),
 PRIMARY KEY (Reading_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/readings/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('readings', req, res);
-});
 
 router.get('/readings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Readings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -202,12 +206,9 @@ Speaking_score varchar(5),
 IsVerified bool,
 Semester_id int,
 PRIMARY KEY (Speaking_id),
+Person_in_charge varchar(255),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/speakings/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('speakings', req, res);
-});
 
 router.get('/speakings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Speakings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -282,13 +283,10 @@ Writing_id int NOT NULL AUTO_INCREMENT,
 Writing_score varchar(5),
 IsVerified bool,
 Semester_id int,
+Person_in_charge varchar(255),
 PRIMARY KEY (Writing_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/writings/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('writings', req, res);
-});
 
 router.get('/writings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Writings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -357,6 +355,196 @@ router.get('/writings/delete/:Semester_id', function(req, res) {
 	});
 });
 
+//define Toefl_preps class
+/*
+CREATE TABLE Toefl_prep(
+Toefl_prep_id int NOT NULL UNIQUE AUTO_INCREMENT,
+Toefl_prep_score varchar(5),
+IsVerified bool,
+Semester_id int,
+Person_in_charge varchar(255),
+PRIMARY KEY (Toefl_prep_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
+*/
+
+router.get('/toefl_preps/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM ?? WHERE Semester_id = ?', ['Toefl_preps', req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			var error_message = 'There is an existed record belong to the same student in the semester. Jumped to edit page instead of create page.';
+			req.session.error_message = error_message;
+			res.redirect('/webforms/' + 'toefl_preps' + '/edit/' + req.params.Semester_id);
+		}
+	});
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	connection.query(query, [req.params.Semester_id], function(err, results) {
+		if (err) throw err;
+
+		res.render('webforms/grades/create', {
+			title: "Toefl Preparation",
+			result: results[0],
+			user: req.user[0],
+			url: "/webforms",
+			gradingWebformType: 'toefl_preps',
+			scoreType: 'Toefl_prep_score'
+		});
+	});
+});
+
+router.post('/toefl_preps/:Semester_id', function(req, res) {
+	var query = "INSERT INTO Toefl_preps SET ?";
+	var toefl_prep = {
+		Toefl_prep_score: req.body.Toefl_prep_score,
+		IsVerified: false,
+		Semester_id: req.params.Semester_id,
+		Person_in_charge: req.body.Person_in_charge
+	};
+
+	connection.query(query, toefl_prep, function(err, result) {
+		if (err) throw err;
+		req.session.okay_message = 'A record has been saved successfully.'
+		res.redirect('/');
+	});
+});
+
+router.get('/toefl_preps/edit/:Semester_id', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefl_preps ON Semesters.Semester_id = Toefl_preps.Semester_id WHERE Semesters.Semester_id = ?";
+
+	connection.query(query, [req.params.Semester_id], function(err, results) {
+		if (err) throw err;
+
+		res.render('webforms/grades/edit', {
+			title: "Toefl Preparation",
+			result: results[0],
+			user: req.user[0],
+			url: "/webforms",
+			gradingWebformType: 'toefl_preps',
+			scoreType: 'Toefl_prep_score',
+			score: results[0].Toefl_prep_score
+		});
+	});
+});
+
+router.post('/toefl_preps/edit/:Semester_id', function(req, res) {
+	var query = "UPDATE Toefl_preps SET ? WHERE Semester_id = ?"
+	var toefl_prep = {
+		Toefl_prep_score: req.body.Toefl_prep_score,
+		IsVerified: true,
+		Semester_id: req.params.Semester_id,
+		Person_in_charge: req.body.Person_in_charge
+	};
+
+	connection.query(query, [toefl_prep, req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/verifications/toefl_prep')
+	});
+});
+
+router.get('/toefl_preps/delete/:Semester_id', function(req, res) {
+	connection.query("DELETE FROM Toefl_preps WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/verifications/toefl_prep')
+	});
+});
+//
+
+//define Extensive_listenings class
+/*
+CREATE TABLE Extensive_listenings(
+Extensive_listening_id int NOT NULL UNIQUE AUTO_INCREMENT,
+Extensive_listening_score varchar(5),
+IsVerified bool,
+Semester_id int,
+Person_in_charge varchar(255),
+PRIMARY KEY (Extensive_listening_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
+*/
+
+router.get('/extensive_listenings/:Semester_id', function(req, res) {
+	connection.query('SELECT * FROM ?? WHERE Semester_id = ?', ['Extensive_listenings', req.params.Semester_id], function(err, counts) {
+		if (counts.length != 0) {
+			var error_message = 'There is an existed record which belongs to the same student in the semester. Jumped to edit page instead of create page.';
+			req.session.error_message = error_message;
+			res.redirect('/webforms/' + 'extensive_listenings' + '/edit/' + req.params.Semester_id);
+		}
+	});
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	connection.query(query, [req.params.Semester_id], function(err, results) {
+		if (err) throw err;
+
+		res.render('webforms/grades/create', {
+			title: "Extensive Listening",
+			result: results[0],
+			user: req.user[0],
+			url: "/webforms",
+			gradingWebformType: 'extensive_listenings',
+			scoreType: 'Extensive_listening_score'
+		});
+	});
+});
+
+router.post('/extensive_listenings/:Semester_id', function(req, res) {
+	var query = "INSERT INTO Extensive_listenings SET ?";
+	var extensive_listening = {
+		Extensive_listening_score: req.body.Extensive_listening_score,
+		IsVerified: false,
+		Semester_id: req.params.Semester_id,
+		Person_in_charge: req.body.Person_in_charge
+	};
+
+	connection.query(query, extensive_listening, function(err, result) {
+		if (err) throw err;
+		req.session.okay_message = 'A record has been saved successfully.'
+		res.redirect('/');
+	});
+});
+
+router.get('/extensive_listenings/edit/:Semester_id', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Extensive_listenings ON Semesters.Semester_id = Extensive_listenings.Semester_id WHERE Semesters.Semester_id = ?";
+
+	connection.query(query, [req.params.Semester_id], function(err, results) {
+		if (err) throw err;
+
+		res.render('webforms/grades/edit', {
+			title: "Extensive Listening",
+			result: results[0],
+			user: req.user[0],
+			url: "/webforms",
+			gradingWebformType: 'extensive_listenings',
+			scoreType: 'Extensive_listening_score',
+			score: results[0].Extensive_listening_score
+		});
+	});
+});
+
+router.post('/extensive_listenings/edit/:Semester_id', function(req, res) {
+	var query = "UPDATE Extensive_listenings SET ? WHERE Semester_id = ?"
+	var extensive_listening = {
+		Extensive_listening_score: req.body.Extensive_listening_score,
+		IsVerified: true,
+		Semester_id: req.params.Semester_id,
+		Person_in_charge: req.body.Person_in_charge
+	};
+
+	connection.query(query, [extensive_listening, req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/verifications/extensive_listening')
+	});
+});
+
+router.get('/extensive_listenings/delete/:Semester_id', function(req, res) {
+	connection.query("DELETE FROM Extensive_listenings WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/verifications/extensive_listening')
+	});
+});
+//
+
 //define toefl class
 /*
 Toefl_id int NOT NULL AUTO_INCREMENT,
@@ -365,13 +553,10 @@ Reading int,
 Grammar int,
 IsVerified bool,
 Semester_id int,
+Person_in_charge varchar(255),
 PRIMARY KEY (Toefl_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/toefls/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('toefls', req, res);
-});
 
 router.get('/toefls/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Toefls WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -447,7 +632,6 @@ router.get('/toefls/delete/:Semester_id', function(req, res) {
 //define recommendation class
 /*
 Recommendation_id int NOT NULL AUTO_INCREMENT,
-Teacher_name varchar(255),
 Attendence varchar(10),
 Completion varchar(10),
 Participation varchar(20),
@@ -456,13 +640,10 @@ Recommendation_level int,
 Comments varchar(255),
 IsVerified bool,
 Semester_id int,
+Person_in_charge varchar(255),
 PRIMARY KEY (Recommendation_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/recommendations/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('recommendations', req, res);
-});
 
 router.get('/recommendations/:Semester_id', function(req, res) {
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
@@ -479,7 +660,7 @@ router.get('/recommendations/:Semester_id', function(req, res) {
 router.post('/recommendations/:Semester_id', function(req, res) {
 	var query = "INSERT INTO Recommendations SET ?";
 	var recommendation = {
-		Teacher_name: req.body.Teacher_name,
+		Person_in_charge: req.body.Person_in_charge,
 		Attendence: req.body.Attendence,
 		Completion: req.body.Completion,
 		Participation: req.body.Participation,
@@ -513,7 +694,7 @@ router.get('/recommendations/edit/:Recommendation_id', function(req, res) {
 router.post('/recommendations/edit/:Recommendation_id', function(req, res) {
 	var query = "UPDATE Recommendations SET ? WHERE Recommendation_id = ?"
 	var recommendation = {
-		Teacher_name: req.body.Teacher_name,
+		Person_in_charge: req.body.Person_in_charge,
 		Attendence: req.body.Attendence,
 		Completion: req.body.Completion,
 		Participation: req.body.Participation,
@@ -544,13 +725,10 @@ Timed_writing_id int NOT NULL AUTO_INCREMENT,
 Score varchar(5),
 IsVerified bool,
 Semester_id int,
+Person_in_charge varchar(255),
 PRIMARY KEY (Timed_writing_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
-
-router.get('/timed_writings/', isAuthenticated, function(req, res, next) {
-	renderWebformsIndex('timed_writings', req, res);
-});
 
 router.get('/timed_writings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Timed_writings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -618,5 +796,21 @@ router.get('/timed_writings/delete/:Semester_id', function(req, res) {
 		res.redirect('/verifications/timed_writing')
 	});
 });
+
+//used for router.get('/:webformType', function()}
+function renderWebformsIndex(webformType, req, res) {
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
+	connection.query(query, function(err, results) {
+		if (err) throw err;
+
+		res.render('webforms/index', {
+			title: "Choose a student record",
+			rows: results,
+			user: req.user[0],
+			url: "/webforms",
+			webformType: webformType
+		});
+	});
+};
 
 module.exports = router;

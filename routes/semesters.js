@@ -4,6 +4,11 @@ var router = express.Router();
 //tools.js contains global functions
 var tools = require('./tools')();
 
+//A router-level middleware check authentication before using any functions
+router.use(function (req, res, next) {
+  isAuthenticated(req, res, next);
+});
+
 //define semester class
 /*
 Semester_id int NOT NULL AUTO_INCREMENT,
@@ -17,7 +22,8 @@ PRIMARY KEY (Semester_id),
 FOREIGN KEY (Student_id) REFERENCES Students(Student_id)
 */
 
-router.get('/index', isAuthenticated, function(req, res, next) {
+//get the list of semester info combined with student profile
+router.get('/index',  function(req, res, next) {
 	var query = "SELECT Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
 	connection.query(query, function(err, results) {
 		if (err) throw err;
@@ -30,7 +36,7 @@ router.get('/index', isAuthenticated, function(req, res, next) {
 	});
 });
 
-router.get('/get/:Student_id', isAuthenticated, function(req, res, next) {
+router.get('/get/:Student_id',  function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
@@ -48,7 +54,7 @@ router.get('/get/:Student_id', isAuthenticated, function(req, res, next) {
 	});
 });
 
-router.get('/create/:Student_id', isAuthenticated, function(req, res, next) {
+router.get('/create/:Student_id', function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
@@ -77,7 +83,7 @@ router.post('/create/:Student_id', function(req, res) {
 	});
 });
 
-router.get('/edit/:Student_id/:Semester_id', isAuthenticated, function(req, res) {
+router.get('/edit/:Student_id/:Semester_id', function(req, res) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
@@ -93,7 +99,7 @@ router.get('/edit/:Student_id/:Semester_id', isAuthenticated, function(req, res)
 	});
 });
 
-router.post('/edit/:Student_id/:Semester_id', isAuthenticated, function(req, res) {
+router.post('/edit/:Student_id/:Semester_id', function(req, res) {
 	var semester = {
 		Year: req.body.Year,
 		Season: req.body.Season,
@@ -110,7 +116,7 @@ router.post('/edit/:Student_id/:Semester_id', isAuthenticated, function(req, res
 	})
 })
 
-router.get('/delete/:Student_id/:Semester_id', isAuthenticated, function(req, res) {
+router.get('/delete/:Student_id/:Semester_id', function(req, res) {
 	connection.query("DELETE FROM Semesters WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
 		if (err) throw err;
 

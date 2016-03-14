@@ -2,16 +2,23 @@ extends ../layout
 
 block content
   h1= title
-  a(href='/verifications/interview') Interview
-  br
-  a(href='/verifications/reading') Reading & Vocabulary
-  br
-  a(href='/verifications/speaking') Speaking & Listening
-  br
-  a(href='/verifications/writing') Writing & Grammar
-  br
-  a(href='/verifications/toefl') TOEFL
-  br
-  a(href='/verifications/recommendation') Teacher Recommendation
-  br
-  a(href='/verifications/timed_writing') Timed Writing
+  ul
+    li
+      a(href='/verifications/interview') Interview
+    ul
+      li
+        a(href='/verifications/reading') Reading & Vocabulary
+      li
+        a(href='/verifications/speaking') Speaking & Listening
+      li
+        a(href='/verifications/writing') Writing & Grammar
+      li
+        a(href='/verifications/toefl_prep') TOEFL Preparation
+      li
+        a(href='/verifications/extensive_listening') Extensive Listening
+    li
+      a(href='/verifications/toefl') TOEFL
+    li
+      a(href='/verifications/recommendation') Teacher Recommendation
+    li
+      a(href='/verifications/timed_writing') Timed Writing

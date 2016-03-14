@@ -47,9 +47,9 @@ html(lang='en')
                 li
                   a(href='/webforms/writings') Writing & Grammar
                 li
-                  a(href='#') TOEFL Prep
+                  a(href='/webforms/toefl_preps') TOEFL Prep
                 li
-                  a(href='#') Extensive Listening
+                  a(href='/webforms/extensive_listenings') Extensive Listening
                 li(role="separator" class="divider")
                 li
                   a(href='/webforms/interviews/') Interview
@@ -57,9 +57,9 @@ html(lang='en')
                   a(href='/webforms/recommendations') Teacher Recommendation
                 li
                   a(href='/webforms/timed_writings') Timed Writing
-            li(class= url == 'verifications' ? 'active': '')
+            li(class= url == '/verifications' ? 'active': '')
               a(href='/verifications') Verify
-            li(class= url == 'reports' ? 'active': '')
+            li(class= url == '/reports' ? 'active': '')
               a(href='/reports') Report
           ul.nav.navbar-nav.navbar-right
               if user
