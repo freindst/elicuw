@@ -1,34 +1,20 @@
 var express = require('express');
 var router = express.Router();
 
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-    	next();
-    } else {
-    	req.session.error_message = "Please login first to use the system.";
-        res.redirect('/login');
-    }
-}
+//tools.js contains global functions
+var tools = require('./tools')();
 
-router.get('/', isAuthenticated ,function(req, res, next) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		res.render('webforms/index', {
-			title: 'Choose a student record',
-			rows: results,
-			user: req.user[0],
-			url: "/webforms"
-		});
-	});
+router.get('/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('lists', req, res);
 });
 
-router.get('/lists/:Semester_id', function(req, res) {
+router.get('/lists/:Semester_id', isAuthenticated, function(req, res, next) {
 	var Semester_id = req.params.Semester_id;
 	res.render('webforms/list', {
 		title: 'Webform List',
-		Semester_id: Semester_id
+		Semester_id: Semester_id,
+		user: req.user[0],
+		url: "/webforms"
 	});
 });
 
@@ -47,10 +33,14 @@ PRIMARY KEY (Interview_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
+router.get('/interviews/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('interviews', req, res);
+});
+
 router.get('/interviews/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Interviews WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
 		if (counts.length != 0) {
-			res.redirect('edit/' + req.params.Semester_id);
+			res.redirect('/webforms/interviews/edit/' + req.params.Semester_id);
 		}
 	});
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
@@ -134,6 +124,10 @@ PRIMARY KEY (Reading_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
+router.get('/readings/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('readings', req, res);
+});
+
 router.get('/readings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Readings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
 		if (counts.length != 0) {
@@ -211,6 +205,10 @@ PRIMARY KEY (Speaking_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
+router.get('/speakings/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('speakings', req, res);
+});
+
 router.get('/speakings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Speakings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
 		if (counts.length != 0) {
@@ -287,6 +285,11 @@ Semester_id int,
 PRIMARY KEY (Writing_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
+
+router.get('/writings/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('writings', req, res);
+});
+
 router.get('/writings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Writings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
 		if (counts.length != 0) {
@@ -365,6 +368,10 @@ Semester_id int,
 PRIMARY KEY (Toefl_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
+
+router.get('/toefls/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('toefls', req, res);
+});
 
 router.get('/toefls/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Toefls WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
@@ -452,6 +459,11 @@ Semester_id int,
 PRIMARY KEY (Recommendation_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
+
+router.get('/recommendations/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('recommendations', req, res);
+});
+
 router.get('/recommendations/:Semester_id', function(req, res) {
 	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
@@ -535,6 +547,10 @@ Semester_id int,
 PRIMARY KEY (Timed_writing_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
+
+router.get('/timed_writings/', isAuthenticated, function(req, res, next) {
+	renderWebformsIndex('timed_writings', req, res);
+});
 
 router.get('/timed_writings/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Timed_writings WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {

@@ -54,6 +54,7 @@ router.post('/create', function(req, res) {
 	})
 });
 
+//Directly add a semester record to a student by picking a student in the list
 router.get('/add_semester', isAuthenticated, function(req, res, next) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;

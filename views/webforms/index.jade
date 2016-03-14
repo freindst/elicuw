@@ -24,7 +24,7 @@ block content
                 each row in rows
                   tr
                     td
-                      a.btn.btn-default(href='/webforms/lists/#{row.Semester_id}/') Click
+                      a.btn.btn-default(href='/webforms/#{webformType}/#{row.Semester_id}/') Click
                     td= row.Student_number
                     td= row.First_name
                     td= row.Last_name

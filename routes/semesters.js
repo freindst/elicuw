@@ -1,14 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-    	next();
-    } else {
-    	req.session.error_message = "Please login first to use the system.";
-        res.redirect('/login');
-    }
-}
+//tools.js contains global functions
+var tools = require('./tools')();
 
 //define semester class
 /*
@@ -54,13 +48,14 @@ router.get('/get/:Student_id', isAuthenticated, function(req, res, next) {
 	});
 });
 
-router.get('/create/:Student_id', function(req, res) {
+router.get('/create/:Student_id', isAuthenticated, function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
 		res.render('semesters/create', {
 			title: 'Create Student Semester Information',
-			student: students[0]
+			student: students[0],
+			user: req.user[0]
 		});
 	});
 });
@@ -82,7 +77,7 @@ router.post('/create/:Student_id', function(req, res) {
 	});
 });
 
-router.get('/edit/:Student_id/:Semester_id', function(req, res) {
+router.get('/edit/:Student_id/:Semester_id', isAuthenticated, function(req, res) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
@@ -98,7 +93,7 @@ router.get('/edit/:Student_id/:Semester_id', function(req, res) {
 	});
 });
 
-router.post('/edit/:Student_id/:Semester_id', function(req, res) {
+router.post('/edit/:Student_id/:Semester_id', isAuthenticated, function(req, res) {
 	var semester = {
 		Year: req.body.Year,
 		Season: req.body.Season,
@@ -115,7 +110,7 @@ router.post('/edit/:Student_id/:Semester_id', function(req, res) {
 	})
 })
 
-router.get('/delete/:Student_id/:Semester_id', function(req, res) {
+router.get('/delete/:Student_id/:Semester_id', isAuthenticated, function(req, res) {
 	connection.query("DELETE FROM Semesters WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
 		if (err) throw err;
 
