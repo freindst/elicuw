@@ -8,10 +8,22 @@ a {
 .index_page {
   padding: 10px 15px;
 }
+.warning {
+	color: red;
+	font-weight: bold;
+}
 .footer_eli {
-	color: grey;
+	color: LightGray;
 	text-align: right;
 }
 .alert {
 	margin-top: 20px;
+}
+td.yes {
+	color: green;
+	font-weight: bold;
+}
+td.no {
+	color: red;
+	font-weight: bold;
 }

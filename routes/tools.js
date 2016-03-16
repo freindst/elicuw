@@ -32,7 +32,7 @@ module.exports = function() {
 			next();
 		} else {
 			req.session.error_message = "Sorry. Only administrator is allowed to access this funciton.";
-			res.redirect(req.path);
+			res.redirect('/');
 		}
 	}
 
