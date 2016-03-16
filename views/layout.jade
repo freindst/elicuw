@@ -92,7 +92,8 @@ html(lang='en')
       .success
         if okay_message
           .alert.alert-success(role='alert')
-            span.glyphicon.glyphicons-ok-sign(aria-hidden='true')
+            span.glyphicon.glyphicon-ok(aria-hidden='true')
+            span.sr-only Success:
             |   !{okay_message}
 
     .jumbotron

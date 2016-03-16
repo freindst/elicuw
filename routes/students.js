@@ -26,20 +26,19 @@ router.get('/', function(req, res, next) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
 
-		res.render('students/index', {
+		renderScreen(req, res, 'students/index', {
 			title: 'Student List',
 			students: students,
-			url: "/students",
-			user: req.user[0] || null
+			url: '/students',			
 		});
 	});
 });
 
 //Create a new student profile
 router.get('/create', function(req, res, next) {
-	res.render('students/create', {
+	renderScreen(req, res, 'students/create', {
 		title: 'Create Student Profile',
-		user: req.user[0] || null
+		url: '/students'
 	});
 });
 
@@ -64,11 +63,10 @@ router.get('/add_semester', function(req, res, next) {
 	connection.query('SELECT * FROM Students', function(err, students) {
 		if (err) throw err;
 		
-		res.render('students/add_semester', {
+		renderScreen(req, res, 'students/add_semester', {
 			title: 'Student List',
 			students: students,
-			url: "/students",
-			user: req.user[0] || null
+			url: "/students"
 		});
 	});
 });
@@ -80,11 +78,10 @@ router.get('/edit/:Student_id', function(req, res, next) {
 	connection.query('SELECT * FROM Students WHERE Student_id = "' + Student_id + '"', function(err, student) {
 		if (err) throw err;
 
-		res.render('students/edit', {
+		renderScreen(req, res, 'students/edit', {
 			title: 'Edit Student File',
 			student: student[0],
-			url: "/students",
-			user: req.user[0] || null
+			url: "/students"
 		});
 	});
 });

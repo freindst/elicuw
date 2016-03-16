@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+
+//local authentication strategies
 require('./passport.js')(app);
 
 var routes = require('./routes/index');
@@ -52,6 +54,7 @@ app.use('/tools', tools);
 
 //connect to mysql database
 var mysql = require("mysql");
+//make connection a global variable
 connection = mysql.createConnection({
   host: "tviw6wn55xwxejwj.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
   user: "bop7yvld7w5mu7l5",
@@ -75,16 +78,6 @@ app.set('connection', connection);
   // before sending a COM_QUIT packet to the MySQL server.
 });*/
 
-//database connection query example
-/*
-connection.query('SELECT * FROM students',function(err,rows){
-  if(err) throw err;
-
-  console.log('Data received from Db:\n');
-  console.log(rows);
-});
-*/
-
 app.get('/login', function(req, res) {
   if (req.session.hasOwnProperty('okay_message')) {
     var okay_message = req.session.okay_message;
@@ -94,6 +87,7 @@ app.get('/login', function(req, res) {
     var error_message = req.session.error_message;
     delete req.session.error_message;
   }
+
   res.render('login', {
     title: 'Login',
     okay_message: okay_message || null,
@@ -106,7 +100,9 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/loginFailu
     if (err) {
       return next(err);
     }
-    res.redirect('/loginSuccess');
+    req.session.okay_message = "You have logged in the system scuccessfully!";
+    res.redirect(req.session.returnTo || '/');
+    delete req.session.returnTo;
   });
 });
 
@@ -115,33 +111,11 @@ app.get('/loginFailure', function(req, res, next) {
   res.redirect('/login');
 });
 
-app.get('/loginSuccess', function(req, res, next) {
-  res.render('index', {
-    title: 'Home',
-    url: '/',
-    user: req.user[0],
-    okay_message: "You have logged in the system scuccessfully!"
-  });
-});
-
 app.get('/logout', function(req, res) {
   req.logout();
-  res.render('logout', {
-    title: "Logout"
-  });
+  req.session.okay_message = "You have logged out from the system."
+  res.redirect('/');
 });
-
-/*
-app.get('/sign_up', function(req, res) {
-  res.render('sign_up', {
-    title: "Sign Up"
-  });
-});
-
-app.post('/sign_up', function(req, res) {
-  res.send('test');
-});
-*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

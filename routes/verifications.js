@@ -7,13 +7,15 @@ var tools = require('./tools')();
 //A Router-level middleware check user's authentication before using it
 router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
+}, function(req, res, next) {
+	isVerified(req, res, next);
+}, function(req, res, next) {
+	isAdmin(req, res, next);
 });
 
-
 router.get('/', function(req, res) {
-	res.render('verifications/index', {
+	renderScreen(req, res, 'verifications/index', {
 		title: 'Verify',
-		user: req.user[0],
 		url: "/verifications"
 	});
 });
@@ -23,10 +25,9 @@ router.get('/interview', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/interview', {
+		renderScreen(req, res, 'verifications/interview', {
 			title: 'Unverified Interview List',
 			rows: results,
-			user: req.user[0],
 			url: "/verifications"
 		});
 	});
@@ -37,11 +38,10 @@ router.get('/reading', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/genericVerification', {
+		renderScreen(req, res, 'verifications/genericVerification', {
 			title: 'Unverified Reading List',
 			rows: results,
-			webformType: 'readings',			
-			user: req.user[0],
+			webformType: 'readings',
 			url: "/verifications"
 		});
 	});
@@ -52,11 +52,10 @@ router.get('/speaking', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/genericVerification', {
+		renderScreen(req, res, 'verifications/genericVerification', {
 			title: 'Unverified Speaking List',
 			rows: results,
-			webformType: 'speakings',			
-			user: req.user[0],
+			webformType: 'speakings',
 			url: "/verifications"
 		});
 	});
@@ -67,11 +66,10 @@ router.get('/writing', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/genericVerification', {
+		renderScreen(req, res, 'verifications/genericVerification', {
 			title: 'Unverified Writings List',
 			rows: results,
-			webformType: 'writings',			
-			user: req.user[0],
+			webformType: 'writings',
 			url: "/verifications"
 		});
 	});
@@ -82,11 +80,10 @@ router.get('/toefl_prep', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/genericVerification', {
+		renderScreen(req, res, 'verifications/genericVerification', {
 			title: 'Unverified Toefl Preparation List',
 			rows: results,
-			webformType: 'toefl_preps',			
-			user: req.user[0],
+			webformType: 'toefl_preps',
 			url: "/verifications"
 		});
 	});
@@ -97,11 +94,10 @@ router.get('/extensive_listening', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/genericVerification', {
+		renderScreen(req, res, 'verifications/genericVerification', {
 			title: 'Unverified Extensive Listening List',
 			rows: results,
-			webformType: 'extensive_listenings',			
-			user: req.user[0],
+			webformType: 'extensive_listenings',
 			url: "/verifications"
 		});
 	});
@@ -112,10 +108,9 @@ router.get('/toefl', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/toelf', {
+		renderScreen(req, res, 'verifications/toelf', {
 			title: 'Unverified TOEFL Score List',
 			rows: results,
-			user: req.user[0],
 			url: "/verifications"
 		});
 	});
@@ -126,10 +121,9 @@ router.get('/recommendation', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/recommendation', {
+		renderScreen(req, res, 'verifications/recommendation', {
 			title: 'Unverified Recommendation List',
 			rows: results,
-			user: req.user[0],
 			url: "/verifications"
 		});
 	});
@@ -140,10 +134,9 @@ router.get('/timed_writing', function(req, res) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('verifications/Timed_writing', {
+		renderScreen(req, res, 'verifications/Timed_writing', {
 			title: 'Unverified Timed Writing List',
 			rows: results,
-			user: req.user[0],
 			url: "/verifications"
 		});
 	});

@@ -6,28 +6,18 @@ var tools = require('./tools.js')();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-    if (req.isAuthenticated()) {
-        var user = req.user[0];
-    } else {
-        var user = null
-    }
-    res.render('index', {
+    renderScreen(req, res, 'index', {
         title: 'Home',
-        url: '/',
-        user: user
+        url: '/'
     });
 });
 
 //User sign up view
 router.get('/sign_up', function(req, res) {
-    if (req.session.hasOwnProperty('error_message')) {
-        var error_message = req.session.error_message;
-        delete req.session.error_message;
-    }
-    res.render('sign_up', {
-        title: "Sign Up",
-        error_message: error_message || null
-    });
+    renderScreen(req, res, 'sign_up', {
+        title: 'Sign Up',
+        url: null
+    })
 });
 
 //sign up new user put into database
@@ -45,7 +35,7 @@ router.post('/sign_up', function(req, res) {
             req.session.error_message = "Sign up failed.";
             res.redirect('/sign_up');
         } else {
-            req.session.okay_message = "Sign Up Successfully. You can login now, but you need to wait for email verificatio by administrator."
+            req.session.okay_message = "Sign Up Successfully. You can login now, but you need to wait for account verification by system administrator."
             res.redirect('/login');
         }
     });

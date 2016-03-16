@@ -28,10 +28,10 @@ router.get('/index',  function(req, res, next) {
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
-		res.render('semesters/index', {
+		renderScreen(req, res, 'semesters/index', {
 			title: 'Semester List',
 			rows: results,
-			user:req.user[0]
+			url: '/students'
 		});
 	});
 });
@@ -43,13 +43,12 @@ router.get('/get/:Student_id',  function(req, res, next) {
 
 		connection.query("SELECT Semester_id, Year, Season, Term, Level, Section FROM Semesters WHERE Student_id = ? ORDER BY Year", [req.params.Student_id], function(err, rows) {
 			if (err) throw err;
-			console.log(students[0]);
 
-			res.render('semesters/get', {
+			renderScreen(req, res, 'semesters/get', {
 				title: 'Student Semester',
 				student: students[0],
 				rows: rows,
-				user: req.user[0]
+				url: '/students'
 			})
 		});
 	});
@@ -60,10 +59,10 @@ router.get('/create/:Student_id', function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
-		res.render('semesters/create', {
+		renderScreen(req, res, 'semesters/create', {
 			title: 'Create Student Semester Information',
 			student: students[0],
-			user: req.user[0]
+			url: '/students'
 		});
 	});
 });
@@ -93,10 +92,11 @@ router.get('/edit/:Student_id/:Semester_id', function(req, res) {
 		connection.query("SELECT * FROM Semesters WHERE Semester_id = ?", [req.params.Semester_id], function(err, semesters) {
 			if (err) throw err;
 
-			res.render('semesters/edit', {
+			renderScreen(req, res, 'semesters/edit', {
 				title: 'Student Semester',
 				student: students[0],
-				semester: semesters[0]
+				semester: semesters[0],
+				url: '/students'
 			})
 		});
 	});

@@ -14,15 +14,12 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-
 //get student account page
 router.get('/:userid', function(req, res) {
-	res.render('users/user', {
-		title: 'User Account',
-		user:req.user[0]
+	renderScreen(req, res, 'users/user', {
+		title: 'User Account'
 	});
 })
-
 
 
 module.exports = router;
