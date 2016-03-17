@@ -99,6 +99,9 @@ router.post('/interviews/:Interview_id', function(req, res) {
 		connection.query("UPDATE Interviews SET ? WHERE Interview_id = ?", [interview, Interview_id], function(err, result2) {
 			if (err) throw err;
 
+			//add code to update final interview table
+			//
+
 			Count_unverified_change('Interviews', '-');
 			res.redirect('/verifications/interviews/');
 		});		
