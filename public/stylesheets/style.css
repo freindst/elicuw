@@ -24,6 +24,9 @@ td.yes {
 	font-weight: bold;
 }
 td.no {
-	color: red;
+	color: orange;
 	font-weight: bold;
+}
+.warning {
+	color: orange;
 }

@@ -13,7 +13,7 @@ router.use(function (req, res, next) {
 
 //choose a form to input
 router.get('/', function(req, res, next) {
-	renderWebformsIndex('lists', req, res);
+	renderWebformsIndex(req, res, 'lists');
 });
 
 //list all semester records
@@ -29,8 +29,38 @@ router.get('/lists/:Semester_id', function(req, res, next) {
 //another portal to go to webform input, by choosing webform type first
 router.get('/:webformType', function(req, res, next) {
 	var webformType = req.params.webformType;
-	renderWebformsIndex(webformType, req, res);
+	if (webformType == 'interviews') {
+		renderWebformsIndex(req, res, webformType);
+	} else {
+		renderWebformsIndex(req, res, webformType);
+	}	
 })
+
+//Final_interview: contains final score of the interview and all interview_id
+/*
+CREATE TABLE Final_interview (
+Final_interview_id int NOT NULL AUTO_INCREMENT,
+Semester_id int UNIQUE,
+Count int DEFAULT 0,
+Score varchar(5),
+PRIMARY KEY (Final_interview_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
+*/
+
+router.get('/interviews/', function(req, res) {
+	var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Final_interview.Count, Final_interview.Score FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id';
+
+	connection.query(query, function(err, results) {
+		if (err) throw err;
+
+		renderScreen(req, res, 'webforms/interviews/index', {
+			title: 'Choose a student record',
+			rows: results,
+			url: '/webforms'
+		});
+	});
+});
 
 //intervbiew: Each item is related to a semester item by Semester_id
 //define interview class
@@ -49,31 +79,57 @@ PRIMARY KEY (Interview_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
-//if there is no existed record to a semester record open a create page
 router.get('/interviews/:Semester_id', function(req, res) {
-	connection.query('SELECT * FROM Interviews WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
-		if (counts.length != 0) {
-			res.redirect('/webforms/interviews/edit/' + req.params.Semester_id);
-		} else {
-			var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
-			connection.query(query, [req.params.Semester_id], function(err, results) {
+	var Semester_id = req.params.Semester_id;
+	var userQuery = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Semesters.Semester_id = ?';
+	var interviewQuery = 'SELECT * FROM Interviews WHERE Semester_id = ?';
+
+	connection.query(userQuery, [Semester_id], function (err, student) {
+		if (err) throw err;
+
+		connection.query(interviewQuery, [Semester_id], function (err, interviews) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'webforms/interviews/list', {
+				title: "Interview Record List",
+				student: student[0],
+				rows: interviews,
+				url: '/webforms'
+			});
+		});
+	});
+});
+
+router.get('/interviews/create/:Semester_id', function(req, res) {
+	var Semester_id = req.params.Semester_id;
+	var queryNumber = 'SELECT COUNT(*) AS Number FROM Interviews WHERE Semester_id = ?';
+	connection.query(queryNumber, [Semester_id], function(err, count) {
+		if (err) throw err;
+
+		if (count[0].Number >= 2) {
+			req.session.error_message = 'Cannot create more than two Interview records.';
+			res.redirect('back');
+		}
+		else {
+			var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?";
+			connection.query(query, [Semester_id], function(err, result) {
 				if (err) throw err;
 
 				renderScreen(req, res, 'webforms/interviews/create', {
-					title: "Interviews",
-					result: results[0],
+					title: "Create Interview Record",
+					result: result[0],
 					url: "/webforms"
 				});
-			});			
+			});
 		}
 	});
-
 });
 
 //save records to database
-router.post('/interviews/:Semester_id', function(req, res) {
+router.post('/interviews/create/:Semester_id', function(req, res) {
 	var query = "INSERT INTO Interviews SET ?";
 	var semester = {
+		Person_in_charge: req.body.Person_in_charge,
 		Pronunciation: req.body.Pronunciation,
 		Fluency: req.body.Fluency,
 		Comprehension: req.body.Comprehension,
@@ -87,19 +143,19 @@ router.post('/interviews/:Semester_id', function(req, res) {
 	connection.query(query, semester, function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/');
+		res.redirect('/webforms/interviews/' + req.params.Semester_id);
 	});
 });
 
 //if there is an existed record of interview, take it back and open an edit page
-router.get('/interviews/edit/:Semester_id', function(req, res) {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Semesters.Semester_id = ?";
+router.get('/interviews/edit/:Interview_id', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.Interview_id = ?";
 
-	connection.query(query, [req.params.Semester_id], function(err, results) {
+	connection.query(query, [req.params.Interview_id], function(err, results) {
 		if (err) throw err;
 
 		renderScreen(req, res, 'webforms/interviews/edit', {
-			title: "Verify Interview",
+			title: "Edit Interview Record",
 			result: results[0],
 			url: "/webforms"
 		});
@@ -107,31 +163,34 @@ router.get('/interviews/edit/:Semester_id', function(req, res) {
 });
 
 //update the existed record
-router.post('/interviews/edit/:Semester_id', function(req, res) {
-	var query = "UPDATE Interviews SET ? WHERE Semester_id = ?"
+router.post('/interviews/edit/:Interview_id', function(req, res) {
+	var Interview_id = req.params.Interview_id;
 	var interview = {
+		Person_in_charge: req.body.Person_in_charge,
 		Pronunciation: req.body.Pronunciation,
 		Fluency: req.body.Fluency,
 		Comprehension: req.body.Comprehension,
 		Repetition: req.body.Repetition,
 		Comments: req.body.Comments,
-		Recommendation: req.body.Recommendation,
-		IsVerified: true
+		Recommendation: req.body.Recommendation
 	};
 
-	connection.query(query, [interview, req.params.Semester_id], function(err, result) {
-		if (err) throw err;
+	connection.query("SELECT * FROM Interviews WHERE Interview_id = ?", [Interview_id], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+		connection.query("UPDATE Interviews SET ? WHERE Interview_id = ?", [interview, Interview_id], function(err, result2) {
+			if (err) throw err;
 
-		res.redirect('/verifications/interview')
+			res.redirect('/webforms/interviews/' + Semester_id);
+		});		
 	});
 });
 
 //delete an exited record based on Semester_id
-router.get('/interviews/delete/:Semester_id', function(req, res) {
-	connection.query("DELETE FROM Interviews WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
+router.get('/interviews/delete/:Interview_id', function(req, res) {
+	connection.query("DELETE FROM Interviews WHERE Interview_id = ?", [req.params.Interview_id], function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/verifications/interview')
+		res.redirect('back')
 	});
 });
 
@@ -855,18 +914,32 @@ router.get('/timed_writings/delete/:Semester_id', function(req, res) {
 });
 
 //used for router.get('/:webformType', function()}
-function renderWebformsIndex(webformType, req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
+function renderWebformsIndex(req, res, webformType) {
+	if (webformType == 'interviews') {
+		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Final_interview.Count, Final_interview.Score FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id';
 
-		renderScreen(req, res, 'webforms/index', {
-			title: "Choose a student record",
-			rows: results,
-			url: "/webforms",
-			webformType: webformType
+		connection.query(query, function(err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'webforms/interviews/index', {
+				title: 'Choose a student record',
+				rows: results,
+				url: '/webforms'
+			});
 		});
-	});
+	} else {
+		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
+		connection.query(query, function(err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'webforms/index', {
+				title: "Choose a student record",
+				rows: results,
+				url: "/webforms",
+				webformType: webformType
+			});
+		});		
+	}
 };
 
 module.exports = router;

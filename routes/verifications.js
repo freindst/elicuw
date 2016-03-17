@@ -14,132 +14,95 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', function(req, res) {
-	renderScreen(req, res, 'verifications/index', {
-		title: 'Verify',
-		url: "/verifications"
-	});
-});
-
-router.get('/interview', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
+	connection.query("SELECT * FROM Count_unverified WHERE ID = 1", function(err, result) {
 		if (err) throw err;
 
-		renderScreen(req, res, 'verifications/interview', {
-			title: 'Unverified Interview List',
-			rows: results,
-			url: "/verifications"
+		var all = -1;
+		for (var key in result[0]) {
+			all += result[0][key];
+		}
+
+		renderScreen(req, res, 'verifications/index', {
+			title: 'Verify',
+			url: "/verifications",
+			result: result[0],
+			all: all
+		});	
+	});
+
+});
+
+router.get('/:webformType', function(req, res) {
+	var webformType = req.params.webformType;
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, ?? AS ID FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = FALSE ORDER BY Semesters.Year DESC, Semesters.Season DESC";
+	connection.query("SELECT * FROM Count_unverified WHERE ID = 1", function(err, result) {
+		if (err) throw err;
+
+		var all = -1;
+		for (var key in result[0]) {
+			all += result[0][key];
+		}
+
+		TableName = webformType.substring(0, 1).toUpperCase() + webformType.substring(1);
+		IndexName = webformType.substring(0, webformType.length - 1) + '_id';
+		queryOption = [
+		TableName + '.' + IndexName,
+		TableName,
+		TableName + '.Semester_id',
+		TableName + '.IsVerified'
+		];
+
+		connection.query(query, queryOption, function(err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'verifications/genericVerification', {
+				title: 'Unverified ' + TableName + ' List',
+				rows: results,
+				result: result[0],
+				all: all,
+				url: "/verifications",
+				webformType: webformType
+			});
 		});
 	});
 });
 
-router.get('/reading', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Readings ON Semesters.Semester_id = Readings.Semester_id WHERE Readings.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
+router.get('/interviews/:Interview_id', function(req, res) {
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.Interview_id = ?";
+
+	connection.query(query, [req.params.Interview_id], function(err, results) {
 		if (err) throw err;
 
-		renderScreen(req, res, 'verifications/genericVerification', {
-			title: 'Unverified Reading List',
-			rows: results,
-			webformType: 'readings',
-			url: "/verifications"
+		renderScreen(req, res, 'verifications/interviews', {
+			title: "Edit Interview Record",
+			result: results[0],
+			url: "/webforms"
 		});
 	});
 });
 
-router.get('/speaking', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Speakings ON Semesters.Semester_id = Speakings.Semester_id WHERE Speakings.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
+router.post('/interviews/:Interview_id', function(req, res) {
+	var Interview_id = req.params.Interview_id;
+	var interview = {
+		Person_in_charge: req.body.Person_in_charge,
+		Pronunciation: req.body.Pronunciation,
+		Fluency: req.body.Fluency,
+		Comprehension: req.body.Comprehension,
+		Repetition: req.body.Repetition,
+		Comments: req.body.Comments,
+		Recommendation: req.body.Recommendation,
+		IsVerified: true
+	};
 
-		renderScreen(req, res, 'verifications/genericVerification', {
-			title: 'Unverified Speaking List',
-			rows: results,
-			webformType: 'speakings',
-			url: "/verifications"
-		});
+	connection.query("SELECT * FROM Interviews WHERE Interview_id = ?", [Interview_id], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+		connection.query("UPDATE Interviews SET ? WHERE Interview_id = ?", [interview, Interview_id], function(err, result2) {
+			if (err) throw err;
+
+			Count_unverified_change('Interviews', '-');
+			res.redirect('/verifications/interviews/');
+		});		
 	});
-});
-
-router.get('/writing', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Writings ON Semesters.Semester_id = Writings.Semester_id WHERE Writings.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'verifications/genericVerification', {
-			title: 'Unverified Writings List',
-			rows: results,
-			webformType: 'writings',
-			url: "/verifications"
-		});
-	});
-});
-
-router.get('/toefl_prep', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefl_preps ON Semesters.Semester_id = Toefl_preps.Semester_id WHERE Toefl_preps.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'verifications/genericVerification', {
-			title: 'Unverified Toefl Preparation List',
-			rows: results,
-			webformType: 'toefl_preps',
-			url: "/verifications"
-		});
-	});
-});
-
-router.get('/extensive_listening', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Extensive_listenings ON Semesters.Semester_id = Extensive_listenings.Semester_id WHERE Extensive_listenings.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'verifications/genericVerification', {
-			title: 'Unverified Extensive Listening List',
-			rows: results,
-			webformType: 'extensive_listenings',
-			url: "/verifications"
-		});
-	});
-});
-
-router.get('/toefl', function(req, res) {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'verifications/toelf', {
-			title: 'Unverified TOEFL Score List',
-			rows: results,
-			url: "/verifications"
-		});
-	});
-});
-
-router.get('/recommendation', function(req, res) {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'verifications/recommendation', {
-			title: 'Unverified Recommendation List',
-			rows: results,
-			url: "/verifications"
-		});
-	});
-});
-
-router.get('/timed_writing', function(req, res) {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.IsVerified = FALSE";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'verifications/Timed_writing', {
-			title: 'Unverified Timed Writing List',
-			rows: results,
-			url: "/verifications"
-		});
-	});
-});
+})
 
 module.exports = router;

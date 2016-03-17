@@ -1,24 +1,28 @@
 extends ../layout
 
 block content
-  h1= title
-  ul
-    li
-      a(href='/verifications/interview') Interview
-    ul
-      li
-        a(href='/verifications/reading') Reading & Vocabulary
-      li
-        a(href='/verifications/speaking') Speaking & Listening
-      li
-        a(href='/verifications/writing') Writing & Grammar
-      li
-        a(href='/verifications/toefl_prep') TOEFL Preparation
-      li
-        a(href='/verifications/extensive_listening') Extensive Listening
-    li
-      a(href='/verifications/toefl') TOEFL
-    li
-      a(href='/verifications/recommendation') Teacher Recommendation
-    li
-      a(href='/verifications/timed_writing') Timed Writing
+  h2= title
+  .row
+    .col-md-3
+      .list-group
+        li.list-group-item All Unverified Records
+          span.badge= all
+        a.list-group-item(href='/verifications/readings') Reading & Vocabulary
+          span.badge= result.Readings
+        a.list-group-item(href='/verifications/speakings') Speaking & Listening
+          span.badge= result.Speakings
+        a.list-group-item(href='/verifications/writings') Writing & Gramar
+          span.badge= result.Writings
+        a.list-group-item(href='/verifications/toefl_preps') TOEFL Preparation
+          span.badge= result.Toefl_preps
+        a.list-group-item(href='/verifications/extensive_listenings') Extensive Listening
+          span.badge= result.Extensive_listenings
+        a.list-group-item(href='/verifications/interviews') Interview
+          span.badge= result.Interviews
+        a.list-group-item(href='/verifications/recommendations') Teacher Recommendation
+          span.badge= result.Recommendations
+        a.list-group-item(href='/verifications/toefls') TOEFL
+          span.badge= result.Toefls
+        a.list-group-item(href='/verifications/timed_writings') Timed Writing
+          span.badge= result.Timed_writings
+

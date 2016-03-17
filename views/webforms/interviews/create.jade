@@ -1,104 +1,134 @@
 extends ../../layout
 
 block content
-  h1= title
-  h2 Student Information
-  table
-    tr
-      td First Name
-      td= result.First_name
-    tr
-      td Last Name
-      td= result.Last_name
-    tr
-      td Student ID
-      td= result.Student_number
-    tr
-      td School Year
-      td= result.Year
-    tr
-      td Semester
-      td= result.Season
-    tr
-      td Term
-      td= result.Term
-    tr
-      td Level
-      td= result.Level
-    tr
-      td Section
-      td= result.Section
+  h2= title
+  .row
+    .col-md-4
+      .panel.panel-default
+        .panel-heading
+          h4 Student Information
+        .panel-body
+          table.table
+            tbody
+              tr
+                td First Name
+                td= result.First_name
+              tr
+                td Last Name
+                td= result.Last_name
+              tr
+                td Student ID
+                td= result.Student_number
+              tr
+                td School Year
+                td= result.Year
+              tr
+                td Semester
+                td= result.Season
+              tr
+                td Term
+                td= result.Term
+              tr
+                td Level
+                td= result.Level
+              tr
+                td Section
+                td= result.Section
 
-  form(action='/webforms/interviews/' + result.Semester_id, method='post')
-    h2 Speaking Test
-    h3 Speaking-Pronuonciation
-    input(type='radio', name='Pronunciation', value='0', checked='')
-    | 0 Constant pronunciation and stress errors that cause speech to be completely unintelligible.
-    br
-    input(type='radio', name='Pronunciation', value='1')
-    | 1 Frequent pronunciation and stress errors that cause speech to be occasionally unintelligible.
-    br
-    input(type='radio', name='Pronunciation', value='2')
-    | 2 Consistent pronunciation and stress errors but speech is generally intelligible.
-    br
-    input(type='radio', name='Pronunciation', value='3')
-    | 3 Some pronunciation and stress errors but speech is consistently intelligible.
-    br
-    h3 Speaking-Fluency
-    input(type='radio', name='Fluency', value='0', checked='')
-    | 0 Speech is so slow or fragmented that speech is completely unintelligible.
-    br
-    input(type='radio', name='Fluency', value='1')
-    | 1 Speech is so slow or has so many pauses that speech is occasionally unintelligible.
-    br
-    input(type='radio', name='Fluency', value='2')
-    | 2 Speech has frequent pauses but is intelligible.
-    br
-    input(type='radio', name='Fluency', value='3')
-    | 3 Speech has some pauses but is consistently intelligible.
-    br
-    h3 Listening-Initial Comprehension
-    input(type='radio', name='Comprehension', value='0', checked='')
-    | 0 Student understands 0%-50% of what is initially said.
-    br
-    input(type='radio', name='Comprehension', value='1')
-    | 1 Student understands 50% -70% of what is initially said.
-    br
-    input(type='radio', name='Comprehension', value='2')
-    | 2 Student understands 70% =-85% of what is initially said.
-    br
-    input(type='radio', name='Comprehension', value='3')
-    | 3 Student understands 85% -100% of what is initially said.
-    br
-    h3 Listening-Need for Repetition
-    input(type='radio', name='Repetition', value='0', checked='')
-    | 0 Student needs constant repetition.
-    br
-    input(type='radio', name='Repetition', value='1')
-    | 1 Student needs significant repetition.
-    br
-    input(type='radio', name='Repetition', value='2')
-    | 2 Student needs some repetition.
-    br
-    input(type='radio', name='Repetition', value='3')
-    | 3 Student needs little or no repetition.
-    br
-    h3 Comments:
-    p If you would like to add any more information, please do so here.  Thanks a lot for your help!
-    br
-    input#Comments(type='text', name='Comments')
-    br
-    h3 Final Interview Recommendation [REQUIRED].
-    input(type='radio', name='Recommendation', value='0', checked='')
-    | 0 is clearly not ready for academic study.
-    br
-    input(type='radio', name='Recommendation', value='1')
-    | 1 may be ready for academic study but will have significant difficulties with listening & speaking tasks.
-    br
-    input(type='radio', name='Recommendation', value='2')
-    | 2 is ready for academic study but will have some difficulties with listening and speaking tasks.
-    br
-    input(type='radio', name='Recommendation', value='3')
-    | 3 is clearly ready for academic study and will have only minor difficulties with listening and speaking tasks.
-    br
-    input(type='submit', value='Submit')
+    .col-md-8
+      .panel.panel-default
+        .panel-heading
+          h4 Interview Record
+        .panel-body
+          form(action='/webforms/interviews/create/' + result.Semester_id, method='post')
+            .form-group
+              label(for='Person_in_charge') Interviewer Name
+              input#Person_in_charge.form-control(type='text' name='Person_in_charge')
+            .form-group
+              label Speaking-Pronuonciation
+              br
+              input(type='radio', name='Pronunciation', value='0', checked='')
+              | 0 Constant pronunciation and stress errors that cause speech to be completely unintelligible.
+              br
+              input(type='radio', name='Pronunciation', value='1')
+              | 1 Frequent pronunciation and stress errors that cause speech to be occasionally unintelligible.
+              br
+              input(type='radio', name='Pronunciation', value='2')
+              | 2 Consistent pronunciation and stress errors but speech is generally intelligible.
+              br
+              input(type='radio', name='Pronunciation', value='3')
+              | 3 Some pronunciation and stress errors but speech is consistently intelligible.
+            hr
+            .form-group
+              label Speaking-Fluency
+              br
+              input(type='radio', name='Fluency', value='0', checked='')
+              | 0 Speech is so slow or fragmented that speech is completely unintelligible.
+              br
+              input(type='radio', name='Fluency', value='1')
+              | 1 Speech is so slow or has so many pauses that speech is occasionally unintelligible.
+              br
+              input(type='radio', name='Fluency', value='2')
+              | 2 Speech has frequent pauses but is intelligible.
+              br
+              input(type='radio', name='Fluency', value='3')
+              | 3 Speech has some pauses but is consistently intelligible.
+            hr
+            .form-group
+              label Listening-Initial Comprehension
+              br
+              input(type='radio', name='Comprehension', value='0', checked='')
+              | 0 Student understands 0%-50% of what is initially said.
+              br
+              input(type='radio', name='Comprehension', value='1')
+              | 1 Student understands 50% -70% of what is initially said.
+              br
+              input(type='radio', name='Comprehension', value='2')
+              | 2 Student understands 70% =-85% of what is initially said.
+              br
+              input(type='radio', name='Comprehension', value='3')
+              | 3 Student understands 85% -100% of what is initially said.
+            hr
+            .form-group
+              label Listening-Need for Repetition
+              br
+              input(type='radio', name='Repetition', value='0', checked='')
+              | 0 Student needs constant repetition.
+              br
+              input(type='radio', name='Repetition', value='1')
+              | 1 Student needs significant repetition.
+              br
+              input(type='radio', name='Repetition', value='2')
+              | 2 Student needs some repetition.
+              br
+              input(type='radio', name='Repetition', value='3')
+              | 3 Student needs little or no repetition.
+            hr
+            .form-group
+              label(for='Comments') Comments
+              br
+              bold If you would like to add any more information, please do so here.  Thanks a lot for your help!
+              textarea.form-control#Comments(rows="3" name="Comments")
+            hr
+            .form-group
+              label Final Interview Recommendation [REQUIRED].
+              br
+              input(type='radio', name='Recommendation', value='0', checked='')
+              | 0 is clearly not ready for academic study.
+              br
+              input(type='radio', name='Recommendation', value='1')
+              | 1 may be ready for academic study but will have significant difficulties with listening & speaking tasks.
+              br
+              input(type='radio', name='Recommendation', value='2')
+              | 2 is ready for academic study but will have some difficulties with listening and speaking tasks.
+              br
+              input(type='radio', name='Recommendation', value='3')
+              | 3 is clearly ready for academic study and will have only minor difficulties with listening and speaking tasks.
+            hr
+            .form-group
+              .row
+                .col-md-3
+                .col-md-3
+                  input.btn.btn-primary(type='submit', value='Submit')
+                .col-md-6
+                  a.btn.btn-primary(href='/webforms/interviews/#{result.Semester_id}') Cancel

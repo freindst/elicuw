@@ -1,4 +1,4 @@
-extends ../../layout
+extends ../layout
 
 block content
   h2= title
@@ -40,7 +40,7 @@ block content
         .panel-heading
           h4 Interview Record
         .panel-body
-          form(action='/webforms/interviews/edit/' + result.Interview_id, method='post')
+          form(action='/verifications/interviews/' + result.Interview_id, method='post')
             .form-group
               label(for='Person_in_charge') Interviewer Name
               input#Person_in_charge.form-control(type='text' name='Person_in_charge' value= result.Person_in_charge)
@@ -131,4 +131,4 @@ block content
                 .col-md-3
                   input.btn.btn-primary(type='submit', value='Confirm')
                 .col-md-6
-                  a.btn.btn-primary(href='/webforms/interviews/#{result.Semester_id}') Cancel
+                  a.btn.btn-primary(href='/verifications/interviews/') Cancel

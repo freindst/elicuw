@@ -14,6 +14,7 @@ block content
                 th Student Number
                 th First Name
                 th Last Name
+                th Major
                 th Year
                 th Semester
                 th Term
@@ -24,10 +25,11 @@ block content
                 each row in rows
                   tr
                     td
-                      a.btn.btn-default(href='/webforms/#{webformType}/#{row.Semester_id}/') Click
+                      a.btn.btn-primary.btn-xs(href='/webforms/#{webformType}/#{row.Semester_id}/') Click
                     td= row.Student_number
                     td= row.First_name
                     td= row.Last_name
+                    td= row.Major
                     td= row.Year
                     td= row.Season
                     td= row.Term

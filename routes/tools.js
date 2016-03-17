@@ -59,5 +59,27 @@ module.exports = function() {
 		}
 		res.render(view, options)
 	}
+
+	//statistic table
+/*	CREATE TABLE Count_unverified (
+	ID int NOT NULL AUTO_INCREMENT,
+	Interviews int DEFAULT 0,
+	Timed_writings int DEFAULT 0,
+	Toefls int DEFAULT 0,
+	Readings int DEFAULT 0,
+	Speakings int DEFAULT 0,
+	Writings int DEFAULT 0,
+	Toefl_preps int DEFAULT 0,
+	Extensive_listenings int DEFAULT 0,
+	Recommendations int DEFAULT 0,
+	PRIMARY KEY (ID)
+	);*/
+
+	this.Count_unverified_change = function(webformType, option) {
+		var query = 'UPDATE Count_unverified SET ' + webformType + '=' +  webformType + option + '1 WHERE ID = 1';
+		connection.query(query, function(err, result) {
+			if (err) throw err;
+		});
+	}
 	
 };
