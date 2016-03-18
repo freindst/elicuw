@@ -156,5 +156,76 @@ module.exports = function() {
 			});
 		});
 	}
+
+	this.Convert_Grades = function(TableName, Score, grades) {
+		var Raw_grade = 0;
+		var count = 0;
+
+		grades[TableName] = Score;
+
+		if (grades['Readings'] != null) {
+			count += 2;
+			Raw_grade += 2 * parseFloat(grades['Readings']);
+		}
+		if (grades['Speakings'] != null) {
+			count += 2;
+			Raw_grade += 2 * parseFloat(grades['Speakings']);
+		}
+		if (grades['Writings'] != null) {
+			count += 2;
+			Raw_grade += 2 * parseFloat(grades['Writings']);
+		}
+		if (grades['Toefl_preps'] != null) {
+			count += 1;
+			Raw_grade += parseFloat(grades['Toefl_preps']);
+		}
+		if (grades['Extensive_listenings'] != null) {
+			count += 1;
+			Raw_grade += parseFloat(grades['Extensive_listenings']);
+		}
+		if (count == 0)
+		{
+			Raw_grade = 0;
+		} else {
+			Raw_grade = Raw_grade / count;			
+		}
+
+
+		var ranges = [0, 0.80, 0.96, 1.10, 1.30, 1.50, 1.70, 1.80, 2.00, 2.10, 2.20, 2.50, 2.70, 2.80, 3.00, 3.10, 3.50, 3,70, 3.80, 3.90, 4.00];
+
+		var Final_grade = 20;
+		for (var i = 1; i <= 20; i++)
+		{
+			if (Raw_grade >= ranges[i - 1] && Raw_grade < ranges[i]) {
+				Final_grade = i - 1;
+				break;
+			}			
+		}
+
+		return {
+			Raw_grade: Raw_grade,
+			Final_grade: Final_grade
+		};
+	}
 	
+
+	this.test = function(Raw_grade) {
+		 
+		var ranges = [0, 0.80, 0.96, 1.10, 1.30, 1.50, 1.70, 1.80, 2.00, 2.10, 2.20, 2.50, 2.70, 2.80, 3.00, 3.10, 3.50, 3.70, 3.80, 3.90, 4.00];
+
+		for (i in ranges) {
+			console.log(ranges[i])
+		}
+
+		var Final_grade = 20;
+		for (var i = 1; i <= 20; i++)
+		{
+			if (Raw_grade >= ranges[i - 1] && Raw_grade < ranges[i]) {
+				console.log(ranges[i])
+				Final_grade = i - 1;
+				break;
+			}			
+		}		
+		return Final_grade;
+	}
 };

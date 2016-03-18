@@ -43,7 +43,12 @@ block content
                     td= row.Level
                     td= row.Section
                     td= row.Score
-                    td= row.IsVerified
+                    if (row.IsVerified == '1')
+                      td.yes Pass
+                    else if (row.IsVerified == '0')
+                      td.no Pending
+                    else
+                      td
                     if (row.Score)
                       td
                         a.btn.btn-danger.btn-xs.confirmation(href='/webforms/#{webformType}/delete/#{row.ID}/') Delete

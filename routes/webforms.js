@@ -214,7 +214,68 @@ router.post('/:webformType/edit/:ID', function(req, res, next) {
 			var IsVerified = result[0].IsVerified;
 			
 			if (IsVerified == '1') {
-				Count_unverified_change(webformType, "+");
+				Count_unverified_change(TableName, "+");
+				//update final grade
+				connection.query('SELECT Semester_id, Score FROM ?? WHERE ?? = ?', [TableName, IndexName, ID], function(err, result) {
+					if (err) throw err;
+					var Semester_id = result[0].Semester_id;
+					var Score = null;
+
+					connection.query('SELECT * FROM Final_Grade WHERE Semester_id = ?', [Semester_id], function(err, results) {
+						if (err) throw err;
+
+						var grades = {
+							'Readings': null,
+							'Speaking': null,
+							'Writings': null,
+							'Toefl_preps': null,
+							'Extensive_Listenings': null
+						};
+
+						if (results.length != 0) {
+							grades = results[0]
+						}
+
+						var scores = Convert_Grades(TableName, Score, grades);
+
+						scores[TableName] = Score;
+						scores.Semester_id = Semester_id;
+
+						connection.query('INSERT INTO Final_Grade SET ? ON DUPLICATE KEY UPDATE ?? = ?, Raw_grade = ? , Final_grade = ?', [scores, TableName, Score, scores.Raw_grade, scores.Final_grade], function(err, result) {
+							if (err) throw err;
+							
+						});
+
+						connection.query('SELECT * FROM Exit_reports WHERE Semester_id = ?', [Semester_id], function(err, result3) {
+							if (result3.length == 0) {
+								var option = [
+								{
+									Semester_id: Semester_id,
+									Grades: scores.Final_grade,
+									Result: scores.Final_grade
+								},
+								scores.Final_grade,
+								scores.Final_grade
+								];
+							} else {
+								var Result = result3[0].Teacher_recommendation + result3[0].Timed_writing + result3[0].Interview + result3[0].Toefl + scores.Final_grade;
+								var option = [
+								{
+									Semester_id: Semester_id,
+									Grades: scores.Final_grade,
+									Result: Result
+								},
+								scores.Final_grade,
+								Result
+								];
+							}
+							
+							connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Grades = ? , Result = ?', option, function(err, result) {
+								if (err) throw err;
+							});
+						})
+					});
+				});
 			}
 		});
 
@@ -242,16 +303,78 @@ router.get('/:webformType/delete/:ID', function(req, res, next) {
 
 			var IsVerified = result[0].IsVerified;
 			
+			//if it has not been verified, change Count_unverified table
 			if (IsVerified == '0') {
 				Count_unverified_change(webformType, "-");
+
+				connection.query(query, option, function(err, result) {
+					if (err) throw err;
+
+					res.redirect('back');
+				});
+			}
+			//if it has been verified, change the result in final grade and report
+			else {
+				//update final grade and exit report if delete a grade
+				connection.query('SELECT Semester_id, Score FROM ?? WHERE ?? = ?', [TableName, IndexName, ID], function(err, result) {
+					if (err) throw err;
+					var Semester_id = result[0].Semester_id;
+					var Score = null;
+
+					connection.query('SELECT * FROM Final_Grade WHERE Semester_id = ?', [Semester_id], function(err, results) {
+						if (err) throw err;
+
+						var grades = {
+							'Readings': null,
+							'Speaking': null,
+							'Writings': null,
+							'Toefl_preps': null,
+							'Extensive_Listenings': null
+						};
+
+						if (results.length != 0) {
+							grades = results[0]
+						}
+
+						var scores = Convert_Grades(TableName, Score, grades);
+
+						scores[TableName] = Score;
+						scores.Semester_id = Semester_id;
+
+						connection.query('INSERT INTO Final_Grade SET ? ON DUPLICATE KEY UPDATE ?? = ?, Raw_grade = ? , Final_grade = ?', [scores, TableName, Score, scores.Raw_grade, scores.Final_grade], function(err, result) {
+							if (err) throw err;
+							
+						});
+
+						connection.query('SELECT * FROM Exit_reports WHERE Semester_id = ?', [Semester_id], function(err, result3) {
+							if (result3.length != 0) {
+								var Result = result3[0].Teacher_recommendation + result3[0].Timed_writing + result3[0].Interview + result3[0].Toefl + scores.Final_grade;
+								var option = [
+								{
+									Semester_id: Semester_id,
+									Grades: scores.Final_grade,
+									Result: Result
+								},
+								scores.Final_grade,
+								Result
+								];
+								connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Grades = ? , Result = ?', option, function(err, result) {
+									if (err) throw err;
+								});
+							}
+						});
+
+						connection.query(query, option, function(err, result) {
+							if (err) throw err;
+
+							res.redirect('back');
+						});
+					});
+				});
 			}
 		});
 
-		connection.query(query, option, function(err, result) {
-			if (err) throw err;
 
-			res.redirect('back');
-		});
 	}
 });
 

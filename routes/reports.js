@@ -17,12 +17,12 @@ router.use(function (req, res, next) {
 	isAdmin(req, res, next);
 });
 
-router.get('/', function(req, res) {
+/*router.get('/', function(req, res) {
 	renderScreen(req, res, 'reports/index', {
 		title: 'Report Typte',
 		url: '/reports'
 	})
-});
+});*/
 
 //exit criteria report
 /*
@@ -39,7 +39,7 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 
 //retrieve all records in exit report table
-router.get('/exit_report', function(req, res) {
+router.get('/', function(req, res) {
 	connection.query('SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students on Semesters.Student_id=Students.Student_id', function(err, results) {
 		renderScreen(req, res, 'reports/exit_report', {
 			title: 'Exit Report List',

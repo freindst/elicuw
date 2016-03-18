@@ -1,6 +1,31 @@
 var express = require('express');
 var router = express.Router();
 
+//define semester class
+/*
+Semester_id int NOT NULL AUTO_INCREMENT,
+Year int,
+Season varchar(10),
+Term varchar(10),
+Level varchar(10),
+Section varchar(10),
+Student_id int,
+PRIMARY KEY (Semester_id),
+FOREIGN KEY (Student_id) REFERENCES Students(Student_id)
+*/
+
+//define student class
+/*
+CREATE TABLE Students(
+Student_id int NOT NULL UNIQUE AUTO_INCREMENT,
+Student_number varchar(9) UNIQUE,
+First_name varchar(100),
+Last_name varchar(100),
+Major varchar(100),
+PRIMARY KEY Student_id
+);
+*/
+
 //Final_interview: contains final score of the interview and all interview_id
 /*
 CREATE TABLE Final_interview (
