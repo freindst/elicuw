@@ -40,53 +40,33 @@ block content
         .panel-heading
           h4 Edit Grades for #{title}
         .panel-body
-          form(action='/webforms/#{gradingWebformType}/edit/' + result.Semester_id, method='post')
+          form(action='/webforms/#{webformType}/edit/' + result.ID, method='post')
             .form-group
               label(for 'Person_in_charge') Instructor Name
-              input#Person_in_charge(type='text' class='form-control' name='Person_in_charge' value = result.Person_in_charge)
+              input#Person_in_charge.form-control(type='text' name='Person_in_charge' value = result.Person_in_charge)
+
+            hr
 
             .form-group
               label Please choose a grade
-              br
-              input(type='radio' name= scoreType value='4.0' checked=score=='4.0')
-              |  4.0&nbsp&nbspA+/A
-              br
-              input(type='radio' name= scoreType value='3.7' checked=score=='3.7')
-              |  3.7&nbsp&nbspA-
-              br
-              input(type='radio' name= scoreType value='3.3' checked=score=='3.3')
-              |  3.3&nbsp&nbspB+
-              br
-              input(type='radio' name= scoreType value='3.0' checked=score=='3.0')
-              |  3.0&nbsp&nbspB
-              br
-              input(type='radio' name= scoreType value='2.7' checked=score=='2.7')
-              |  2.7&nbsp&nbspB-
-              br
-              input(type='radio' name= scoreType value='2.3' checked=score=='2.3')
-              |  2.3&nbsp&nbspC+
-              br
-              input(type='radio' name= scoreType value='2.0' checked=score=='2.0')
-              |  2.0&nbsp&nbspC
-              br
-              input(type='radio' name= scoreType value='1.7' checked=score=='1.7')
-              |  1.7&nbsp&nbspC-
-              br
-              input(type='radio' name= scoreType value='1.3' checked=score=='1.3')
-              |  1.3&nbsp&nbspD+
-              br
-              input(type='radio' name= scoreType value='1.0' checked=score=='1.0')
-              |  1.0&nbsp&nbspD
-              br
-              input(type='radio' name= scoreType value='0.0' checked=score=='0.0')
-              |  0.0&nbsp&nbspE/F
-              br
+              select.form-control(name='Score' multiple)
+                option(selected = result.Score=='4.0' value='4.0') 4.0&nbsp&nbspA+/A
+                option(selected = result.Score=='3.7' value='3.7') 3.7&nbsp&nbspA-
+                option(selected = result.Score=='3.3' value='3.3') 3.3&nbsp&nbspB+
+                option(selected = result.Score=='3.0' value='3.0') 3.0&nbsp&nbspB
+                option(selected = result.Score=='2.7' value='2.7') 2.7&nbsp&nbspB-
+                option(selected = result.Score=='2.3' value='2.3') 2.3&nbsp&nbspC+
+                option(selected = result.Score=='2.0' value='2.0') 2.0&nbsp&nbspC
+                option(selected = result.Score=='1.7' value='1.7') 1.7&nbsp&nbspC-
+                option(selected = result.Score=='1.3' value='1.3') 1.3&nbsp&nbspD+
+                option(selected = result.Score=='1.0' value='1.0') 1.0&nbsp&nbspD
+                option(selected = result.Score=='0.0' value='0.0') 0.0&nbsp&nbspE/F
 
             .form-group
               .row
                 .col-md-4
                   input.btn.btn-primary.btn-block(type='submit' value='Comfirm')
                 .col-md-4
-                  a.btn.btn-primary.btn-block(href='/') Cancel
+                  a.btn.btn-primary.btn-block(href='/webforms/#{webformType}/') Cancel
                 .col-md-4
-                  a.btn.btn-primary.btn-block(href='/webforms/#{gradingWebformType}/delete/#{result.Semester_id}') Delete
+                  a.btn.btn-primary.btn-block(href='/webforms/#{webformType}/delete/#{result.ID}') Delete

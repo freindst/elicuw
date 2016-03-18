@@ -99,10 +99,36 @@ router.post('/interviews/:Interview_id', function(req, res) {
 		connection.query("UPDATE Interviews SET ? WHERE Interview_id = ?", [interview, Interview_id], function(err, result2) {
 			if (err) throw err;
 
-			//add code to update final interview table
-			//
-
+			//change unverified list
 			Count_unverified_change('Interviews', '-');
+
+			//update score in final_interviews
+			connection.query('SELECT Recommendation FROM Interviews WHERE Semester_id = ? AND IsVerified = 1', [Semester_id], function(err, Recommendations) {
+
+				var score = Convert_Score_Interviews(Recommendations);
+
+				connection.query('UPDATE Final_interview SET ? WHERE Semester_id = ?', [{Score: score}, Semester_id], function(err, result) {
+				});
+
+				connection.query('SELECT * FROM Exit_reports WHERE Semester_id = ?', [Semester_id], function(err, result3) {
+					if (result3.length == 0) {
+						var option = [
+						{Semester_id: Semester_id,Interview: score,Result: score},
+						Semester_id
+						];
+					} else {
+						var Result = result3[0].Teacher_recommendation + result3[0].Timed_writing + result3[0].Grades + result3[0].Toefl + score;
+						var option = [
+						{Semester_id: Semester_id,Interview: score,Result: Result},
+						Semester_id
+						];
+					}
+					connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Interview = ?', option, function(err, result) {
+						if (err) throw err;
+					});					
+				});
+			});
+
 			res.redirect('/verifications/interviews/');
 		});		
 	});

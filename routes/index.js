@@ -12,6 +12,10 @@ router.get('/', function(req, res) {
     });
 });
 
+router.get('/test', function(req, res) {
+    res.send('test')
+});
+
 //User sign up view
 router.get('/sign_up', function(req, res) {
     renderScreen(req, res, 'sign_up', {

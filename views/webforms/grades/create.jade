@@ -40,47 +40,27 @@ block content
         .panel-heading
           h4 Grades for #{title}
         .panel-body
-          form(action='/webforms/#{gradingWebformType}/' + result.Semester_id, method='post')
+          form(action='/webforms/#{webformType}/create/' + result.Semester_id, method='post')
             .form-group
               label(for='Person_in_charge') Instructor Name
-              input#Person_in_charge(type='text' name='Person_in_charge' class='form-control')
+              input#Person_in_charge.form-control(type='text' name='Person_in_charge')
+
+            hr
 
             .form-group
               label Please choose a grade
-              br
-              input(type='radio' name= scoreType value='4.0' checked)
-              |  4.0&nbsp&nbspA+/A
-              br
-              input(type='radio' name= scoreType value='3.7')
-              |  3.7&nbsp&nbspA-
-              br
-              input(type='radio' name= scoreType value='3.3')
-              |  3.3&nbsp&nbspB+
-              br
-              input(type='radio' name= scoreType value='3.0')
-              |  3.0&nbsp&nbspB
-              br
-              input(type='radio' name= scoreType value='2.7')
-              |  2.7&nbsp&nbspB-
-              br
-              input(type='radio' name= scoreType value='2.3')
-              |  2.3&nbsp&nbspC+
-              br
-              input(type='radio' name= scoreType value='2.0')
-              |  2.0&nbsp&nbspC
-              br
-              input(type='radio' name= scoreType value='1.7')
-              |  1.7&nbsp&nbspC-
-              br
-              input(type='radio' name= scoreType value='1.3')
-              |  1.3&nbsp&nbspD+
-              br
-              input(type='radio' name= scoreType value='1.0')
-              |  1.0&nbsp&nbspD
-              br
-              input(type='radio' name= scoreType value='0.0')
-              |  0.0&nbsp&nbspE/F
-              br
+              select.form-control(name='Score' multiple)
+                option(selected = 'selected' value='4.0') 4.0&nbsp&nbspA+/A
+                option(value='3.7') 3.7&nbsp&nbspA-
+                option(value='3.3') 3.3&nbsp&nbspB+
+                option(value='3.0') 3.0&nbsp&nbspB
+                option(value='2.7') 2.7&nbsp&nbspB-
+                option(value='2.3') 2.3&nbsp&nbspC+
+                option(value='2.0') 2.0&nbsp&nbspC
+                option(value='1.7') 1.7&nbsp&nbspC-
+                option(value='1.3') 1.3&nbsp&nbspD+
+                option(value='1.0') 1.0&nbsp&nbspD
+                option(value='0.0') 0.0&nbsp&nbspE/F
 
             .form-group
               .row

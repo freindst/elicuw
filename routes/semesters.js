@@ -9,18 +9,7 @@ router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
 });
 
-//define semester class
-/*
-Semester_id int NOT NULL AUTO_INCREMENT,
-Year int,
-Season varchar(10),
-Term varchar(10),
-Level varchar(10),
-Section varchar(10),
-Student_id int,
-PRIMARY KEY (Semester_id),
-FOREIGN KEY (Student_id) REFERENCES Students(Student_id)
-*/
+
 
 //get the list of semester info combined with student profile
 router.get('/index',  function(req, res, next) {

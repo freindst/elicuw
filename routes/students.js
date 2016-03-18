@@ -9,17 +9,7 @@ router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
 });
 
-//define student class
-/*
-CREATE TABLE Students(
-Student_id int NOT NULL UNIQUE AUTO_INCREMENT,
-Student_number varchar(9) UNIQUE,
-First_name varchar(100),
-Last_name varchar(100),
-Major varchar(100),
-PRIMARY KEY Student_id
-);
-*/
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

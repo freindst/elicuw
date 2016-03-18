@@ -75,10 +75,85 @@ module.exports = function() {
 	PRIMARY KEY (ID)
 	);*/
 
-	this.Count_unverified_change = function(webformType, option) {
-		var query = 'UPDATE Count_unverified SET ' + webformType + '=' +  webformType + option + '1 WHERE ID = 1';
+	this.Count_unverified_change = function(TableName, option) {
+		var query = 'UPDATE Count_unverified SET ' + TableName + '=' +  TableName + option + '1 WHERE ID = 1';
 		connection.query(query, function(err, result) {
 			if (err) throw err;
+		});
+	}
+
+	//Interview convertion formula
+	this.Convert_Score_Interviews = function(Recommendations) {
+		var sum = 0;
+		for (var i in Recommendations) {
+			sum += Recommendations[i].Recommendation;
+		}
+		sum = Math.ceil(sum /Recommendations.length * 3);
+		var score = 0;
+		switch (sum) {
+	    case 1:
+	        score = 2;
+	        break;
+	    case 2:
+	        score = 2
+	        break;
+	    case 3:
+	        score = 3;
+	        break;
+	    case 4:
+	        score = 5;
+	        break;
+	    case 5:
+	        score = 8;
+	        break;
+	    case 6:
+	        score = 10;
+	        break;
+	    case 7:
+	    	score = 13;
+	    	break;
+	    case 8:
+	    	score = 17;
+	    	break;
+	    case 9:
+	    	score = 20;
+	    	break;
+	    default:
+	    	score = 0;
+		}
+		return score;
+	}
+
+	this.Update_Result_Interview = function(Semester_id) {
+		//update score in final_interviews and Exit_report
+		connection.query('SELECT Recommendation FROM Interviews WHERE Semester_id = ? AND IsVerified = 1', [Semester_id], function(err, Recommendations) {
+
+			var score = 0;
+
+			if (Recommendations.length != 0) {
+				score = Convert_Score_Interviews(Recommendations);;
+			}
+
+			connection.query('UPDATE Final_interview SET ? WHERE Semester_id = ?', [{Score: score}, Semester_id], function(err, result) {
+			});
+
+			connection.query('SELECT * FROM Exit_reports WHERE Semester_id = ?', [Semester_id], function(err, result3) {
+				if (result3.length == 0) {
+					var option = [
+					{Semester_id: Semester_id,Interview: score,Result: score},
+					score
+					];
+				} else {
+					var Result = result3[0].Teacher_recommendation + result3[0].Timed_writing + result3[0].Grades + result3[0].Toefl + score;
+					var option = [
+					{Semester_id: Semester_id,Interview: score,Result: Result},
+					score
+					];
+				}
+				connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Interview = ?', option, function(err, result) {
+					if (err) throw err;
+				});					
+			});
 		});
 	}
 	
