@@ -103,7 +103,21 @@ router.get('/:webformType/:ID', function(req, res) {
 			});
 		});
 	}
-	else if ( webformType ==  'timed_writings' || webformType == 'toefls' || webformType == 'recommendations') {
+	else if ( webformType == 'timed_writings') {
+		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.Person_in_charge, Timed_writings.IsVerified FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.Timed_writing_id = ?";
+
+		connection.query(query, [req.params.ID], function(err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'verifications/timed_writings', {
+				title: "Timed Writing Exam",
+				result: results[0],
+				url: "/webforms",
+				webformType: 'timed_writings'
+			});
+		});
+	}
+	else if ( webformType == 'toefls' || webformType == 'recommendations') {
 		next();
 	}
 	else {
@@ -247,5 +261,43 @@ router.post('/interviews/:Interview_id', function(req, res) {
 		});		
 	});
 })
+
+router.post('/timed_writings/:ID', function(req, res) {
+	var ID = req.params.ID;
+	var item = {
+		Person_in_charge: req.body.Person_in_charge,
+		Score: req.body.Score,
+		IsVerified: 1
+	};
+
+	connection.query('SELECT Semester_id FROM Timed_writings WHERE Timed_writing_id = ?', [ID], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+
+		var convertedScore = Convert_Score_TWE(req.body.Score);
+
+		connection.query("SELECT * FROM Exit_reports WHERE Semester_id = ?", [Semester_id], function(err, result2) {
+			if (result2.length == 0) {
+				connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Timed_writings: convertedScore, Result: convertedScore}], function(err, result) {
+					if (err) throw err;
+				})
+			}
+			else {
+				var Result = result2[0].Teacher_recommendation + result2[0].Interview + result2[0].Grades + result2[0].Toefl + convertedScore;
+				connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [{Timed_writing: convertedScore, Result: Result}, Semester_id], function(err, result) {
+					if (err) throw err;
+				})
+			}
+		});
+	});
+
+	connection.query("UPDATE Timed_writings SET ? WHERE Timed_writing_id = ?", [item, ID], function(err, result) {
+		if (err) throw err;
+
+		Count_unverified_change('Timed_writings', '-');
+
+		res.redirect('/verifications/timed_writings');
+	});
+
+});
 
 module.exports = router;

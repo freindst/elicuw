@@ -3,7 +3,7 @@ extends ../layout
 block content
   .row
     .col-md-12
-      p Choose a student by add/edit a semester to him/her.
+      h4 Choose a student by add/edit a semester:
   .row
     .col-md-12
       .panel.panel-default
@@ -17,6 +17,7 @@ block content
                 th First Name
                 th Last Name
                 th Major
+                th Degree
                 th
                 th
                 th
@@ -28,8 +29,9 @@ block content
                     td= student.First_name
                     td= student.Last_name
                     td= student.Major
+                    td= student.Degree
                     td
-                      a(href='/semesters/get/' + student.Student_id) semester
+                      a.btn.btn-primary.btn-xs(href='/semesters/get/' + student.Student_id) semester
               else
                 tr
                   td Empty

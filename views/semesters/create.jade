@@ -1,55 +1,78 @@
 extends ../layout
 
 block content
-  h1 Student Info
-  table
-    tr
-      td Student Number
-      td= student.Student_number
-    tr
-      td First Name
-      td= student.First_name
-    tr
-      td Last name
-      td= student.Last_name
-    tr
-      td Major
-      td= student.Major
-  
-  h1= title
-  form(action = '/semesters/create/' + student.Student_id method = 'post')
-    label(for='Year') Calendar Year:
-    input#Year(type='number' name='Year')
-    br
-    label(for='Season') Semster:
-    select(name='Season')
-      option(value='spring') Spring
-      option(value='summer') Summer
-      option(value='fall') Fall
-    br
-    label(for='Term') Term:
-    select(name='Term')
-      option(value='1') 1
-      option(value='2') 2
-    br
-    label(for='Level') level
-    select(name='Level')
-      option(value='Beginning A') Beginning A
-      option(value='Beginning B') Beginning B
-      option(value='Basic A') Basic A
-      option(value='Basic B') Basic B
-      option(value='Intemediate A') Intemediate A
-      option(value='Intemediate B') Intemediate B
-      option(value='Advanced A') Advanced A
-      option(value='Advanced B') Advanced B
-    br
-    label(for='Section') Section
-    select(name='Section')
-      option(value='0') 0
-      option(value='2') 2
-      option(value='3') 3
-      option(value='4') 4
-      option(value='5') 5
-      option(value='6') 6
-    br
-    input(type='submit', value='Submit') 
+  .row
+    .col-md-4
+      .panel.panel-default
+        .panel-heading
+          h4 Student Information
+        .panel-body
+          table.table
+            tbody
+              tr
+                td Student Number
+                td= student.Student_number
+              tr
+                td First Name
+                td= student.First_name
+              tr
+                td Last name
+                td= student.Last_name
+              tr
+                td Major
+                td= student.Major
+              tr
+                td Degree
+                td= student.Degree
+
+    .col-md-4
+      .panel.panel-primary
+        .panel-heading
+          h4= title + ':'
+        .panel-body
+          form(action = '/semesters/create/' + student.Student_id method = 'post')
+            .form-group
+              label(for='Year') Calendar Year:
+              input#Year.form-control(type='number' name='Year')
+
+            .form-group
+              label(for='Season') Semster:
+              select.form-control(name='Season')
+                option(value='spring') Spring
+                option(value='summer') Summer
+                option(value='fall') Fall
+
+            .form-group
+              label(for='Term') Term:
+              select.form-control(name='Term')
+                option(value='1') 1
+                option(value='2') 2
+
+            .form-group
+              label(for='Level') level
+              select.form-control(name='Level')
+                option(value='Beginning A') Beginning A
+                option(value='Beginning B') Beginning B
+                option(value='Basic A') Basic A
+                option(value='Basic B') Basic B
+                option(value='Intemediate A') Intemediate A
+                option(value='Intemediate B') Intemediate B
+                option(value='Advanced A') Advanced A
+                option(value='Advanced B') Advanced B
+
+            .form-group
+              label(for='Section') Section
+              select.form-control(name='Section')
+                option(value='0') 0
+                option(value='2') 2
+                option(value='3') 3
+                option(value='4') 4
+                option(value='5') 5
+                option(value='6') 6
+
+            .form-group
+              .row
+                .col-md-6
+                  input.btn.btn-primary.btn-block(type='submit', value='Submit')
+                .col-md-6
+                  a.btn.btn-primary.btn-block(href='/semesters/get/#{student.Student_id}') Cancel

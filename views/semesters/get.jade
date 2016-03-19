@@ -21,6 +21,9 @@ block content
               tr
                 td Major
                 td= student.Major
+              tr
+                td Degree
+                td= student.Degree
 
     .col-md-8
       .panel.panel-default
@@ -45,6 +48,6 @@ block content
                   td= row.Level
                   td= row.Section
                   td
-                    a(href='/semesters/edit/#{student.Student_id}/#{row.Semester_id}') edit
+                    a.btn.btn-default.btn-xs(href='/semesters/edit/#{student.Student_id}/#{row.Semester_id}') edit
                   td
-                    a(href='/semesters/delete/#{student.Student_id}/#{row.Semester_id}') delete
+                    a.btn.btn-danger.btn-xs.confirmation(href='/semesters/delete/#{student.Student_id}/#{row.Semester_id}') delete

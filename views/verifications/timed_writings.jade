@@ -1,4 +1,4 @@
-extends ../../layout
+extends ../layout
 
 block content
   h2= title
@@ -44,9 +44,9 @@ block content
     .col-md-4
       .panel.panel-primary
         .panel-heading
-          h4 Score for #{title} :
+          h4 Verify #{title} :
         .panel-body
-          form(action='/webforms/timed_writings/edit/' + result.ID, method='post')
+          form(action='/verifications/timed_writings/' + result.ID, method='post')
             .form-group
               label(for='Person_in_charge') Instructor Name
               input#Person_in_charge.form-control(type='text' name='Person_in_charge' value= result.Person_in_charge)
@@ -60,6 +60,6 @@ block content
             .form-group
               .row
                 .col-md-6
-                  input.btn.btn-primary.btn-block(type='submit', value='Update')
+                  input.btn.btn-primary.btn-block(type='submit', value='Confirm')
                 .col-md-6
-                  a.btn.btn-primary.btn-block(href='/webforms/timed_writings/') Cancel
+                  a.btn.btn-primary.btn-block(href='/verifications/timed_writings/') Cancel

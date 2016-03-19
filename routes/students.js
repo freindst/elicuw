@@ -7,7 +7,9 @@ var tools = require('./tools')();
 //A Router-level middleware check user's authentication before using it
 router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
-});
+}), function(req, res, next) {
+	isVerified(req, res, next)
+};
 
 
 
@@ -38,7 +40,8 @@ router.post('/create', function(req, res) {
 		Student_number: 'F' + req.body.Student_number,
 		First_name: req.body.First_name,
 		Last_name: req.body.Last_name,
-		Major: req.body.Major
+		Major: req.body.Major,
+		Degree: req.body.Degree
 	};
 
 	connection.query('INSERT INTO Students SET ?', student, function(err, result) {
@@ -82,7 +85,8 @@ router.post('/edit/:Student_id', function(req, res) {
 		Student_number: req.body.Student_number,
 		First_name: req.body.First_name,
 		Last_name: req.body.Last_name,
-		Major: req.body.Major
+		Major: req.body.Major,
+		Degree: req.body.Degree
 	};
 
 	connection.query('UPDATE Students SET ? WHERE Student_id = ?', [student, Student_id], function(err, result) {

@@ -49,6 +49,10 @@ router.get('/', function(req, res) {
 	});
 });
 
+router.get('/grade/:Semester_id', function(req, res) {
+
+});
+
 //refresh the table of exit report
 router.get('/refresh', function(req, res) {
 	//get all semester records

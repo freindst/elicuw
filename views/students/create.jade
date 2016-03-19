@@ -30,5 +30,12 @@ block content
                 input#Major.form-control(type='text', name='Major', value='', placeholder="MSIT or MBA")
 
             .form-group
+              label.col-md-4.control-label(for='Degree') Degree:
+              .input-group.col-md-8
+                select#Degree.form-control(name='Degree')
+                  option(value='undergraduate') Undergraduate Student
+                  option(value='graduate') Graduate Student
+
+            .form-group
               .input-group.col-md-offset-4.col-md-8
                 input.btn.btn-primary.btn-block(type='submit', value='Submit') 

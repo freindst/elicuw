@@ -18,6 +18,7 @@ block content
                 th First Name
                 th Last Name
                 th Major
+                th Degree
                 th
                 th
                 th
@@ -29,12 +30,13 @@ block content
                     td= student.First_name
                     td= student.Last_name
                     td= student.Major
+                    td= student.Degree
                     td
-                      a(href= '/students/edit/' + student.Student_id) edit
+                      a.btn.btn-default.btn-xs(href= '/students/edit/' + student.Student_id) edit
                     td
-                      a(href= '/students/delete/' + student.Student_id) delete
+                      a.btn.btn-danger.btn-xs.confirmation(href= '/students/delete/' + student.Student_id) delete
                     td
-                      a(href='/semesters/get/' + student.Student_id) semester
+                      a.btn.btn-primary.btn-xs.primary(href='/semesters/get/' + student.Student_id) add semester
               else
                 tr
                   td Empty

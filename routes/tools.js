@@ -207,25 +207,18 @@ module.exports = function() {
 			Final_grade: Final_grade
 		};
 	}
-	
 
-	this.test = function(Raw_grade) {
-		 
-		var ranges = [0, 0.80, 0.96, 1.10, 1.30, 1.50, 1.70, 1.80, 2.00, 2.10, 2.20, 2.50, 2.70, 2.80, 3.00, 3.10, 3.50, 3.70, 3.80, 3.90, 4.00];
-
-		for (i in ranges) {
-			console.log(ranges[i])
-		}
-
-		var Final_grade = 20;
-		for (var i = 1; i <= 20; i++)
-		{
-			if (Raw_grade >= ranges[i - 1] && Raw_grade < ranges[i]) {
-				console.log(ranges[i])
-				Final_grade = i - 1;
+	this.Convert_Score_TWE = function(RawScore) {
+		var Final_score = 20;
+		var ranges = [0.0, 1.0, 2.0, 3.0, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
+		var score = [0, 3,4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+		for (var i = 0; i < ranges.length - 1; i ++) {
+			if (RawScore >= ranges[i - 1] && RawScore < ranges[i]) {
+				Final_score = score[i - 1];
 				break;
-			}			
-		}		
-		return Final_grade;
+			}
+		}
+		return Final_score;
 	}
+
 };

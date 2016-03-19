@@ -1,6 +1,7 @@
 extends ../layout
 
 block content
+
   .container-fluid
     .row
       .col-md-3
@@ -27,6 +28,13 @@ block content
               label.col-md-4.control-label(for='Major') Major:
               .input-group.col-md-8
                 input#Major.form-control(type='text', name='Major', value=student.Major)
+
+            .form-group
+              label.col-md-4.control-label(for='Degree') Degree:
+              .input-group.col-md-8
+                select#Degree.form-control(name='Degree')
+                  option(value='Undergraduate' selected = student.Degree== 'undergraduate') Undergraduate Student
+                  option(value='Graduate' selected = student.Degree == 'graduate') Graduate Student
 
             .form-group
               .input-group.col-md-offset-4.col-md-8

@@ -7,23 +7,10 @@ var tools = require('./tools')();
 //A router-level middleware check authentication before using any functions
 router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
+}, function(req, res, next) {
+	isVerified(req, res, next)
 });
 
-
-
-//get the list of semester info combined with student profile
-router.get('/index',  function(req, res, next) {
-	var query = "SELECT Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
-	connection.query(query, function(err, results) {
-		if (err) throw err;
-
-		renderScreen(req, res, 'semesters/index', {
-			title: 'Semester List',
-			rows: results,
-			url: '/students'
-		});
-	});
-});
 
 //get all existed semester record related to a student_id
 router.get('/get/:Student_id',  function(req, res, next) {

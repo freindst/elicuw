@@ -36,7 +36,7 @@ block content
                 td= result.Section
 
     .col-md-4
-      .panel.panel-default
+      .panel.panel-primary
         .panel-heading
           h4 Grades for #{title}
         .panel-body
@@ -64,7 +64,7 @@ block content
 
             .form-group
               .row
-                .col-md-4.col-md-offset-2
-                  input.btn.btn-primary(type='submit', value='Submit')
                 .col-md-6
-                  input.btn.btn-primary(type='button' onclick="window.location.href=\'/webforms/lists/" + result.Semester_id + "\'" value='Cancel')
+                  input.btn.btn-primary.btn-block(type='submit', value='Submit')
+                .col-md-6
+                  a.btn.btn-primary.btn-block(href='/webforms') Cancel
