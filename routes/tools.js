@@ -141,18 +141,53 @@ module.exports = function() {
 				if (result3.length == 0) {
 					var option = [
 					{Semester_id: Semester_id,Interview: score,Result: score},
-					score
+					score, score
 					];
 				} else {
 					var Result = result3[0].Teacher_recommendation + result3[0].Timed_writing + result3[0].Grades + result3[0].Toefl + score;
 					var option = [
 					{Semester_id: Semester_id,Interview: score,Result: Result},
-					score
+					score, Result
 					];
 				}
-				connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Interview = ?', option, function(err, result) {
+				connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Interview = ?, Result = ?', option, function(err, result) {
 					if (err) throw err;
 				});					
+			});
+		});
+	}
+
+	this.Update_Result_Recommendation = function(Semester_id) {
+		connection.query('SELECT Recommendation_level FROM Recommendations WHERE Semester_id = ? AND IsVerified = 1', [Semester_id], function(err, results) {
+
+			var RawScore = 0;
+			for (var i in results) {
+				RawScore += results[i].Recommendation_level;
+			}
+
+			RawScore = RawScore/results.length;
+
+			var convertedScore = Convert_Sore_Recommendation(RawScore);
+
+			var option = [{Semester_id: Semester_id,
+				Raw_score: RawScore,
+				Final_score: convertedScore
+			}, RawScore, convertedScore];
+			connection.query('INSERT INTO Final_Recommendation SET ? ON DUPLICATE KEY UPDATE Raw_score = ?, Final_score = ?', option, function(err, result) {
+				if (err) throw err;
+
+			});
+
+			connection.query('SELECT * FROM Exit_reports WHERE Semester_id = ?', [Semester_id], function(err, result2) {
+				if (result2.length == 0) {
+					option = [{Semester_id: Semester_id, Teacher_recommendation: convertedScore, Result: convertedScore}, convertedScore, convertedScore];
+				} else {
+					var Result = result2[0].Interview + result2[0].Timed_writing + result2[0].Grades + result2[0].Toefl + convertedScore;
+					option = [{Semester_id: Semester_id, Teacher_recommendation: convertedScore, Result: Result}, convertedScore, Result];
+				}
+				connection.query('INSERT INTO Exit_reports SET ? ON DUPLICATE KEY UPDATE Teacher_recommendation = ?, Result = ?', option, function(err, result) {
+					if (err) throw err;
+				})
 			});
 		});
 	}
@@ -191,6 +226,7 @@ module.exports = function() {
 		}
 
 
+
 		var ranges = [0, 0.80, 0.96, 1.10, 1.30, 1.50, 1.70, 1.80, 2.00, 2.10, 2.20, 2.50, 2.70, 2.80, 3.00, 3.10, 3.50, 3,70, 3.80, 3.90, 4.00];
 
 		var Final_grade = 20;
@@ -212,7 +248,7 @@ module.exports = function() {
 		var Final_score = 20;
 		var ranges = [0.0, 1.0, 2.0, 3.0, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
 		var score = [0, 3,4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-		for (var i = 0; i < ranges.length - 1; i ++) {
+		for (var i = 1; i < ranges.length; i ++) {
 			if (RawScore >= ranges[i - 1] && RawScore < ranges[i]) {
 				Final_score = score[i - 1];
 				break;
@@ -234,7 +270,7 @@ module.exports = function() {
 			ranges = [0, 480, 483, 490, 493, 497, 500, 503, 510, 513, 517, 520, 523, 530, 533, 537, 540, 547, 550];
 			score = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 		}
-		for (var i = 0; i < ranges.length-1; i++) {
+		for (var i = 1; i < ranges.length; i++) {
 			if (RawScore >= ranges[i - 1] && RawScore < ranges[i]) {
 				convertedScore = score[i - 1];
 				break;
@@ -242,5 +278,25 @@ module.exports = function() {
 		}
 		return convertedScore;
 	}
+
+	this.Convert_Sore_Recommendation = function(RawScore) {
+		var convertedScore = 20;
+		var ranges = [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+
+		var score = [0, 5, 7, 10, 12, 14, 16, 17, 18, 20];
+
+
+		for (var i = 1; i < ranges.length; i++) {
+
+			if (RawScore >= ranges[i - 1] && RawScore < ranges[i]) {
+
+				convertedScore = score[i - 1];
+				break;
+			}
+		}
+		return convertedScore;
+	}
+
+
 
 };

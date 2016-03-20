@@ -12,12 +12,8 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/test/:aa/:ss', function(req, res) {
-    var item = {};
-    item.Listening = req.params.ss;
-    item.Reading = req.params.ss;
-    item.Grammar = req.params.ss;
-    console.log(Convert_Score_Toefl(req.params.aa, item));
+router.get('/test/:aa', function(req, res) {
+    console.log(Convert_Sore_Recommendation(req.params.aa));
     res.send('test')
 });
 

@@ -140,6 +140,7 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 //recommendation
 //define recommendation class
 /*
+CREATE TABLE Recommendations(
 Recommendation_id int NOT NULL AUTO_INCREMENT,
 Attendence varchar(10),
 Completion varchar(10),
@@ -152,6 +153,7 @@ Semester_id int,
 Person_in_charge varchar(255),
 PRIMARY KEY (Recommendation_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+);
 */
 
 //timed writing

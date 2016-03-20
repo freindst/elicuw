@@ -1,74 +1,108 @@
 extends ../../layout
 
 block content
-  h1= title
-  h2 Student Information
-  table
-    tr
-      td First Name
-      td= result.First_name
-    tr
-      td Last Name
-      td= result.Last_name
-    tr
-      td Student ID
-      td= result.Student_number
-    tr
-      td School Year
-      td= result.Year
-    tr
-      td Semester
-      td= result.Season
-    tr
-      td Term
-      td= result.Term
-    tr
-      td Level
-      td= result.Level
-    tr
-      td Section
-      td= result.Section
+  h2= title + ":"
+  .row
+    .col-md-4
+      .panel.panel-default
+        .panel-heading
+          h4 Student Information
+        .panel-body
+          table.table
+            tbody
+              tr
+                th First Name
+                td= result.First_name
+              tr
+                th Last Name
+                td= result.Last_name
+              tr
+                th Student ID
+                td= result.Student_number
+              tr
+                th Major
+                td= result.Major
+              tr
+                th Degree
+                td= result.Degree
+              tr
+                th School Year
+                td= result.Year
+              tr
+                th Semester
+                td= result.Season
+              tr
+                th Term
+                td= result.Term
+              tr
+                th Level
+                td= result.Level
+              tr
+                th Section
+                td= result.Section
 
-  form(action='/webforms/recommendations/' + result.Semester_id, method='post')
-    label Teacher Name:
-    br
-    input(type='text', name='Person_in_charge')
-    h3 Effort
-    label Attendence:
-    br
-    input(type='text', name='Attendence')
-    br
-    label Completion Of Homework:
-    br
-    input(type='text', name='Completion')
-    br
-    label Quality Of Class Participation:
-    br
-    select(name='Participation')
-      option(value='Strong') Stong
-      option(value='Average') Average
-      option(value='Weak') Weak
-      option(value='Cannot Evaluate') Cannot Evaluate
-    br
-    label Attitude Towards English Study:
-    br
-    select(name='Attitude')
-      option(value='Strong') Stong
-      option(value='Average') Average
-      option(value='Weak') Weak
-      option(value='Cannot Evaluate') Cannot Evaluate
-    br
-    h3 Recommendation Of Subsequent Student:
-    select(name='Recommendation_level')
-      option(value='0') Repeat Current ELI Level
-      option(value='1') Advance To Next ELI Level
-      option(value='2') Bridge Take both ELI and Academic Classes
-      option(value='3') Exit ELI (Some Teacher Concern)
-      option(value='4') Exit ELI (Few Or No Teacher Concern)
-    br
-    label Comments For Students File(To inform/assist academic program professor)
-    br
-    input(type='text', name='Comments')
-    br
-    input(type='submit', value='Submit')
-    input(type='button' onclick="window.location.href=\'/webforms/lists/" + result.Semester_id + "\'" value='Cancel')
+    .col-md-8
+      .panel.panel-primary
+        .panel-heading
+          h4 Interview Record
+        .panel-body
+          form(action='/webforms/recommendations/create/' + result.Semester_id, method='post')
+            .form-group
+              label(for='Person_in_charge') Interviewer Name
+              input#Person_in_charge.form-control(type='text' name='Person_in_charge')
+            hr
+            .form-group
+              h4 Effort in Program
+              .form-group
+                label(for='Attendence') Attendence:
+                .input-group
+                  input#Attendence.form-control(type='number' name='Attendence')
+                  .input-group-addon %
+              .form-group
+                label(for='Completion') Completion Of Homework:
+                .input-group
+                  input#Completion.form-control(type='number' name='Completion')
+                  .input-group-addon %
+              .form-group
+                label Quality Of Class Participation:
+                select.form-control(name='Participation')
+                    option(value='Strong') Stong
+                    option(value='Average') Average
+                    option(value='Weak') Weak
+                    option(value='Cannot Evaluate') Cannot Evaluate
+              .form-group
+                label Attitude Towards English Study:
+                select.form-control(name='Attitude')
+                  option(value='Strong') Stong
+                  option(value='Average') Average
+                  option(value='Weak') Weak
+                  option(value='Cannot Evaluate') Cannot Evaluate
+            hr
+            .form-group
+              label Recommendation Of Subsequent Student (REQUIRE):
+              br
+              input(type='radio' name = 'Recommendation_level' value = '1' )
+              |  1 Repeat Current ELI Level
+              br
+              input(type='radio' name = 'Recommendation_level' value = '2' )
+              |  2 Advance To Next ELI Level
+              br
+              input(type='radio' name = 'Recommendation_level' value = '3' )
+              |  3 Bridge Take both ELI and Academic Classes
+              br
+              input(type='radio' name = 'Recommendation_level' value = '4' )
+              |  4 Exit ELI (Some Teacher Concern)
+              br
+              input(type='radio' name = 'Recommendation_level' value = '5' )
+              |  5 Exit ELI (Few Or No Teacher Concern)
+            hr
+            .form-group
+              label(for='Comments') Comments For Students File (To inform/assist academic program professor):
+              textarea.form-control#Comments(rows="3" name="Comments")
+            hr
+            .form-group
+              .row
+                .col-md-6
+                  input.btn.btn-primary.btn-block(type='submit', value='Submit')
+                .col-md-6
+                  a.btn.btn-primary.btn-block(href='/webforms/recommendations/#{result.Semester_id}') Cancel

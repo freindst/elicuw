@@ -81,21 +81,22 @@ router.get('/:webformType', function(req, res, next) {
 		});
 
 	} else if (webformType == 'recommendations') {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
+		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Final_Recommendation.Count, Final_Recommendation.Raw_score FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_Recommendation ON Semesters.Semester_id = Final_Recommendation.Semester_id';
+
 		connection.query(query, function(err, results) {
 			if (err) throw err;
 
-			renderScreen(req, res, 'webforms/index', {
-				title: "Choose a student record",
+			renderScreen(req, res, 'webforms/recommendations/index', {
+				title: 'Choose a student record',
+				webformType: webformType,
 				rows: results,
-				url: "/webforms",
-				webformType: webformType
+				url: '/webforms'
 			});
-		});	
+		});
 	}
 	else {
 
-		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree ??, ?? , ?? AS ID FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN ?? ON Semesters.Semester_id = ??';
+		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, ??, ?? , ?? AS ID FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN ?? ON Semesters.Semester_id = ??';
 		var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id'];
 		connection.query(query, option, function(err, results) {
 			if (err) throw err;
@@ -709,24 +710,45 @@ router.get('/toefls/delete/:ID', function(req, res) {
 });
 
 router.get('/recommendations/:Semester_id', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	var Semester_id = req.params.Semester_id;
+	var userQuery = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Semesters.Semester_id = ?';
+	var recommendationQuery = 'SELECT * FROM Recommendations WHERE Semester_id = ?';
+
+	connection.query(userQuery, [Semester_id], function (err, student) {
+		if (err) throw err;
+
+		connection.query(recommendationQuery, [Semester_id], function (err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'webforms/recommendations/list', {
+				title: "Recommendation Record List",
+				student: student[0],
+				rows: results,
+				url: '/webforms'
+			});
+		});
+	});
+});
+
+router.get('/recommendations/create/:Semester_id', function(req, res) {
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
 
 		renderScreen(req, res, 'webforms/recommendations/create', {
-			title: "Teacher Recommendation",
+			title: "Create Instructor Recommendation Record",
 			result: results[0],
 			url: "/webforms"
 		});
 	});
 });
 
-router.post('/recommendations/:Semester_id', function(req, res) {
+router.post('/recommendations/create/:Semester_id', function(req, res) {
 	var query = "INSERT INTO Recommendations SET ?";
 	var recommendation = {
 		Person_in_charge: req.body.Person_in_charge,
-		Attendence: req.body.Attendence,
-		Completion: req.body.Completion,
+		Attendence: req.body.Attendence + '%',
+		Completion: req.body.Completion + '%',
 		Participation: req.body.Participation,
 		Attitude: req.body.Attitude,
 		Recommendation_level: req.body.Recommendation_level,
@@ -738,18 +760,31 @@ router.post('/recommendations/:Semester_id', function(req, res) {
 	connection.query(query, recommendation, function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/');
+		//increase Statistic of interview record in Count_unverified table
+		Count_unverified_change('Recommendations', '+');
+
+		//increase interview record number in final_interview table
+		var set = {
+			Semester_id : req.params.Semester_id,
+			Count: 1
+		};
+		connection.query('INSERT INTO Final_Recommendation SET ? ON DUPLICATE KEY UPDATE Count = Count + 1', [set], function(err, result) {
+			if (err) throw err;
+		});
+
+		res.redirect('/webforms/recommendations/' + req.params.Semester_id);
 	});
 });
 
 router.get('/recommendations/edit/:Recommendation_id', function(req, res) {
+	var ID = req.params.Recommendation_id;
 	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
 
-	connection.query(query, [req.params.Recommendation_id], function(err, results) {
+	connection.query(query, [ID], function(err, results) {
 		if (err) throw err;
 
 		renderScreen(req, res, 'webforms/recommendations/edit', {
-			title: "Verify Teacher Recommendation",
+			title: "Edit Instructor Recommendation",
 			result: results[0],
 			url: "/webforms"
 		});
@@ -757,30 +792,58 @@ router.get('/recommendations/edit/:Recommendation_id', function(req, res) {
 });
 
 router.post('/recommendations/edit/:Recommendation_id', function(req, res) {
+	var ID = req.params.Recommendation_id;
 	var query = "UPDATE Recommendations SET ? WHERE Recommendation_id = ?"
 	var recommendation = {
 		Person_in_charge: req.body.Person_in_charge,
-		Attendence: req.body.Attendence,
-		Completion: req.body.Completion,
+		Attendence: req.body.Attendence + '%',
+		Completion: req.body.Completion + '%',
 		Participation: req.body.Participation,
 		Attitude: req.body.Attitude,
 		Recommendation_level: req.body.Recommendation_level,
 		Comments: req.body.Comments,
-		IsVerified: true
+		IsVerified: false
 	};
+	connection.query("SELECT * FROM Recommendations WHERE Recommendation_id = ?", [ID], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+		var IsVerified = result[0].IsVerified;
 
-	connection.query(query, [recommendation, req.params.Recommendation_id], function(err, result) {
-		if (err) throw err;
+		connection.query(query, [recommendation, ID], function(err, result) {
+			if (err) throw err;
 
-		res.redirect('/verifications/recommendation')
+			if (IsVerified == '1') {
+				Count_unverified_change('Recommendations', '+');
+
+				Update_Result_Recommendation(Semester_id);
+			}			
+
+			res.redirect('/webforms/recommendations/' + Semester_id);
+		});
 	});
 });
 
 router.get('/recommendations/delete/:Recommendation_id', function(req, res) {
-	connection.query("DELETE FROM Recommendations WHERE Recommendation_id = ?", [req.params.Recommendation_id], function(err, result) {
-		if (err) throw err;
+	var ID = req.params.Recommendation_id;
+	connection.query("SELECT * FROM Recommendations WHERE Recommendation_id = ?", [ID], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+		var IsVerified = result[0].IsVerified;
 
-		res.redirect('/verifications/recommendation')
+		if (IsVerified == '0') {
+			Count_unverified_change('recommendations', '-');
+
+		} else {
+			connection.query('UPDATE Final_Recommendation SET Count = Count - 1 WHERE Semester_id = ?', Semester_id, function(err, result) {
+				if (err) throw err; 
+			});
+		}
+
+		connection.query("DELETE FROM Recommendations WHERE Recommendation_id = ?", [req.params.Recommendation_id], function(err, result) {
+			if (err) throw err;
+
+			Update_Result_Recommendation(Semester_id);
+
+			res.redirect('/webforms/recommendations/' + Semester_id);
+		});
 	});
 });
 

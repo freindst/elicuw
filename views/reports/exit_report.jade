@@ -1,11 +1,6 @@
 extends ../layout
 
 block content
-  .row
-    .col-md-12
-      a.btn.btn-primary(href='/reports/refresh') Refresh
-
-  hr
 
   .row
     .col-md-12
@@ -35,7 +30,7 @@ block content
               each row in rows
                 tr
                   td
-                    a.btn.btn-default(href='/reports/individual/' + row.Semester_id) export
+                    a.btn.btn-primary.btn-xs(href='/reports/individual/' + row.Semester_id) export
                   td= row.Student_number
                   td= row.First_name
                   td= row.Last_name

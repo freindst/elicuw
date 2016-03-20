@@ -112,7 +112,7 @@ router.get('/:webformType/:ID', function(req, res) {
 			renderScreen(req, res, 'verifications/timed_writings', {
 				title: "Timed Writing Exam",
 				result: results[0],
-				url: "/webforms",
+				url: "/verifications",
 				webformType: 'timed_writings'
 			});
 		});
@@ -126,13 +126,23 @@ router.get('/:webformType/:ID', function(req, res) {
 			renderScreen(req, res, 'verifications/toefls', {
 				title: "TOEFL",
 				result: results[0],
-				url: "/webforms",
+				url: "/verifications",
 				webformType: 'toefls'
 			});
 		});
 	}
 	else if ( webformType == 'recommendations') {
-		next();
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
+
+	connection.query(query, [ID], function(err, results) {
+		if (err) throw err;
+
+		renderScreen(req, res, 'verifications/recommendations', {
+			title: "Verify Instructor Recommendation",
+			result: results[0],
+			url: "/verifications"
+		});
+	});
 	}
 	else {
 		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, ?? AS ID, ??, ??, ?? FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = ?";
@@ -341,6 +351,36 @@ router.post('/interviews/:Interview_id', function(req, res) {
 		});		
 	});
 })
+
+router.post('/recommendations/:Recommendation_id', function(req, res) {
+	var ID = req.params.Recommendation_id;
+	var item = {
+		Person_in_charge: req.body.Person_in_charge,
+		Attendence: req.body.Attendence + '%',
+		Completion: req.body.Completion + '%',
+		Participation: req.body.Participation,
+		Attitude: req.body.Attitude,
+		Recommendation_level: req.body.Recommendation_level,
+		Comments: req.body.Comments,
+		IsVerified: true
+	};
+
+	connection.query("SELECT * FROM Recommendations WHERE Recommendation_id = ?", [ID], function(err, result) {
+		if (err) throw err;
+
+		var Semester_id = result[0].Semester_id;
+
+		connection.query('UPDATE Recommendations SET ? WHERE Recommendation_id = ?', [item, ID], function(err, result){
+			if (err) throw err;
+
+			Count_unverified_change('Recommendations', '-');
+
+			Update_Result_Recommendation(Semester_id);
+
+			res.redirect('/verifications/recommendations/')
+		});
+	});
+});
 
 router.post('/toefls/:ID', function(req, res) {
 	var ID = req.params.ID;
