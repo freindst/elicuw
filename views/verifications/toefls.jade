@@ -1,4 +1,4 @@
-extends ../../layout
+extends ../layout
 
 block content
   h2= title
@@ -44,9 +44,9 @@ block content
     .col-md-4
       .panel.panel-primary
         .panel-heading
-          h4 Score for #{title} :
+          h4 Verify Score for #{title} :
         .panel-body
-          form(action='/webforms/toefls/edit/' + result.ID, method='post')
+          form(action='/verifications/toefls/' + result.ID, method='post')
             .form-group
               label(for='Person_in_charge') Instructor Name
               input#Person_in_charge.form-control(type='text' name='Person_in_charge' value= result.Person_in_charge)
@@ -70,4 +70,4 @@ block content
                 .col-md-6
                   input.btn.btn-primary.btn-block(type='submit', value='Submit')
                 .col-md-6
-                  a.btn.btn-primary.btn-block(href='/webforms/toefls/') Cancel
+                  a.btn.btn-primary.btn-block(href='/verifications/toefls/') Cancel

@@ -221,4 +221,26 @@ module.exports = function() {
 		return Final_score;
 	}
 
+	this.Convert_Score_Toefl = function(Degree, item) {
+		var convertedScore = 20;
+		var RawScore = Math.ceil((parseInt(item.Listening) + parseInt(item.Reading) + parseInt(item.Grammar)) * 10 / 3);
+		var ranges=[];
+		var score=[];
+		if (Degree == 'undergraduate') {
+			ranges = [0, 453, 457, 460, 463, 467, 470, 473, 477, 480, 483, 487, 490, 493, 497, 500];
+			score = [0, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20];
+		}
+		else {
+			ranges = [0, 480, 483, 490, 493, 497, 500, 503, 510, 513, 517, 520, 523, 530, 533, 537, 540, 547, 550];
+			score = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+		}
+		for (var i = 0; i < ranges.length-1; i++) {
+			if (RawScore >= ranges[i - 1] && RawScore < ranges[i]) {
+				convertedScore = score[i - 1];
+				break;
+			}
+		}
+		return convertedScore;
+	}
+
 };

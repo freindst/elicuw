@@ -117,7 +117,21 @@ router.get('/:webformType/:ID', function(req, res) {
 			});
 		});
 	}
-	else if ( webformType == 'toefls' || webformType == 'recommendations') {
+	else if ( webformType == 'toefls' ) {
+		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
+
+		connection.query(query, [ID], function(err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'verifications/toefls', {
+				title: "TOEFL",
+				result: results[0],
+				url: "/webforms",
+				webformType: 'toefls'
+			});
+		});
+	}
+	else if ( webformType == 'recommendations') {
 		next();
 	}
 	else {
@@ -296,6 +310,74 @@ router.post('/timed_writings/:ID', function(req, res) {
 		Count_unverified_change('Timed_writings', '-');
 
 		res.redirect('/verifications/timed_writings');
+	});
+
+});
+
+router.post('/interviews/:Interview_id', function(req, res) {
+	var Interview_id = req.params.Interview_id;
+	var interview = {
+		Person_in_charge: req.body.Person_in_charge,
+		Pronunciation: req.body.Pronunciation,
+		Fluency: req.body.Fluency,
+		Comprehension: req.body.Comprehension,
+		Repetition: req.body.Repetition,
+		Comments: req.body.Comments,
+		Recommendation: req.body.Recommendation,
+		IsVerified: true
+	};
+
+	connection.query("SELECT * FROM Interviews WHERE Interview_id = ?", [Interview_id], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+		connection.query("UPDATE Interviews SET ? WHERE Interview_id = ?", [interview, Interview_id], function(err, result2) {
+			if (err) throw err;
+
+			//change unverified list
+			Count_unverified_change('Interviews', '-');
+
+			Update_Result_Interview(Semester_id);
+
+			res.redirect('/verifications/interviews/');
+		});		
+	});
+})
+
+router.post('/toefls/:ID', function(req, res) {
+	var ID = req.params.ID;
+	var item = {
+		Person_in_charge: req.body.Person_in_charge,
+		Listening: req.body.Listening,
+		Reading: req.body.Reading,
+		Grammar: req.body.Grammar,
+		IsVerified: 1
+	};
+
+	connection.query('SELECT Semester_id FROM Toefls WHERE Toefl_id = ?', [ID], function(err, result) {
+		var Semester_id = result[0].Semester_id;
+
+		connection.query("SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Exit_reports.Semester_id = ?", [Semester_id], function(err, result2) {
+			var Degree = result2.Degree;
+			var convertedScore = Convert_Score_Toefl(Degree, item);
+			if (result2.length == 0) {
+				connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Toefl: convertedScore, Result: convertedScore}], function(err, result) {
+					if (err) throw err;
+				})
+			}
+			else {
+				var Result = result2[0].Teacher_recommendation + result2[0].Interview + result2[0].Grades + result2[0].Timed_writing + convertedScore;
+				connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [{Toefl: convertedScore, Result: Result}, Semester_id], function(err, result) {
+					if (err) throw err;
+				})
+			}
+		});
+	});
+
+	connection.query("UPDATE Toefls SET ? WHERE Toefl_id = ?", [item, ID], function(err, result) {
+		if (err) throw err;
+
+		Count_unverified_change('Toefls', '-');
+
+		res.redirect('/verifications/toefls');
 	});
 
 });

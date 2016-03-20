@@ -67,7 +67,20 @@ router.get('/:webformType', function(req, res, next) {
 			});
 		});
 
-	} else if (webformType == 'toefls' || webformType == 'recommendations') {
+	} else if (webformType == 'toefls' ) {
+		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id';
+		connection.query(query, function(err, results) {
+			if (err) throw err;
+
+			renderScreen(req, res, 'webforms/toefls/index', {
+				title: "Choose a student record",
+				rows: results,
+				url: "/webforms",
+				webformType: webformType
+			});
+		});
+
+	} else if (webformType == 'recommendations') {
 		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id ORDER BY Students.Student_number";
 		connection.query(query, function(err, results) {
 			if (err) throw err;
@@ -560,32 +573,25 @@ router.get('/interviews/delete/:Interview_id', function(req, res) {
 
 
 
-router.get('/toefls/:Semester_id', function(req, res) {
-	connection.query('SELECT * FROM Toefls WHERE Semester_id = ?', [req.params.Semester_id], function(err, counts) {
-		if (counts.length != 0) {
-			var error_message = 'There is an existed record belong to the same student in the semester. Jumped to edit page instead of create page.';
-			req.session.error_message = error_message;
-			res.redirect('/webforms/toefls/edit/' + req.params.Semester_id);
-		}
-		else {
-			var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
-			connection.query(query, [req.params.Semester_id], function(err, results) {
-				if (err) throw err;
+router.get('/toefls/create/:Semester_id', function(req, res) {
+	var Semester_id = req.params.Semester_id;
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	connection.query(query, [Semester_id], function(err, results) {
+		if (err) throw err;
 
-				renderScreen(req, res, 'webforms/toefls/create', {
-					title: "TOEFL",
-					result: results[0],
-					url: "/webforms"
-				});
-			});			
-		}
+		renderScreen(req, res, 'webforms/toefls/create', {
+			title: "TOEFL",
+			result: results[0],
+			url: "/webforms",
+			webformType: 'toefls'
+		});
 	});
-
 });
 
-router.post('/toefls/:Semester_id', function(req, res) {
+router.post('/toefls/create/:Semester_id', function(req, res) {
 	var query = "INSERT INTO Toefls SET ?";
 	var toefl = {
+		Person_in_charge: req.body.Person_in_charge,
 		Grammar: req.body.Grammar,
 		Listening: req.body.Listening,
 		Reading: req.body.Reading,
@@ -596,45 +602,109 @@ router.post('/toefls/:Semester_id', function(req, res) {
 	connection.query(query, toefl, function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/');
+		Count_unverified_change('Toefls', '+');
+
+		res.redirect('/webforms/toefls/');
 	});
 });
 
-router.get('/toefls/edit/:Semester_id', function(req, res) {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Semesters.Semester_id = ?";
+router.get('/toefls/edit/:ID', function(req, res) {
+	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
 
-	connection.query(query, [req.params.Semester_id], function(err, results) {
+	connection.query(query, [req.params.ID], function(err, results) {
 		if (err) throw err;
 
 		renderScreen(req, res, 'webforms/toefls/edit', {
-			title: "Verify TOEFL Score",
+			title: "TOEFL",
 			result: results[0],
-			url: "/webforms"
+			url: "/webforms",
+			webformType: 'toefls'
 		});
 	});
 });
 
-router.post('/toefls/edit/:Semester_id', function(req, res) {
-	var query = "UPDATE Toefls SET ? WHERE Semester_id = ?"
+router.post('/toefls/edit/:ID', function(req, res) {
+	var query = "UPDATE Toefls SET ? WHERE Toefl_id = ?"
+	var ID =  req.params.ID;
 	var toefl = {
+		Person_in_charge: req.body.Person_in_charge,
 		Grammar: req.body.Grammar,
 		Listening: req.body.Listening,
 		Reading: req.body.Reading,
-		IsVerified: true
+		IsVerified: false
 	};
 
-	connection.query(query, [toefl, req.params.Semester_id], function(err, result) {
+	connection.query("SELECT IsVerified, Semester_id FROM Toefls WHERE Toefl_id = ?", [ID], function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/verifications/toefl')
+		var IsVerified = result[0].IsVerified;
+
+		var Semester_id = result[0].Semester_id;
+
+		if (IsVerified == '1') {
+			Count_unverified_change('Toefls', '+');
+
+			connection.query("SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Exit_reports.Semester_id = ?", [Semester_id], function(err, result2) {
+				var Degree = result2.Degree;
+				var convertedScore = 0;
+				if (result2.length == 0) {
+					connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Toefl: convertedScore, Result: convertedScore}], function(err, result) {
+						if (err) throw err;
+					})
+				}
+				else {
+					var Result = result2[0].Teacher_recommendation + result2[0].Interview + result2[0].Grades + result2[0].Timed_writing + convertedScore;
+					connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [{Toefl: convertedScore, Result: Result}, Semester_id], function(err, result) {
+						if (err) throw err;
+					})
+				}
+			});
+		}
+
+		connection.query(query, [toefl, ID], function(err, result) {
+			if (err) throw err;
+
+			res.redirect('/webforms/toefls')
+		});
 	});
+
+
 });
 
-router.get('/toefls/delete/:Semester_id', function(req, res) {
-	connection.query("DELETE FROM Toefls WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
+router.get('/toefls/delete/:ID', function(req, res) {
+    var ID = req.params.ID;
+	connection.query("SELECT IsVerified, Semester_id FROM Toefls WHERE Toefl_id = ?", [ID], function(err, result) {
 		if (err) throw err;
+		var IsVerified = result[0].IsVerified;
 
-		res.redirect('/verifications/toefl')
+		var Semester_id = result[0].Semester_id;
+
+		if (IsVerified == '0') {
+			Count_unverified_change('Toefls', '-');
+		}
+		else {
+			connection.query("SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Exit_reports.Semester_id = ?", [Semester_id], function(err, result2) {
+				var Degree = result2.Degree;
+				var convertedScore = 0;
+				if (result2.length == 0) {
+					connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Toefl: convertedScore, Result: convertedScore}], function(err, result) {
+						if (err) throw err;
+					})
+				}
+				else {
+					var Result = result2[0].Teacher_recommendation + result2[0].Interview + result2[0].Grades + result2[0].Timed_writing + convertedScore;
+					connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [{Toefl: convertedScore, Result: Result}, Semester_id], function(err, result) {
+						if (err) throw err;
+					})
+				}
+			});
+		}
+
+		connection.query("DELETE FROM Toefls WHERE Toefl_id = ?", [ID], function(err, result) {
+				if (err) throw err;		
+		});
+
+		res.redirect('back')
 	});
 });
 
