@@ -6,10 +6,20 @@ var tools = require('./tools.js')();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-    renderScreen(req, res, 'index', {
-        title: 'Home',
-        url: '/'
-    });
+    if (req.isAuthenticated() && req.user[0].User_group == 'interviewer') {
+        renderScreen(req, res, 'index', {
+            title: 'Home',
+            url: '/',
+            isInterviewer: true
+        });
+    }
+    else {
+        renderScreen(req, res, 'index', {
+            title: 'Home',
+            url: '/'
+        });        
+    }
+
 });
 
 router.get('/test/:aa', function(req, res) {

@@ -36,21 +36,24 @@ block content
           .panel-heading.text-center Webforms
           .panel-body
               .list-group.text-center
-                a.list-group-item(href='/webforms/') Pick a student from list.
-              hr
-              .text.text-center Grades
-                .list-group
-                  a.list-group-item(href='/webforms/readings') Reading & Vocabulary
-                  a.list-group-item(href='/webforms/speakings') Speaking & Listening
-                  a.list-group-item(href='/webforms/writings') Writing & Grammar
-                  a.list-group-item(href='/webforms/toefl_preps') TOEFL Prep
-                  a.list-group-item(href='/webforms/extensive_listenings') Extensive Listening
-              hr
-              .list-group.text-center
-                a.list-group-item(href='/webforms/interviews/') Interview
-                a.list-group-item(href='/webforms/recommendations') Teacher Recommendation
-                a.list-group-item(href='/webforms/toefls') TOEFL
-                a.list-group-item(href='/webforms/timed_writings') Timed Writing
+                if isInterviewer
+                  a.list-group-item.active(href='/webforms/interviews/') Interview
+                else 
+                  a.list-group-item(href='/webforms/') Pick a student from list.
+                  hr
+                  .text.text-center Grades
+                    .list-group
+                      a.list-group-item(href='/webforms/readings') Reading & Vocabulary
+                      a.list-group-item(href='/webforms/speakings') Speaking & Listening
+                      a.list-group-item(href='/webforms/writings') Writing & Grammar
+                      a.list-group-item(href='/webforms/toefl_preps') TOEFL Prep
+                      a.list-group-item(href='/webforms/extensive_listenings') Extensive Listening
+                  hr
+                  .list-group.text-center
+                    a.list-group-item(href='/webforms/interviews/') Interview
+                    a.list-group-item(href='/webforms/recommendations') Teacher Recommendation
+                    a.list-group-item(href='/webforms/toefls') TOEFL
+                    a.list-group-item(href='/webforms/timed_writings') Timed Writing
       .col-md-4
         .panel.panel-default
           .panel-heading.text-center.strong Administrator

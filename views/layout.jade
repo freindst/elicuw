@@ -35,31 +35,34 @@ html(lang='en')
             li(class= url == '/students' ? 'active': '')
               a(href='/students') Student List
             li.dropdown(class= url == '/webforms' ? 'active': '')
-              a.dropdown-toggle(href='/webforms' data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false") Fill Forms
-              ul.dropdown-menu
-                li
-                  a(href='/webforms') Student List
-                li.divider(role="separator")
-                li.dropdown-header Grades
-                li
-                  a(href='/webforms/readings') Reading & Vocabulary
-                li
-                  a(href='/webforms/speakings') Speaking & Listening
-                li
-                  a(href='/webforms/writings') Writing & Grammar
-                li
-                  a(href='/webforms/toefl_preps') TOEFL Prep
-                li
-                  a(href='/webforms/extensive_listenings') Extensive Listening
-                li.divider(role="separator")
-                li
-                  a(href='/webforms/interviews/') Interview
-                li
-                  a(href='/webforms/recommendations') Teacher Recommendation
-                li
-                  a(href='/webforms/toefls') TOEFL
-                li
-                  a(href='/webforms/timed_writings') Timed Writing
+              if isInterviewer
+                a(href='webforms/interviews') Interview
+              else
+                a.dropdown-toggle(href='/webforms' data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false") Fill Forms
+                ul.dropdown-menu
+                  li
+                    a(href='/webforms') Student List
+                  li.divider(role="separator")
+                  li.dropdown-header Grades
+                  li
+                    a(href='/webforms/readings') Reading & Vocabulary
+                  li
+                    a(href='/webforms/speakings') Speaking & Listening
+                  li
+                    a(href='/webforms/writings') Writing & Grammar
+                  li
+                    a(href='/webforms/toefl_preps') TOEFL Prep
+                  li
+                    a(href='/webforms/extensive_listenings') Extensive Listening
+                  li.divider(role="separator")
+                  li
+                    a(href='/webforms/interviews/') Interview
+                  li
+                    a(href='/webforms/recommendations') Teacher Recommendation
+                  li
+                    a(href='/webforms/toefls') TOEFL
+                  li
+                    a(href='/webforms/timed_writings') Timed Writing
             li(class= url == '/verifications' ? 'active': '')
               a(href='/verifications') Verify
             li(class= url == '/reports' ? 'active': '')

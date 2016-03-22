@@ -7,9 +7,11 @@ var tools = require('./tools')();
 //A Router-level middleware check user's authentication before using it
 router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
-}), function(req, res, next) {
+}, function(req, res, next) {
 	isVerified(req, res, next)
-};
+}, function(req, res, next) {
+	isAdmin(req, res, next) 
+});
 
 
 
