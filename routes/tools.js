@@ -46,6 +46,9 @@ module.exports = function() {
 		//if user has logged in, assign req.user[0] to variable user
 		if (req.isAuthenticated()) {
 			options.user = req.user[0];
+			if (req.user[0].User_group == 'interviewer') {
+				options.isInterviewer = true;
+			}
 		}
 		//if previous page has passed a meesage in session, render it.
 		if (req.session.hasOwnProperty('okay_message')) {

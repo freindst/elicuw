@@ -41,7 +41,8 @@ block content
                   td= row.Section
                   td= row.Teacher_recommendation
                   td= row.Timed_writing
-                  td= row.Grades
+                  td
+                    a(href='reports/grades/#{row.Semester_id}')= row.Grades
                   td= row.Interview
                   td= row.Toefl
                   td= row.Result

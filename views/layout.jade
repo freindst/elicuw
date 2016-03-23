@@ -111,7 +111,6 @@ html(lang='en')
       .container
         block content
 
-    block script
     //
       Bootstrap core JavaScript
       ==================================================
@@ -122,9 +121,13 @@ html(lang='en')
       $('.confirmation').on('click', function () {
           return confirm('Are you sure?');
       });
+
     script(src='/dist/js/bootstrap.min.js')
+
     // IE10 viewport hack for Surface/desktop Windows 8 bug
     script(src='/assets/js/ie10-viewport-bug-workaround.js')
+    script(src='/javascript/javascript.js')
+    block scripts
   footer
     hr
     .row

@@ -64,4 +64,23 @@ router.get('/individual/:Semester_id', function(req, res) {
 	});
 });
 
+router.get('/grades/:Semester_id', function(req, res) {
+
+	var query = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_Grade ON Final_Grade.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
+	connection.query(query, [req.params.Semester_id], function(err, result) {
+		if (err) throw err;
+		if (result.length == 0) {
+			res.send("no result");
+		} else {
+
+		renderScreen(req, res, 'reports/grades', {
+			result: result[0],
+			title: 'Grades',
+			url: '/reports'
+		})			
+		}
+
+	});
+});
+
 module.exports = router;

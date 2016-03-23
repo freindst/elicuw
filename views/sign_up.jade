@@ -7,21 +7,23 @@ block content
       .col-md-6
           h2.text-center User Sign Up
           br
-          form.form-horizontal(action='/sign_up' method='post')
+          form.form-horizontal(id='sign_up' action='/sign_up' method='post')
             .form-group
               label.col-md-3.control-label(for='username') Username
               .col-md-9
                 input#username.form-control(type='text' name='username' placeholder="Username")
+                span.confirmUsername#confirmUsername
 
             .form-group
               label.col-md-3.control-label(for='password') Password
               .col-md-9
-                input#password.form-control(type='password' name='password' placeholder="Password")
+                input#password.form-control(type='password' name='password' placeholder="Password" onkeyup="checkPass(); return false;")
 
             .form-group
-              label.col-md-3.control-label(for='re_password') Re-enter Password
+              label.col-md-3.control-label(for='re_password') Confirm Password
               .col-md-9
-                input#re_password.form-control(type='password' name='re_password' placeholder="Re-enter Password")
+                input#re_password.form-control(type='password' name='re_password' placeholder="Confirm Password" onkeyup="checkPass(); return false;")
+                span.confirmMessage#confirmMessage
 
             .form-group
               label.col-md-3.control-label(for='email') E-mail
@@ -44,3 +46,5 @@ block content
               p.text-center If you have an account already, you may&nbsp
                 a.btn.btn-primary(href='/login') Login
                 | &nbspnow.
+
+
