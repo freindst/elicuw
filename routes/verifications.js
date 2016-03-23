@@ -392,23 +392,58 @@ router.post('/toefls/:ID', function(req, res) {
 		IsVerified: 1
 	};
 
-	connection.query('SELECT Semester_id FROM Toefls WHERE Toefl_id = ?', [ID], function(err, result) {
-		var Semester_id = result[0].Semester_id;
+	connection.query('SELECT Toefls.Semester_id AS Semester_id, Students.Student_id AS Student_id FROM Toefls INNER JOIN Semesters ON Toefls.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Toefl_id = ?', [ID], function(err, result) {
+		if (err) throw err;
 
-		connection.query("SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Exit_reports.Semester_id = ?", [Semester_id], function(err, result2) {
-			var Degree = result2.Degree;
-			var convertedScore = Convert_Score_Toefl(Degree, item);
-			if (result2.length == 0) {
-				connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Toefl: convertedScore, Result: convertedScore}], function(err, result) {
-					if (err) throw err;
-				})
+		var Semester_id = result[0].Semester_id;
+		var Student_id = result[0].Student_id;
+
+		connection.query('SELECT Toefls.Listening, Toefls.Reading, Toefls.Grammar, Students.Degree FROM Toefls INNER JOIN Semesters ON Semesters.Semester_id = Toefls.Semester_id INNER JOIN Students ON Students.Student_id = Semesters.Student_id WHERE Students.Student_id = ?', [Student_id], function(err, result1) {
+			if (err) throw err;
+
+			var Max_score = 0;
+			for (var i in result1) {
+				var temp = Convert_Score_Toefl(result1[i].Degree, result1[i]);
+				if (temp > Max_score) {
+					Max_score = temp;
+				}
 			}
-			else {
-				var Result = result2[0].Teacher_recommendation + result2[0].Interview + result2[0].Grades + result2[0].Timed_writing + convertedScore;
-				connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [{Toefl: convertedScore, Result: Result}, Semester_id], function(err, result) {
+
+			connection.query("SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Exit_reports.Semester_id = ?", [Semester_id], function(err, result2) {
+				var Degree = result2.Degree;
+				var convertedScore = Convert_Score_Toefl(Degree, item);
+				if (Max_score > convertedScore) {
+					convertedScore = Max_score;
+				}
+
+				if (result2.length == 0) {
+					connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Toefl: convertedScore, Result: convertedScore}], function(err, result) {
+						if (err) throw err;
+					})
+				}
+				else {
+					var Result = result2[0].Teacher_recommendation + result2[0].Interview + result2[0].Grades + result2[0].Timed_writing + convertedScore;
+					connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [{Toefl: convertedScore, Result: Result}, Semester_id], function(err, result) {
+						if (err) throw err;
+					})
+				}
+				connection.query("SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Students.Student_id = ?", [Student_id], function(err, result3) {
 					if (err) throw err;
-				})
-			}
+					for (var i in result3) {
+						var currentScore = result3[i].Toefl;
+						var Result = result3[i].Teacher_recommendation + result3[i].Interview + result3[i].Grades + result3[i].Timed_writing + convertedScore;
+						if (convertedScore > currentScore) {
+							var options = {
+								Toefl: convertedScore,
+								Result: Result
+							};
+							connection.query("UPDATE Exit_reports SET ? WHERE Semester_id = ?", [options, result3[i].Semester_id], function(err, result) {
+								if (err) throw err;
+							});
+						}
+					}
+				});
+			});
 		});
 	});
 

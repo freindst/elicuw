@@ -69,7 +69,7 @@ block content
           td= result.Toefl_preps
         if result.Extensive_listenings
           td= result.Extensive_listenings
-        td= result.Raw_grade
+        td= Math.round(result.Raw_grade * 10)/10
         td= result.Final_grade
 
 

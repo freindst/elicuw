@@ -28,12 +28,14 @@ router.get('/', function(req, res, next) {
 
 //list all semester records
 router.get('/lists/:Semester_id', function(req, res, next) {
-	var Semester_id = req.params.Semester_id;
-	renderScreen(req, res, 'webforms/list', {
-		title: 'Webform List',
-		Semester_id: Semester_id,
-		url: "/webforms"
-	});
+	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Semesters.Semester_id = ?', [req.params.Semester_id], function(err, result) {
+		renderScreen(req, res, 'webforms/list', {
+			title: 'Webform List',
+			result: result[0],
+			url: "/webforms"
+		});
+	})
+
 });
 
 //another portal to go to webform input, by choosing webform type first
