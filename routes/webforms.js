@@ -139,7 +139,7 @@ router.get('/:webformType/create/:Semester_id', function(req, res, next) {
 		next();
 	}
 	else {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
 		connection.query(query, [Semester_id], function(err, results) {
 			if (err) throw err;
 

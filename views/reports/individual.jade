@@ -54,7 +54,7 @@ block content
        td= row.Grammar
      tr
        th Total Score
-       td= row.Toefl
+       td= Math.round((row.Listening + row.Reading + row.Grammar)*10/3)
 
   h3 Concordia Unversity Wsiconsin ELI Exit Criteria
   table.table

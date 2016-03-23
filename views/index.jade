@@ -60,9 +60,9 @@ block content
           .panel-body
             if user
               .list-group.text-center
-                a(href='/users/userlist' class= user.User_group == 'admin' ? "list-group-item" : "list-group-item disabled") Verify registered user
-                a(href='/verifications' class= user.User_group == 'admin' ? "list-group-item" : "list-group-item disabled") Verify inputted data
-                a(href='/reports' class= user.User_group == 'admin' ? "list-group-item" : "list-group-item disabled") Check report
+                a(href='/users/userlist' class= user.User_group == 'admin' || 'super_user' ? "list-group-item" : "list-group-item disabled") Verify registered user
+                a(href='/verifications' class= user.User_group == 'admin' || 'super_user' ? "list-group-item" : "list-group-item disabled") Verify inputted data
+                a(href='/reports' class= user.User_group == 'admin' || 'super_user' ? "list-group-item" : "list-group-item disabled") Check report
             else
               .list-group.text-center
                 a.list-group-item(href='/users/userlist') Verify registered user
