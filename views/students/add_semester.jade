@@ -22,16 +22,16 @@ block content
                 th
                 th
             tbody
-              if students
-                each student in students
+              if results
+                each item in results
                   tr
-                    td= student.Student_number
-                    td= student.First_name
-                    td= student.Last_name
-                    td= student.Major
-                    td= student.Degree
+                    td= item.Student_number
+                    td= item.First_name
+                    td= item.Last_name
+                    td= item.Major
+                    td= item.Degree
                     td
-                      a.btn.btn-primary.btn-xs(href='/semesters/get/' + student.Student_id) semester
+                      a.btn.btn-primary.btn-xs(href='/semesters/get/' + item.Student_id) semester
               else
                 tr
                   td Empty

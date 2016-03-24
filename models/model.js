@@ -4,7 +4,7 @@ var router = express.Router();
 //define semester class
 /*
 Semester_id int NOT NULL AUTO_INCREMENT,
-Year int,
+Year int(4),
 Season varchar(10),
 Term varchar(10),
 Level varchar(10),
@@ -12,6 +12,19 @@ Section varchar(10),
 Student_id int,
 PRIMARY KEY (Semester_id),
 FOREIGN KEY (Student_id) REFERENCES Students(Student_id)
+*/
+
+//define Semester Info class
+/*
+CREATE TABLE Semester_info (
+Semester_info_id int NOT NULL AUTO_INCREMENT,
+Year int(4),
+Season varchar(10),
+Term varchar(10),
+Level varchar(10),
+Section varchar(10),
+PRIMARY KEY (Semester_info_id)
+);
 */
 
 //define student class

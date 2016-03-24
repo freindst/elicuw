@@ -30,45 +30,45 @@ block content
         .panel-heading
           h4= title + ':'
         .panel-body
-          form(action = '/semesters/edit/' + student.Student_id + '/' + semester.Semester_id method = 'post')
+          form(action = '/semesters/edit/#{student.Student_id}/#{result.Semester_id}' method = 'post')
             .form-group
               label(for='Year') Calendar Year:
-              input#Year.form-control(type='number' name='Year' value= semester.Year)
+              input#Year.form-control(type='number' name='Year' value= result.Year)
 
             .form-group
               label(for='Season') Semster:
               select.form-control(name='Season')
-                option(value='spring' selected=semester.Season=='spring') Spring
-                option(value='summer' selected=semester.Season=='summer') Summer
-                option(value='fall' selected=semester.Season=='fall') Fall
+                option(value='spring' selected=result.Season=='spring') Spring
+                option(value='summer' selected=result.Season=='summer') Summer
+                option(value='fall' selected=result.Season=='fall') Fall
 
             .form-group
               label(for='Term') Term:
               select.form-control(name='Term')
-                option(value='1' selected=semester.Term=='1') 1
-                option(value='2' selected=semester.Term=='2') 2
+                option(value='1' selected=result.Term=='1') 1
+                option(value='2' selected=result.Term=='2') 2
 
             .form-group
               label(for='Level') level
               select.form-control(name='Level')
-                option(value='Beginning A' selected=semester.Level=='Beginning A') Beginning A
-                option(value='Beginning B' selected=semester.Level=='Beginning B') Beginning B
-                option(value='Basic A' selected=semester.Level=='Basic A') Basic A
-                option(value='Basic B' selected=semester.Level=='Basic B') Basic B
-                option(value='Intemediate A' selected=semester.Level=='Intemediate A') Intemediate A
-                option(value='Intemediate B' selected=semester.Level=='Intemediate B') Intemediate B
-                option(value='Advanced A' selected=semester.Level=='Advanced A') Advanced A
-                option(value='Advanced B' selected=semester.Level=='Advanced B') Advanced B
+                option(value='Beginning A' selected=result.Level=='Beginning A') Beginning A
+                option(value='Beginning B' selected=result.Level=='Beginning B') Beginning B
+                option(value='Basic A' selected=result.Level=='Basic A') Basic A
+                option(value='Basic B' selected=result.Level=='Basic B') Basic B
+                option(value='Intemediate A' selected=result.Level=='Intemediate A') Intemediate A
+                option(value='Intemediate B' selected=result.Level=='Intemediate B') Intemediate B
+                option(value='Advanced A' selected=result.Level=='Advanced A') Advanced A
+                option(value='Advanced B' selected=result.Level=='Advanced B') Advanced B
 
             .form-group
               label(for='Section') Section
               select.form-control(name='Section')
-                option(value='0' selected=semester.Section='0') 0
-                option(value='2' selected=semester.Section='2') 2
-                option(value='3' selected=semester.Section='3') 3
-                option(value='4' selected=semester.Section='4') 4
-                option(value='5' selected=semester.Section='5') 5
-                option(value='6' selected=semester.Section='6') 6
+                option(value='0' selected=result.Section='0') 0
+                option(value='2' selected=result.Section='2') 2
+                option(value='3' selected=result.Section='3') 3
+                option(value='4' selected=result.Section='4') 4
+                option(value='5' selected=result.Section='5') 5
+                option(value='6' selected=result.Section='6') 6
 
             .form-group
               .row

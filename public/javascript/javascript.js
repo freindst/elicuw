@@ -61,7 +61,7 @@ $('#Student_number').keypress(function(e) {
   }
 
   var k = e.which;
-  if (Student_number.val().length < 8) {
+  if (Student_number.val().length < 7) {
     message.css('color', "red");
     message.text('This is a incorrect student ID. It is must be 8 digits.');
   } else {

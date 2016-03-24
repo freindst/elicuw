@@ -1,5 +1,7 @@
 extends ../layout
 
+
+
 block content
   .row
     .col-md-4
@@ -32,8 +34,9 @@ block content
         .panel-body
           form(action = '/semesters/create/' + student.Student_id method = 'post')
             .form-group
+              - var d = new Date();
               label(for='Year') Calendar Year:
-              input#Year.form-control(type='number' name='Year')
+              input#Year.form-control(type='number' name='Year' value= d.getFullYear())
 
             .form-group
               label(for='Season') Semster:

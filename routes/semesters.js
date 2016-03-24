@@ -16,15 +16,16 @@ router.use(function (req, res, next) {
 
 //get all existed semester record related to a student_id
 router.get('/get/:Student_id',  function(req, res, next) {
-	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
+	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, student) {
 		if (err) throw err;
-		connection.query("SELECT Semester_id, Year, Season, Term, Level, Section FROM Semesters WHERE Student_id = ? ORDER BY Year", [req.params.Student_id], function(err, rows) {
+
+		connection.query("SELECT Semesters.Semester_id, Semester_info.Year, Semester_info.Season, Semester_info.Term, Semester_info.Level, Semester_info.Section FROM Students LEFT JOIN Semesters ON Students.Student_id = Semesters.Student_id LEFT JOIN Semester_info ON Semesters.Semester_info_id = Semester_info.Semester_info_id WHERE Students.Student_id = ? ORDER BY Year", [req.params.Student_id], function(err, results) {
 			if (err) throw err;
 
 			renderScreen(req, res, 'semesters/get', {
 				title: 'Student Semester',
-				student: students[0],
-				rows: rows,
+				student: student[0],
+				results: results,
 				url: '/students'
 			})
 		});
@@ -45,19 +46,43 @@ router.get('/create/:Student_id', function(req, res, next) {
 });
 
 router.post('/create/:Student_id', function(req, res) {
-	var query = "INSERT INTO Semesters SET ?";
-	var semester = {
-		Year: req.body.Year,
-		Season: req.body.Season,
-		Term: req.body.Term,
-		Level: req.body.Level,
-		Section: req.body.Section,
-		Student_id: req.params.Student_id
-	};
-	connection.query(query, semester, function(err, result) {
+	var Year = req.body.Year;
+	var Season = req.body.Season;
+	var Term = req.body.Term;
+	var Level = req.body.Level;
+	var Section = req.body.Section;
+	var Student_id = req.params.Student_id;
+	connection.query("SELECT * FROM Semester_info WHERE Year = ? AND Season = ? AND Term = ? AND Level = ? AND Section = ?", [Year, Season, Term, Level, Section], function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/semesters/get/' + req.params.Student_id);
+		if (result.length == 0) {
+			var option = {
+				Year: Year,
+				Season: Season,
+				Term: Term,
+				Level: Level,
+				Section: Section
+			};
+			connection.query("INSERT INTO Semester_info SET ?", [option], function(err, result) {
+				if (err) throw err;
+
+				var Semester_info_id = result.insertId;
+				var option2 = {Student_id: Student_id, Semester_info_id: result.insertId};
+				connection.query("INSERT INTO Semesters SET ?", [option2], function(err, result) {
+					if (err) throw err;
+
+					res.redirect('/semesters/get/' + Student_id);
+				})
+			});
+		} else {
+			var Semester_info_id = result[0].Semester_info_id;
+			var option2 = {Student_id: Student_id, Semester_info_id: result.insertId};
+			connection.query("INSERT INTO semesters SET ?", [option2], function(err, result) {
+				if (err) throw err;
+
+				res.redirect('/semesters/get/' + Student_id);
+			});
+		}
 	});
 });
 
@@ -66,13 +91,13 @@ router.get('/edit/:Student_id/:Semester_id', function(req, res) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
 
-		connection.query("SELECT * FROM Semesters WHERE Semester_id = ?", [req.params.Semester_id], function(err, semesters) {
+		connection.query("SELECT * FROM Semesters INNER JOIN Semester_info ON Semesters.Semester_info_id = Semester_info.Semester_info_id WHERE Semester_id = ?", [req.params.Semester_id], function(err, result) {
 			if (err) throw err;
 
 			renderScreen(req, res, 'semesters/edit', {
 				title: 'Student Semester',
 				student: students[0],
-				semester: semesters[0],
+				result: result[0],
 				url: '/students'
 			})
 		});
@@ -80,21 +105,44 @@ router.get('/edit/:Student_id/:Semester_id', function(req, res) {
 });
 
 router.post('/edit/:Student_id/:Semester_id', function(req, res) {
-	var semester = {
-		Year: req.body.Year,
-		Season: req.body.Season,
-		Term: req.body.Term,
-		Level: req.body.Level,
-		Section: req.body.Section,
-		Student_id: req.params.Student_id
-	};
-
-	connection.query('UPDATE Semesters SET ? WHERE Semester_id = ?', [semester, req.params.Semester_id], function(err, result) {
+	var Year = req.body.Year;
+	var Season = req.body.Season;
+	var Term = req.body.Term;
+	var Level = req.body.Level;
+	var Section = req.body.Section;
+	var Student_id = req.params.Student_id;
+	var Semester_id = req.params.Semester_id;
+	connection.query("SELECT * FROM Semester_info WHERE Year = ? AND Season = ? AND Term = ? AND Level = ? AND Section = ?", [Year, Season, Term, Level, Section], function(err, result) {
 		if (err) throw err;
 
-		res.redirect('/semesters/get/' + req.params.Student_id);
-	})
-})
+		if (result.length == 0) {
+			var option = {
+				Year: Year,
+				Season: Season,
+				Term: Term,
+				Level: Level,
+				Section: Section
+			};
+			connection.query("INSERT INTO Semester_info SET ?", [option], function(err, result) {
+				if (err) throw err;
+
+				var Semester_info_id = result.insertId;
+				var option2 = {Student_id: Student_id, Semester_info_id: Semester_info_id};
+				connection.query("UPDATE Semesters SET ? WHERE Semester_id = ?", [option2, Semester_id], function(err, result) {
+					if (err) throw err;
+
+				})
+			});
+		} else {
+			var Semester_info_id = result[0].Semester_info_id;
+			var option2 = {Student_id: Student_id, Semester_info_id: Semester_info_id};
+			connection.query("UPDATE Semesters SET ? WHERE Semester_id = ?", [option2, Semester_id], function(err, result) {
+				if (err) throw err;
+			})
+		}
+		res.redirect('/semesters/get/' + Student_id);		
+	});
+});
 
 //delete a semester item
 router.get('/delete/:Student_id/:Semester_id', function(req, res) {

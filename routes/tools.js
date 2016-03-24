@@ -62,17 +62,21 @@ module.exports = function() {
 		}
 
 		if (options.hasOwnProperty('rows')) {
-			for (var i in options.rows) {
-				if (options.rows[i].hasOwnProperty('Student_number')) {
-					options.rows[i].Student_number = 'F****' + options.rows[i].Student_number.substring(5, 9)
-				}				
+			if (options.rows.length != 0 ) {
+				for (var i in options.rows) {
+					if (options.rows[i].hasOwnProperty('Student_number')) {
+						options.rows[i].Student_number = 'F****' + options.rows[i].Student_number.substring(5, 9)
+					}				
+				}
 			}
 		}
 		if (options.hasOwnProperty('results')) {
-			for (var i in options.results) {
-				if (options.results[i].hasOwnProperty('Student_number')) {
-					options.results[i].Student_number = 'F****' + options.results[i].Student_number.substring(5, 9);
-				}
+			if (options.results.length != 0) {
+				for (var i in options.results) {
+					if (options.results[i].hasOwnProperty('Student_number')) {
+						options.results[i].Student_number = 'F****' + options.results[i].Student_number.substring(5, 9);
+					}
+				}				
 			}
 		}
 		if (options.hasOwnProperty('result')) {
@@ -91,7 +95,6 @@ module.exports = function() {
 		}
 		if (options.hasOwnProperty('student')) {
 			if (options.student.hasOwnProperty('Student_number')) {
-				console.log(options.student.Student_number);
 				options.student.Student_number = 'F****' + options.student.Student_number.substring(5, 9);
 			}				
 		}
@@ -114,7 +117,7 @@ module.exports = function() {
 	);*/
 
 	this.Count_unverified_change = function(TableName, option) {
-		var query = 'UPDATE Count_unverified SET ' + TableName + '=' +  TableName + option + '1 WHERE ID = 1';
+		var query = 'UPDATE Count_unverified SET ' + TableName + '=' +  TableName + option + '1 WHERE ID = 0';
 		connection.query(query, function(err, result) {
 			if (err) throw err;
 		});

@@ -13,13 +13,13 @@ router.use(function (req, res, next) {
 
 //choose a form to input
 router.get('/', function(req, res, next) {
-	var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id';
+	var query = 'SELECT Semester_info.*, Semesters.Semester_id, Students.* FROM Students INNER JOIN Semesters ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semesters.Semester_info_id = Semester_info.Semester_info_id';
 	connection.query(query, function(err, results) {
 		if (err) throw err;
 
 		renderScreen(req, res, 'webforms/index', {
 			title: "Choose a student record",
-			rows: results,
+			results: results,
 			url: "/webforms",
 			webformType: 'lists'
 		});
@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
 
 //list all semester records
 router.get('/lists/:Semester_id', function(req, res, next) {
-	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Semesters.Semester_id = ?', [req.params.Semester_id], function(err, result) {
+	connection.query('SELECT Semester_info.*, Semesters.Semester_id, Students.* FROM Students INNER JOIN Semesters ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semesters.Semester_info_id = Semester_info.Semester_info_id WHERE Semesters.Semester_id = ?', [req.params.Semester_id], function(err, result) {
 		renderScreen(req, res, 'webforms/list', {
 			title: 'Webform List',
 			result: result[0],
@@ -44,7 +44,7 @@ router.get('/:webformType', function(req, res, next) {
 	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
 	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
 	if (webformType == 'interviews') {
-		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Final_interview.Count, Final_interview.Score FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id';
+		var query = 'SELECT Students.*, Semesters.Semester_id, Semester_info.*, Final_interview.Count, Final_interview.Score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id';
 
 		connection.query(query, function(err, results) {
 			if (err) throw err;
@@ -52,12 +52,12 @@ router.get('/:webformType', function(req, res, next) {
 			renderScreen(req, res, 'webforms/interviews/index', {
 				title: 'Choose a student record',
 				webformType: 'interviews',
-				rows: results,
+				results: results,
 				url: '/webforms'
 			});
 		});
 	} else if (webformType ==  'timed_writings') {
-		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.IsVerified FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id';
+		var query = 'SELECT Students.*, Semester_info.*, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.IsVerified, Semesters.Semester_id FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id';
 		connection.query(query, function(err, results) {
 			if (err) throw err;
 
@@ -70,7 +70,7 @@ router.get('/:webformType', function(req, res, next) {
 		});
 
 	} else if (webformType == 'toefls' ) {
-		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id';
+		var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id';
 		connection.query(query, function(err, results) {
 			if (err) throw err;
 
@@ -83,8 +83,7 @@ router.get('/:webformType', function(req, res, next) {
 		});
 
 	} else if (webformType == 'recommendations') {
-		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Final_Recommendation.Count, Final_Recommendation.Raw_score FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_Recommendation ON Semesters.Semester_id = Final_Recommendation.Semester_id';
-
+		var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Final_Recommendation.Count, Final_Recommendation.Raw_score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_Recommendation ON Final_Recommendation.Semester_id = Semesters.Semester_id';
 		connection.query(query, function(err, results) {
 			if (err) throw err;
 
@@ -97,8 +96,8 @@ router.get('/:webformType', function(req, res, next) {
 		});
 	}
 	else {
+		var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ??'
 
-		var query = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, ??, ?? , ?? AS ID FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN ?? ON Semesters.Semester_id = ??';
 		var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id'];
 		connection.query(query, option, function(err, results) {
 			if (err) throw err;
@@ -139,7 +138,7 @@ router.get('/:webformType/create/:Semester_id', function(req, res, next) {
 		next();
 	}
 	else {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+		var query = 'SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?';
 		connection.query(query, [Semester_id], function(err, results) {
 			if (err) throw err;
 
@@ -205,7 +204,7 @@ router.get('/:webformType/edit/:ID', function(req, res, next) {
 		next();
 	}
 	else {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, ?? AS ID, ??, ??, ?? FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = ?";
+		var query = "SELECT Semesters.Semester_id, Students.*, Semester_info.*, ?? AS ID, ??, ??, ?? FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = ?";
 
 		var option = [
 		TableName + '.' + IndexName,
@@ -421,7 +420,7 @@ router.get('/:webformType/delete/:ID', function(req, res, next) {
 
 router.get('/interviews/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
-	var userQuery = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Semesters.Semester_id = ?';
+	var userQuery = 'SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?';
 	var interviewQuery = 'SELECT * FROM Interviews WHERE Semester_id = ?';
 
 	connection.query(userQuery, [Semester_id], function (err, student) {
@@ -451,7 +450,7 @@ router.get('/interviews/create/:Semester_id', function(req, res) {
 			res.redirect('back');
 		}
 		else {
-			var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?";
+			var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?";
 			connection.query(query, [Semester_id], function(err, result) {
 				if (err) throw err;
 
@@ -501,7 +500,7 @@ router.post('/interviews/create/:Semester_id', function(req, res) {
 
 
 router.get('/interviews/edit/:Interview_id', function(req, res) {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.Interview_id = ?";
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, Interviews.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.Interview_id = ?";
 
 	connection.query(query, [req.params.Interview_id], function(err, results) {
 		if (err) throw err;
@@ -578,7 +577,7 @@ router.get('/interviews/delete/:Interview_id', function(req, res) {
 
 router.get('/toefls/create/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [Semester_id], function(err, results) {
 		if (err) throw err;
 
@@ -612,7 +611,7 @@ router.post('/toefls/create/:Semester_id', function(req, res) {
 });
 
 router.get('/toefls/edit/:ID', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
 
 	connection.query(query, [req.params.ID], function(err, results) {
 		if (err) throw err;
@@ -713,7 +712,7 @@ router.get('/toefls/delete/:ID', function(req, res) {
 
 router.get('/recommendations/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
-	var userQuery = 'SELECT Semesters.Semester_id, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id WHERE Semesters.Semester_id = ?';
+	var userQuery = 'SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?';
 	var recommendationQuery = 'SELECT * FROM Recommendations WHERE Semester_id = ?';
 
 	connection.query(userQuery, [Semester_id], function (err, student) {
@@ -733,7 +732,7 @@ router.get('/recommendations/:Semester_id', function(req, res) {
 });
 
 router.get('/recommendations/create/:Semester_id', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
 		if (err) throw err;
 
@@ -780,7 +779,7 @@ router.post('/recommendations/create/:Semester_id', function(req, res) {
 
 router.get('/recommendations/edit/:Recommendation_id', function(req, res) {
 	var ID = req.params.Recommendation_id;
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
+	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
 
 	connection.query(query, [ID], function(err, results) {
 		if (err) throw err;
@@ -851,7 +850,7 @@ router.get('/recommendations/delete/:Recommendation_id', function(req, res) {
 
 router.get('/timed_writings/create/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id WHERE Semesters.Semester_id = ?"
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [Semester_id], function(err, results) {
 		if (err) throw err;
 
@@ -883,7 +882,7 @@ router.post('/timed_writings/create/:Semester_id', function(req, res) {
 });
 
 router.get('/timed_writings/edit/:ID', function(req, res) {
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.Person_in_charge, Timed_writings.IsVerified FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.Timed_writing_id = ?";
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.Person_in_charge, Timed_writings.IsVerified FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.Timed_writing_id = ?";
 
 	connection.query(query, [req.params.ID], function(err, results) {
 		if (err) throw err;

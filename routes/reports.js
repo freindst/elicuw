@@ -34,7 +34,7 @@ FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 
 //retrieve all records in exit report table
 router.get('/', function(req, res) {
-	connection.query('SELECT * FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students on Semesters.Student_id=Students.Student_id', function(err, results) {
+	connection.query('SELECT Exit_reports.*, Students.*, Semester_info.* FROM Exit_reports INNER JOIN Semesters ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Students on Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id', function(err, results) {
 		renderScreen(req, res, 'reports/exit_report', {
 			title: 'Exit Report List',
 			url: '/reports',
@@ -43,14 +43,10 @@ router.get('/', function(req, res) {
 	});
 });
 
-router.get('/grade/:Semester_id', function(req, res) {
-
-});
-
 
 //get individual report
 router.get('/individual/:Semester_id', function(req, res) {
-	var query = 'SELECT * FROM Semesters AS se INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Toefls AS t ON t.Semester_id = se.Semester_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
+	var query = 'SELECT * FROM Semester_info AS si INNER JOIN Semesters AS se ON si.Semester_info_id = se.Semester_info_id INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Toefls AS t ON t.Semester_id = se.Semester_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
 	connection.query(query , [req.params.Semester_id], function(err, result) {
 /*		res.render('reports/individual', {
 			row: results[0],
@@ -66,7 +62,7 @@ router.get('/individual/:Semester_id', function(req, res) {
 
 router.get('/grades/:Semester_id', function(req, res) {
 
-	var query = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id LEFT JOIN Final_Grade ON Final_Grade.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
+	var query = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_Grade ON Final_Grade.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
 	connection.query(query, [req.params.Semester_id], function(err, result) {
 		if (err) throw err;
 		if (result.length == 0) {

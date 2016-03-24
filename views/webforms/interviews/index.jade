@@ -23,8 +23,8 @@ block content
                 th Interview Number
                 th Interview Score
             tbody
-              if rows
-                each row in rows
+              if results
+                each row in results
                   tr
                     td
                       a.btn.btn-primary.btn-xs(href='/webforms/interviews/#{row.Semester_id}/') Click

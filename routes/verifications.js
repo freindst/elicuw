@@ -14,10 +14,10 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', function(req, res) {
-	connection.query("SELECT * FROM Count_unverified WHERE ID = 1", function(err, result) {
+	connection.query("SELECT * FROM Count_unverified WHERE ID = 0", function(err, result) {
 		if (err) throw err;
 
-		var all = -1;
+		var all = 0;
 		for (var key in result[0]) {
 			all += result[0][key];
 		}
@@ -34,11 +34,11 @@ router.get('/', function(req, res) {
 
 router.get('/:webformType', function(req, res) {
 	var webformType = req.params.webformType;
-	var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, ?? AS ID FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = FALSE ORDER BY Semesters.Year DESC, Semesters.Season DESC";
-	connection.query("SELECT * FROM Count_unverified WHERE ID = 1", function(err, result) {
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = FALSE ORDER BY Semester_info.Year DESC, Semester_info.Season DESC";
+	connection.query("SELECT * FROM Count_unverified WHERE ID = 0", function(err, result) {
 		if (err) throw err;
 
-		var all = -1;
+		var all = 0;
 		for (var key in result[0]) {
 			all += result[0][key];
 		}
@@ -91,7 +91,7 @@ router.get('/:webformType/:ID', function(req, res) {
 			break;
 	}
 	if (webformType == 'interviews') {
-		var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.Interview_id = ?";
+		var query = "SELECT Students.*, Semester_info.*, Interviews.* FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Interviews ON Semesters.Semester_id = Interviews.Semester_id WHERE Interviews.Interview_id = ?";
 
 		connection.query(query, [ID], function(err, results) {
 			if (err) throw err;
@@ -104,7 +104,7 @@ router.get('/:webformType/:ID', function(req, res) {
 		});
 	}
 	else if ( webformType == 'timed_writings') {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.Person_in_charge, Timed_writings.IsVerified FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.Timed_writing_id = ?";
+		var query = "SELECT Students.*, Semester_info.*, Timed_writings.* FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Timed_writings ON Semesters.Semester_id = Timed_writings.Semester_id WHERE Timed_writings.Timed_writing_id = ?";
 
 		connection.query(query, [req.params.ID], function(err, results) {
 			if (err) throw err;
@@ -118,7 +118,7 @@ router.get('/:webformType/:ID', function(req, res) {
 		});
 	}
 	else if ( webformType == 'toefls' ) {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Students.Major, Students.Degree, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
+		var query = "SELECT Students.*, Semester_info.*, Toefls.* FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
 
 		connection.query(query, [ID], function(err, results) {
 			if (err) throw err;
@@ -132,7 +132,7 @@ router.get('/:webformType/:ID', function(req, res) {
 		});
 	}
 	else if ( webformType == 'recommendations') {
-	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
+	var query = "SELECT Students.*, Semester_info.*, Recommendations.* FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
 
 	connection.query(query, [ID], function(err, results) {
 		if (err) throw err;
@@ -145,7 +145,7 @@ router.get('/:webformType/:ID', function(req, res) {
 	});
 	}
 	else {
-		var query = "SELECT Semesters.Semester_id, Students.Student_number, Students.First_name, Students.Last_name, Semesters.Year, Semesters.Season, Semesters.Term, Semesters.Level, Semesters.Section, ?? AS ID, ??, ??, ?? FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = ?";
+		var query = "SELECT Students.*, Semester_info.*, Semesters.Semester_id, ?? AS ID, ??, ??, ?? FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = ?";
 
 		var option = [
 		TableName + '.' + IndexName,

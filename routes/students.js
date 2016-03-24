@@ -55,12 +55,12 @@ router.post('/create', function(req, res) {
 
 //Directly add a semester record to a student by picking a student in the list
 router.get('/add_semester', function(req, res, next) {
-	connection.query('SELECT * FROM Students', function(err, students) {
+	connection.query('SELECT * FROM Students', function(err, results) {
 		if (err) throw err;
 		
 		renderScreen(req, res, 'students/add_semester', {
 			title: 'Student List',
-			students: students,
+			results: results,
 			url: "/students"
 		});
 	});
@@ -75,7 +75,7 @@ router.get('/edit/:Student_id', function(req, res, next) {
 
 		renderScreen(req, res, 'students/edit', {
 			title: 'Edit Student File',
-			student: student[0],
+			edit: student[0],
 			url: "/students"
 		});
 	});
@@ -84,7 +84,7 @@ router.get('/edit/:Student_id', function(req, res, next) {
 router.post('/edit/:Student_id', function(req, res) {
 	var Student_id = req.params.Student_id;
 	var student = {
-		Student_number: req.body.Student_number,
+		Student_number: 'F' + req.body.Student_number,
 		First_name: req.body.First_name,
 		Last_name: req.body.Last_name,
 		Major: req.body.Major,
