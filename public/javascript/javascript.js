@@ -50,3 +50,27 @@ $("#sign_up").submit(function( event ) {
 		return;
 	}
 })
+
+$('#Student_number').keypress(function(e) {
+  var Student_number = $('#Student_number');
+  var message = $('#checkID');
+
+  var digits = [];
+  for (i = 48; i < 58; i++) {
+    digits.push(i);
+  }
+
+  var k = e.which;
+  if (Student_number.val().length < 8) {
+    message.css('color', "red");
+    message.text('This is a incorrect student ID. It is must be 8 digits.');
+  } else {
+    message.css('color', "green");
+    message.text('Correct!');
+  }
+  
+
+  if (digits.indexOf(k) < 0) {
+    e.preventDefault();
+  }
+})

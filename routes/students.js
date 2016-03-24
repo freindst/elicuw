@@ -17,12 +17,12 @@ router.use(function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	connection.query('SELECT * FROM Students', function(err, students) {
+	connection.query('SELECT * FROM Students', function(err, results) {
 		if (err) throw err;
 
 		renderScreen(req, res, 'students/index', {
 			title: 'Student List',
-			students: students,
+			results: results,
 			url: '/students',			
 		});
 	});

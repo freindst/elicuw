@@ -51,13 +51,13 @@ router.get('/grade/:Semester_id', function(req, res) {
 //get individual report
 router.get('/individual/:Semester_id', function(req, res) {
 	var query = 'SELECT * FROM Semesters AS se INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Toefls AS t ON t.Semester_id = se.Semester_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
-	connection.query(query , [req.params.Semester_id], function(err, results) {
+	connection.query(query , [req.params.Semester_id], function(err, result) {
 /*		res.render('reports/individual', {
 			row: results[0],
 			title: 'Individual Report'
 		});*/
 		renderScreen(req, res,'reports/individual', {
-			row: results[0],
+			result: result[0],
 			title: 'Individual Report',
 			url: '/reports'
 		});

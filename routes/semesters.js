@@ -18,7 +18,6 @@ router.use(function (req, res, next) {
 router.get('/get/:Student_id',  function(req, res, next) {
 	connection.query("SELECT * FROM Students WHERE Student_id = ?", [req.params.Student_id], function(err, students) {
 		if (err) throw err;
-
 		connection.query("SELECT Semester_id, Year, Season, Term, Level, Section FROM Semesters WHERE Student_id = ? ORDER BY Year", [req.params.Student_id], function(err, rows) {
 			if (err) throw err;
 

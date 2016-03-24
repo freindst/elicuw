@@ -12,7 +12,10 @@ block content
               label.col-md-4.control-label(for='Student_number') Student Number:
               .input-group.col-md-8
                 span#basic-addon1.input-group-addon F
-                input#Student_number.form-control(type='number', name='Student_number', value='', placeholder="00000000", aria-describeby='basic-addon1')
+                input#Student_number.form-control(type='text', name='Student_number', value='', placeholder="00000000", maxlength="8", aria-describeby='basic-addon1')
+              .row
+                .col-md-8.col-md-offset-4
+                  span#checkID.checkID
 
             .form-group
               label.col-md-4.control-label(for='First_name') First Name:

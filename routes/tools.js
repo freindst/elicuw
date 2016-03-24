@@ -60,6 +60,41 @@ module.exports = function() {
 			options.error_message = req.session.error_message;
 			delete req.session.error_message;
 		}
+
+		if (options.hasOwnProperty('rows')) {
+			for (var i in options.rows) {
+				if (options.rows[i].hasOwnProperty('Student_number')) {
+					options.rows[i].Student_number = 'F****' + options.rows[i].Student_number.substring(5, 9)
+				}				
+			}
+		}
+		if (options.hasOwnProperty('results')) {
+			for (var i in options.results) {
+				if (options.results[i].hasOwnProperty('Student_number')) {
+					options.results[i].Student_number = 'F****' + options.results[i].Student_number.substring(5, 9);
+				}
+			}
+		}
+		if (options.hasOwnProperty('result')) {
+			for (var i in options.result) {
+				if (options.result.hasOwnProperty('Student_number')) {
+					options.result.Student_number = 'F****' + options.result.Student_number.substring(5, 9);
+				}				
+			} 				
+		}
+		if (options.hasOwnProperty('students')) {
+			for (var i in options.students) {
+				if (options.students[i].hasOwnProperty('Student_number')) {
+					options.students[i].Student_number = 'F****' + options.students[i].Student_number.substring(5, 9);
+				}				
+			}
+		}
+		if (options.hasOwnProperty('student')) {
+			if (options.student.hasOwnProperty('Student_number')) {
+				console.log(options.student.Student_number);
+				options.student.Student_number = 'F****' + options.student.Student_number.substring(5, 9);
+			}				
+		}
 		res.render(view, options)
 	}
 

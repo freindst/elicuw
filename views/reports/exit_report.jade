@@ -11,7 +11,6 @@ block content
           table.table.table-striped
             thead
               tr
-                th
                 th Student ID
                 th First Name
                 th Last Name
@@ -26,11 +25,10 @@ block content
                 th Interview
                 th TOEFL
                 th Result
+                th Report
             tbody
               each row in rows
                 tr
-                  td
-                    a.btn.btn-primary.btn-xs(href='/reports/individual/' + row.Semester_id) export
                   td= row.Student_number
                   td= row.First_name
                   td= row.Last_name
@@ -46,3 +44,5 @@ block content
                   td= row.Interview
                   td= row.Toefl
                   td= row.Result
+                  td
+                    a.btn.btn-primary.btn-xs(href='/reports/individual/' + row.Semester_id) Exit Report

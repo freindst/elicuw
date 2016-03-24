@@ -7,34 +7,34 @@ block content
   table.table
     tr
       th First Name
-      td= row.First_name
+      td= result.First_name
     tr
       th Last Name
-      td= row.Last_name
+      td= result.Last_name
     tr
       th Student ID
-      td= row.Student_number
+      td= result.Student_number
     tr
       th School Year
-      td= row.Year
+      td= result.Year
     tr
       th Major
-      td= row.Major
+      td= result.Major
     tr
       th Degree
-      td= row.Degree
+      td= result.Degree
     tr
       th Semester
-      td= row.Season
+      td= result.Season
     tr
       th Term
-      td= row.Term
+      td= result.Term
     tr
       th Level
-      td= row.Level
+      td= result.Level
     tr
       th Section
-      td= row.Section
+      td= result.Section
 
   hr
 
@@ -45,16 +45,16 @@ block content
        th Converted Score
      tr
        th Listening
-       td= row.Listening
+       td= result.Listening
      tr
        th Reading
-       td= row.Reading
+       td= result.Reading
      tr
        th Grammar
-       td= row.Grammar
+       td= result.Grammar
      tr
        th Total Score
-       td= Math.round((row.Listening + row.Reading + row.Grammar)*10/3)
+       td= Math.round((result.Listening + result.Reading + result.Grammar)*10/3)
 
   h3 Concordia Unversity Wsiconsin ELI Exit Criteria
   table.table
@@ -63,22 +63,22 @@ block content
       th Converted Score (out of 20)
     tr
       th Teacher Recommendations
-      td= row.Teacher_recommendation
+      td= result.Teacher_recommendation
     tr
       th Grades
-      td= row.Grades
+      td= result.Grades
     tr
       th Timed Writing
-      td= row.Timed_writing
+      td= result.Timed_writing
     tr
       th Interviews
-      td= row.Interview
+      td= result.Interview
     tr
       th TOEFL
-      td= row.Toefl
+      td= result.Toefl
     tr
       th Total
-      td= row.Result
+      td= result.Result
 
   p Students who earn 70 or more points are eligible to exit the English Language institue.
   p You have made good progress this term, and you will move on to the next level in the ELI.
