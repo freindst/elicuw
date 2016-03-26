@@ -54,6 +54,7 @@ router.post('/create/:Student_id', function(req, res) {
 	var Student_id = req.params.Student_id;
 	connection.query("SELECT * FROM Semester_info WHERE Year = ? AND Season = ? AND Term = ? AND Level = ? AND Section = ?", [Year, Season, Term, Level, Section], function(err, result) {
 		if (err) throw err;
+		console.log(result);
 
 		if (result.length == 0) {
 			var option = {
@@ -76,8 +77,8 @@ router.post('/create/:Student_id', function(req, res) {
 			});
 		} else {
 			var Semester_info_id = result[0].Semester_info_id;
-			var option2 = {Student_id: Student_id, Semester_info_id: result.insertId};
-			connection.query("INSERT INTO semesters SET ?", [option2], function(err, result) {
+			var option2 = {Student_id: Student_id, Semester_info_id: Semester_info_id};
+			connection.query("INSERT INTO Semesters SET ?", [option2], function(err, result) {
 				if (err) throw err;
 
 				res.redirect('/semesters/get/' + Student_id);

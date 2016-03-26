@@ -3,14 +3,14 @@ extends ../../layout
 block content
   .row
     .col-md-12
-      .panel.panel-primary
+      .panel.panel-default
         .panel-heading
           h4= title
         .panel-body
           .container-fluid
             ul.nav.nav-pills
               li.dropdown.active
-                a.dropdown-toggle(data-toggle='dropdown' href='/' role='button' aria-haspopup='true' aria-expanded='false') All Classes
+                a.dropdown-toggle(data-toggle='dropdown' href='/' role='button' aria-haspopup='true' aria-expanded='false')= thisSemester.Year + ' - ' + thisSemester.Season + ' - ' + thisSemester.Term + ' - ' + thisSemester.Level + ' - ' + thisSemester.Section       
                   span.caret
                 ul.dropdown-menu
                   li
@@ -18,7 +18,7 @@ block content
                   li.divider(role='separator')
                   each semester in semesters
                     li
-                      a(href='/webforms/#{webformType}/semester/#{semester.Semester_info_id}')= semester.Year + ' - ' + semester.Season + ' - ' + semester.Term + ' - ' + semester.Level + ' - ' + semester.Section
+                      a(href='/webforms/#{webformType}/semester/#{semester.Semester_info_id}')= semester.Year + ' - ' + semester.Season + ' - ' + semester.Term + ' - ' + semester.Level + ' - ' + semester.Section 
           table.table.table-striped
             thead
               tr
@@ -32,14 +32,14 @@ block content
                 th Term
                 th Level
                 th Section
-                th Interview Number
-                th Interview Score
+                th Recommendation Number
+                th Raw Score
             tbody
-              if results
-                each row in results
+              if rows
+                each row in rows
                   tr
                     td
-                      a.btn.btn-primary.btn-xs(href='/webforms/interviews/#{row.Semester_id}/') Click
+                      a.btn.btn-primary.btn-xs(href='/webforms/#{webformType}/#{row.Semester_id}/') Click
                     td= row.Student_number
                     td= row.First_name
                     td= row.Last_name
@@ -53,7 +53,7 @@ block content
                       td.yes= row.Count
                     else
                       td.no= 0
-                    td= row.Score || 0
+                    td= row.Raw_score || 0
               else
                 tr
                   td Empty

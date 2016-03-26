@@ -43,73 +43,82 @@ router.get('/:webformType', function(req, res, next) {
 	var webformType = req.params.webformType;
 	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
 	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
-	if (webformType == 'interviews') {
-		var query = 'SELECT Students.*, Semesters.Semester_id, Semester_info.*, Final_interview.Count, Final_interview.Score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id';
+	connection.query('SELECT DISTINCT Semester_info.Semester_info_id, Semester_info.* FROM Semester_info INNER JOIN Semesters ON Semesters.Semester_info_id = Semester_info.Semester_info_id', function(err, semesters) {
+		if (err) throw err;
 
-		connection.query(query, function(err, results) {
-			if (err) throw err;
+		if (webformType == 'interviews') {
+			var query = 'SELECT Students.*, Semesters.Semester_id, Semester_info.*, Final_interview.Count, Final_interview.Score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id';
 
-			renderScreen(req, res, 'webforms/interviews/index', {
-				title: 'Choose a student record',
-				webformType: 'interviews',
-				results: results,
-				url: '/webforms'
+			connection.query(query, function(err, results) {
+				if (err) throw err;
+
+				renderScreen(req, res, 'webforms/interviews/index', {
+					title: 'Choose a student record',
+					webformType: 'interviews',
+					results: results,
+					url: '/webforms',
+					semesters: semesters,
+					webformType: webformType
+				});
 			});
-		});
-	} else if (webformType ==  'timed_writings') {
-		var query = 'SELECT Students.*, Semester_info.*, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.IsVerified, Semesters.Semester_id FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id';
-		connection.query(query, function(err, results) {
-			if (err) throw err;
+		} else if (webformType == 'timed_writings') {
+			var query = 'SELECT Students.*, Semester_info.*, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.IsVerified, Semesters.Semester_id FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id';
+			connection.query(query, function(err, results) {
+				if (err) throw err;
 
-			renderScreen(req, res, 'webforms/timed_writings/index', {
-				title: "Choose a student record",
-				rows: results,
-				url: "/webforms",
-				webformType: webformType
+				renderScreen(req, res, 'webforms/timed_writings/index', {
+					title: "Choose a student record",
+					rows: results,
+					semesters: semesters,
+					url: "/webforms",
+					webformType: webformType
+				});				
 			});
-		});
+		} else if (webformType == 'toefls' ) {
+			var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id';
+			connection.query(query, function(err, results) {
+				if (err) throw err;
 
-	} else if (webformType == 'toefls' ) {
-		var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id';
-		connection.query(query, function(err, results) {
-			if (err) throw err;
-
-			renderScreen(req, res, 'webforms/toefls/index', {
-				title: "Choose a student record",
-				rows: results,
-				url: "/webforms",
-				webformType: webformType
+				renderScreen(req, res, 'webforms/toefls/index', {
+					title: "Choose a student record",
+					rows: results,
+					semesters: semesters,
+					url: "/webforms",
+					webformType: webformType
+				});
 			});
-		});
 
-	} else if (webformType == 'recommendations') {
-		var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Final_Recommendation.Count, Final_Recommendation.Raw_score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_Recommendation ON Final_Recommendation.Semester_id = Semesters.Semester_id';
-		connection.query(query, function(err, results) {
-			if (err) throw err;
+		} else if (webformType == 'recommendations') {
+			var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Final_Recommendation.Count, Final_Recommendation.Raw_score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_Recommendation ON Final_Recommendation.Semester_id = Semesters.Semester_id';
+			connection.query(query, function(err, results) {
+				if (err) throw err;
 
-			renderScreen(req, res, 'webforms/recommendations/index', {
-				title: 'Choose a student record',
-				webformType: webformType,
-				rows: results,
-				url: '/webforms'
+				renderScreen(req, res, 'webforms/recommendations/index', {
+					title: 'Choose a student record',
+					webformType: webformType,					
+					semesters: semesters,
+					rows: results,
+					url: '/webforms'
+				});
 			});
-		});
-	}
-	else {
-		var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ??'
+		}
+		else {
+			var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ??'
 
-		var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id'];
-		connection.query(query, option, function(err, results) {
-			if (err) throw err;
+			var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id'];
+			connection.query(query, option, function(err, results) {
+				if (err) throw err;
 
-			renderScreen(req, res, 'webforms/grades/index', {
-				title: 'Choose a student record',
-				webformType: webformType,
-				rows: results,
-				url: '/webforms'				
+				renderScreen(req, res, 'webforms/grades/index', {
+					title: 'Choose a student record',
+					webformType: webformType,					
+					semesters: semesters,
+					rows: results,
+					url: '/webforms'				
+				});
 			});
-		});
-	}
+		}
+	})
 });
 
 
@@ -416,7 +425,198 @@ router.get('/:webformType/delete/:ID', function(req, res, next) {
 	}
 });
 
+router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
+	var webformType = req.params.webformType;
+	var Semester_info_id = req.params.Semester_info_id;
+	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
+	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
 
+
+	var query1 = 'SELECT * FROM Semester_info WHERE Semester_info_id = ?';
+	connection.query(query1, [Semester_info_id], function(err, thisSemester) {
+		if (err) throw err;
+		connection.query('SELECT DISTINCT Semester_info.Semester_info_id, Semester_info.* FROM Semester_info INNER JOIN Semesters ON Semesters.Semester_info_id = Semester_info.Semester_info_id', function(err, semesters) {
+			if (err) throw err;
+
+			if (webformType == 'timed_writings') {
+				var query2 = 'SELECT Students.*, Semester_info.*, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.IsVerified, Semesters.Semester_id FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id WHERE Semester_info.Semester_info_id = ?';
+				connection.query(query2, [Semester_info_id], function(err, results) {
+					if (err) throw err;
+
+
+					connection.query('SELECT COUNT(*) AS Number FROM Semesters LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_info_id = ? AND Timed_writings.Score IS null', [Semester_info_id], function(err, result) {
+						if (err) throw err;
+
+						renderScreen(req, res, 'webforms/timed_writings/semester_all', {
+							title: "Choose a student record",
+							rows: results,
+							semesters: semesters,
+							thisSemester: thisSemester[0],
+							number: result[0].Number,
+							url: "/webforms",
+							webformType: webformType
+						});						
+					});			
+				});		
+			}
+			else if (webformType == 'interviews') {
+				var query2 = 'SELECT Students.*, Semesters.Semester_id, Semester_info.*, Final_interview.Count, Final_interview.Score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_interview ON Semesters.Semester_id = Final_interview.Semester_id WHERE Semester_info.Semester_info_id = ?';
+				connection.query(query2, [Semester_info_id], function(err, results) {
+					if (err) throw err;
+
+
+					renderScreen(req, res, 'webforms/interviews/semester_all', {
+						title: 'Choose a student record',
+						rows: results,
+						semesters: semesters,
+						thisSemester: thisSemester[0],
+						url: "/webforms",
+						webformType: webformType
+					});
+				});
+			}
+			else if (webformType == 'recommendations') {
+				var query2 = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Final_Recommendation.Count, Final_Recommendation.Raw_score FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_Recommendation ON Final_Recommendation.Semester_id = Semesters.Semester_id WHERE Semester_info.Semester_info_id = ?';
+				connection.query(query2, [Semester_info_id], function(err, results) {
+					if (err) throw err;
+
+					renderScreen(req, res, 'webforms/recommendations/semester_all', {
+						title: 'Choose a student record',
+						rows: results,
+						semesters: semesters,
+						thisSemester: thisSemester[0],
+						url: "/webforms",
+						webformType: webformType
+					});
+				});
+			}
+			else if (webformType == 'toefls') {
+				var query2 = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id WHERE Semester_info.Semester_info_id = ?';
+				connection.query(query2, [Semester_info_id], function(err, results) {
+					if (err) throw err;
+
+					connection.query('SELECT COUNT(*) AS Number FROM Semesters LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_info_id = ? AND (Toefls.Listening IS null OR Toefls.Reading IS null OR Toefls.Grammar IS null)', [Semester_info_id], function(err, result) {
+						if (err) throw err;
+
+						renderScreen(req, res, 'webforms/toefls/semester_all', {
+							title: "Choose a student record",
+							rows: results,
+							semesters: semesters,
+							thisSemester: thisSemester[0],
+							number: result[0].Number,
+							url: "/webforms",
+							webformType: webformType
+						});						
+					});			
+				});				
+
+			}
+			else {
+				var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ?? WHERE Semester_info.Semester_info_id = ?'
+
+				var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id', Semester_info_id];
+				connection.query(query, option, function(err, results) {
+					if (err) throw err;
+
+
+
+					connection.query('SELECT COUNT(*) AS Number FROM Semesters LEFT JOIN ?? ON ?? = Semesters.Semester_id WHERE Semesters.Semester_info_id = ? AND ?? IS NULL', [TableName, TableName+'.Semester_id', Semester_info_id, TableName + '.Score'], function(err, result) {
+						if (err) throw err;
+
+						renderScreen(req, res, 'webforms/grades/semester_all', {
+							title: "Choose a student record",
+							rows: results,
+							semesters: semesters,
+							thisSemester: thisSemester[0],
+							number: result[0].Number,
+							url: "/webforms",
+							webformType: webformType				
+						});						
+					});
+				});
+			}
+		});
+	});
+});
+
+router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, res) {
+	var webformType = req.params.webformType;
+	var Semester_info_id = req.params.Semester_info_id;
+	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
+	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
+
+	connection.query('SELECT DISTINCT Semester_info.Semester_info_id, Semester_info.* FROM Semester_info INNER JOIN Semesters ON Semesters.Semester_info_id = Semester_info.Semester_info_id', function(err, semesters) {
+		if (err) throw err;
+
+		var query1 = 'SELECT * FROM Semester_info WHERE Semester_info_id = ?';
+		connection.query(query1, [Semester_info_id], function(err, thisSemester) {
+			if (err) throw err;
+
+			if (webformType == 'timed_writings') {
+				var query2 = 'SELECT Students.*, Semester_info.*, Timed_writings.Timed_writing_id AS ID, Timed_writings.Score, Timed_writings.IsVerified, Semesters.Semester_id FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id WHERE Semester_info.Semester_info_id = ? AND Timed_writings.Score IS null';
+				connection.query(query2, [Semester_info_id], function(err, results) {
+					if (err) throw err;
+
+					connection.query('SELECT COUNT(*) AS Number FROM Semesters LEFT JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_info_id = ? AND Timed_writings.Score IS null', [Semester_info_id], function(err, result) {
+						if (err) throw err;
+
+						renderScreen(req, res, 'webforms/timed_writings/semester_unfinished', {
+							title: "Choose a student record",
+							rows: results,
+							semesters: semesters,
+							thisSemester: thisSemester[0],
+							number: result[0].Number,
+							url: "/webforms",
+							webformType: webformType
+						});						
+					});			
+				});		
+			}
+			else if (webformType == 'toefls') {
+				var query2 = 'SELECT Students.*, Semester_info.*, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Semesters.Semester_id FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id WHERE Semester_info.Semester_info_id = ? AND (Toefls.Listening IS null OR Toefls.Reading IS null OR Toefls.Grammar IS null)';
+				connection.query(query2, [Semester_info_id], function(err, results) {
+					if (err) throw err;
+
+					connection.query('SELECT COUNT(*) AS Number FROM Semesters LEFT JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_info_id = ? AND (Toefls.Listening IS null OR Toefls.Reading IS null OR Toefls.Grammar IS null)', [Semester_info_id], function(err, result) {
+						if (err) throw err;
+
+						renderScreen(req, res, 'webforms/toefls/semester_unfinished', {
+							title: "Choose a student record",
+							rows: results,
+							semesters: semesters,
+							thisSemester: thisSemester[0],
+							number: result[0].Number,
+							url: "/webforms",
+							webformType: webformType
+						});						
+					});			
+				});
+			}
+			else if (webformType == 'readings' || webformType == 'writings' || webformType == 'speaksings' || webformType == 'Toefl_preps' || webformType == 'extensive_listenings') {
+				var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ?? WHERE Semester_info.Semester_info_id = ? AND ?? IS NULL'
+
+				var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id', Semester_info_id, TableName + '.Score'];
+				connection.query(query, option, function(err, results) {
+					if (err) throw err;
+
+					connection.query('SELECT COUNT(*) AS Number FROM Semesters LEFT JOIN ?? ON ?? = Semesters.Semester_id WHERE Semesters.Semester_info_id = ? AND ?? IS NULL', [TableName, TableName+'.Semester_id', Semester_info_id, TableName + '.Score'], function(err, result) {
+						if (err) throw err;
+
+						renderScreen(req, res, 'webforms/grades/semester_unfinished', {
+							title: "Choose a student record",
+							rows: results,
+							semesters: semesters,
+							thisSemester: thisSemester[0],
+							number: result[0].Number,
+							url: "/webforms",
+							webformType: webformType				
+						});						
+					});
+				});
+			}
+		});
+	});
+});
 
 router.get('/interviews/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;

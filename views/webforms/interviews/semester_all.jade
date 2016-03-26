@@ -10,7 +10,7 @@ block content
           .container-fluid
             ul.nav.nav-pills
               li.dropdown.active
-                a.dropdown-toggle(data-toggle='dropdown' href='/' role='button' aria-haspopup='true' aria-expanded='false') All Classes
+                a.dropdown-toggle(data-toggle='dropdown' href='/' role='button' aria-haspopup='true' aria-expanded='false')= thisSemester.Year + ' - ' + thisSemester.Season + ' - ' + thisSemester.Term + ' - ' + thisSemester.Level + ' - ' + thisSemester.Section       
                   span.caret
                 ul.dropdown-menu
                   li
@@ -18,7 +18,7 @@ block content
                   li.divider(role='separator')
                   each semester in semesters
                     li
-                      a(href='/webforms/#{webformType}/semester/#{semester.Semester_info_id}')= semester.Year + ' - ' + semester.Season + ' - ' + semester.Term + ' - ' + semester.Level + ' - ' + semester.Section
+                      a(href='/webforms/#{webformType}/semester/#{semester.Semester_info_id}')= semester.Year + ' - ' + semester.Season + ' - ' + semester.Term + ' - ' + semester.Level + ' - ' + semester.Section  
           table.table.table-striped
             thead
               tr
@@ -35,8 +35,8 @@ block content
                 th Interview Number
                 th Interview Score
             tbody
-              if results
-                each row in results
+              if rows
+                each row in rows
                   tr
                     td
                       a.btn.btn-primary.btn-xs(href='/webforms/interviews/#{row.Semester_id}/') Click
