@@ -51,4 +51,13 @@ router.post('/sign_up', function(req, res) {
     }
 });
 
+router.get('/return', function(req, res) {
+    var returnUrl = '/';
+    if ((req.session.hasOwnProperty('returnTo')) && (req.session.returnTo != null)) {
+        returnUrl = req.session.returnTo;
+        delete req.session.returnTo
+    }
+    res.redirect(returnUrl);
+});
+
 module.exports = router;

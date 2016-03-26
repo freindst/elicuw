@@ -49,33 +49,14 @@ block content
           .list-group
             .text.text-center Grades
               .list-group
-                a.list-group-item(href='/webforms/readings') Reading & Vocabulary
-                a.list-group-item(href='/webforms/speakings') Speaking & Listening
-                a.list-group-item(href='/webforms/writings') Writing & Grammar
-                a.list-group-item(href='/webforms/toefl_preps') TOEFL Prep
-                a.list-group-item(href='/webforms/extensive_listenings') Extensive Listening
+                a.list-group-item(href='/webforms/readings/#{result.Semester_id}') Reading & Vocabulary
+                a.list-group-item(href='/webforms/speakings/#{result.Semester_id}') Speaking & Listening
+                a.list-group-item(href='/webforms/writings/#{result.Semester_id}') Writing & Grammar
+                a.list-group-item(href='/webforms/toefl_preps/#{result.Semester_id}') TOEFL Prep
+                a.list-group-item(href='/webforms/extensive_listenings/#{result.Semester_id}') Extensive Listening
             hr
             .list-group.text-center
               a.list-group-item(href='/webforms/interviews/#{result.Semester_id}') Interview
               a.list-group-item(href='/webforms/recommendations/#{result.Semester_id}') Teacher Recommendation
-              a.list-group-item(href='/webforms/toefls') TOEFL
-              a.list-group-item(href='/webforms/timed_writings') Timed Writing
-
-block content
-  h1= title
-  p
-    a(href='/webforms/interviews/' + Semester_id) Interview
-  p Grades
-  ul
-    li
-      a(href='/webforms/readings/' + Semester_id) Reading & Vocabulary
-    li
-      a(href='/webforms/speakings/' + Semester_id) Speaking & Listening
-    li
-      a(href='/webforms/writings/' + Semester_id) Writing & Grammar
-  p
-    a(href='/webforms/toefls/' + Semester_id) TOEFL Score
-  p
-    a(href='/webforms/recommendations/' + Semester_id) Teacher Recommendation
-  p
-    a(href='/webforms/timed_writings/' + Semester_id) Timed Writing
+              a.list-group-item(href='/webforms/toefls/#{result.Semester_id}') TOEFL
+              a.list-group-item(href='/webforms/timed_writings/#{result.Semester_id}') Timed Writing

@@ -28,6 +28,7 @@ router.get('/', function(req, res, next) {
 
 //list all semester records
 router.get('/lists/:Semester_id', function(req, res, next) {
+	req.session.returnTo = req.originalUrl;
 	connection.query('SELECT Semester_info.*, Semesters.Semester_id, Students.* FROM Students INNER JOIN Semesters ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semesters.Semester_info_id = Semester_info.Semester_info_id WHERE Semesters.Semester_id = ?', [req.params.Semester_id], function(err, result) {
 		renderScreen(req, res, 'webforms/list', {
 			title: 'Webform List',
@@ -41,6 +42,7 @@ router.get('/lists/:Semester_id', function(req, res, next) {
 //another portal to go to webform input, by choosing webform type first
 router.get('/:webformType', function(req, res, next) {
 	var webformType = req.params.webformType;
+	req.session.returnTo = req.originalUrl;
 	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
 	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
 	connection.query('SELECT DISTINCT Semester_info.Semester_info_id, Semester_info.* FROM Semester_info INNER JOIN Semesters ON Semesters.Semester_info_id = Semester_info.Semester_info_id', function(err, semesters) {
@@ -110,7 +112,7 @@ router.get('/:webformType', function(req, res, next) {
 				if (err) throw err;
 
 				renderScreen(req, res, 'webforms/grades/index', {
-					title: 'Choose a student record',
+					title: webformType.substring(0, webformType.length-1).toUpperCase(),
 					webformType: webformType,					
 					semesters: semesters,
 					rows: results,
@@ -181,7 +183,7 @@ router.post('/:webformType/create/:Semester_id', function(req, res, next) {
 
 			Count_unverified_change(TableName, '+');
 
-			res.redirect('/webforms/' + webformType);
+			res.redirect('/return');
 		});
 	}
 });
@@ -329,7 +331,7 @@ router.post('/:webformType/edit/:ID', function(req, res, next) {
 		connection.query(query, option, function(err, result) {
 			if (err) throw err;
 
-			res.redirect('/webforms/' + webformType);
+			res.redirect('/return');
 		});
 	}
 });
@@ -420,8 +422,28 @@ router.get('/:webformType/delete/:ID', function(req, res, next) {
 				});
 			}
 		});
+	}
+});
 
+router.get('/:webformType/:Semester_id', function(req, res, next) {
+	var webformType = req.params.webformType;
+	var Semester_id = req.params.Semester_id;
+	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
+	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
+	if ((webformType == 'interviews') || (webformType == 'recommendations')) {
+		next();
+	} else {
+		connection.query('SELECT * FROM ?? WHERE ?? = ?', [TableName, TableName+'.Semester_id', Semester_id], function(err, results) {
+			var result = results[0];
+			if (err) throw err;
 
+			if (result.length ==0) {
+				res.redirect('/webforms/' + webformType + '/create/' + Semester_id);
+			}
+			else {
+				res.redirect('/webforms/' + webformType + '/edit/' + result[IndexName]);
+			}
+		});
 	}
 });
 
@@ -430,6 +452,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 	var Semester_info_id = req.params.Semester_info_id;
 	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
 	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
+	req.session.returnTo = req.originalUrl;
 
 
 	var query1 = 'SELECT * FROM Semester_info WHERE Semester_info_id = ?';
@@ -448,7 +471,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 						if (err) throw err;
 
 						renderScreen(req, res, 'webforms/timed_writings/semester_all', {
-							title: "Choose a student record",
+							title: webformType.substring(0, webformType.length-1).toUpperCase(),
 							rows: results,
 							semesters: semesters,
 							thisSemester: thisSemester[0],
@@ -466,7 +489,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 
 
 					renderScreen(req, res, 'webforms/interviews/semester_all', {
-						title: 'Choose a student record',
+						title: webformType.substring(0, webformType.length-1).toUpperCase(),
 						rows: results,
 						semesters: semesters,
 						thisSemester: thisSemester[0],
@@ -481,7 +504,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 					if (err) throw err;
 
 					renderScreen(req, res, 'webforms/recommendations/semester_all', {
-						title: 'Choose a student record',
+						title: webformType.substring(0, webformType.length-1).toUpperCase(),
 						rows: results,
 						semesters: semesters,
 						thisSemester: thisSemester[0],
@@ -499,7 +522,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 						if (err) throw err;
 
 						renderScreen(req, res, 'webforms/toefls/semester_all', {
-							title: "Choose a student record",
+							title: webformType.substring(0, webformType.length-1).toUpperCase(),
 							rows: results,
 							semesters: semesters,
 							thisSemester: thisSemester[0],
@@ -524,7 +547,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 						if (err) throw err;
 
 						renderScreen(req, res, 'webforms/grades/semester_all', {
-							title: "Choose a student record",
+							title: webformType.substring(0, webformType.length-1).toUpperCase(),
 							rows: results,
 							semesters: semesters,
 							thisSemester: thisSemester[0],
@@ -544,6 +567,7 @@ router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, 
 	var Semester_info_id = req.params.Semester_info_id;
 	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
 	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
+	req.session.returnTo = req.originalUrl;
 
 	connection.query('SELECT DISTINCT Semester_info.Semester_info_id, Semester_info.* FROM Semester_info INNER JOIN Semesters ON Semesters.Semester_info_id = Semester_info.Semester_info_id', function(err, semesters) {
 		if (err) throw err;
@@ -561,7 +585,7 @@ router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, 
 						if (err) throw err;
 
 						renderScreen(req, res, 'webforms/timed_writings/semester_unfinished', {
-							title: "Choose a student record",
+							title: webformType.substring(0, webformType.length-1).toUpperCase(),
 							rows: results,
 							semesters: semesters,
 							thisSemester: thisSemester[0],
@@ -581,7 +605,7 @@ router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, 
 						if (err) throw err;
 
 						renderScreen(req, res, 'webforms/toefls/semester_unfinished', {
-							title: "Choose a student record",
+							title: webformType.substring(0, webformType.length-1).toUpperCase(),
 							rows: results,
 							semesters: semesters,
 							thisSemester: thisSemester[0],
@@ -603,7 +627,7 @@ router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, 
 						if (err) throw err;
 
 						renderScreen(req, res, 'webforms/grades/semester_unfinished', {
-							title: "Choose a student record",
+							title: webformType.substring(0, webformType.length-1).toUpperCase(),
 							rows: results,
 							semesters: semesters,
 							thisSemester: thisSemester[0],
@@ -642,6 +666,7 @@ router.get('/interviews/:Semester_id', function(req, res) {
 router.get('/interviews/create/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var queryNumber = 'SELECT COUNT(*) AS Number FROM Interviews WHERE Semester_id = ?';
+	console.log(req.originalUrl);
 	connection.query(queryNumber, [Semester_id], function(err, count) {
 		if (err) throw err;
 
@@ -693,6 +718,7 @@ router.post('/interviews/create/:Semester_id', function(req, res) {
 		connection.query('INSERT INTO Final_interview SET ? ON DUPLICATE KEY UPDATE Count = Count + 1', [set_final_interview], function(err, result) {
 			if (err) throw err;
 		});
+
 
 		res.redirect('/webforms/interviews/' + req.params.Semester_id);
 	});
@@ -806,7 +832,7 @@ router.post('/toefls/create/:Semester_id', function(req, res) {
 
 		Count_unverified_change('Toefls', '+');
 
-		res.redirect('/webforms/toefls/');
+		res.redirect('/return');
 	});
 });
 
@@ -866,7 +892,7 @@ router.post('/toefls/edit/:ID', function(req, res) {
 		connection.query(query, [toefl, ID], function(err, result) {
 			if (err) throw err;
 
-			res.redirect('/webforms/toefls')
+			res.redirect('/return')
 		});
 	});
 
@@ -922,7 +948,7 @@ router.get('/recommendations/:Semester_id', function(req, res) {
 			if (err) throw err;
 
 			renderScreen(req, res, 'webforms/recommendations/list', {
-				title: "Recommendation Record List",
+				title: "Instructor Recommendation Record List",
 				student: student[0],
 				rows: results,
 				url: '/webforms'
@@ -1077,7 +1103,7 @@ router.post('/timed_writings/create/:Semester_id', function(req, res) {
 
 		Count_unverified_change('Timed_writings', '+');
 
-		res.redirect('/webforms/timed_writings/');
+		res.redirect('/return');
 	});
 });
 
@@ -1124,7 +1150,7 @@ router.post('/timed_writings/edit/:ID', function(req, res) {
 		connection.query(query, [timed_writing, req.params.ID], function(err, result) {
 			if (err) throw err;
 
-			res.redirect('/webforms/timed_writings/')
+			res.redirect('/return')
 		});		
 	});
 });
