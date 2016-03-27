@@ -1,6 +1,6 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-
+var bcrypt = require('bcrypt-nodejs');
 
 module.exports = function(app) {
 	passport.serializeUser(function(user, done) {
@@ -21,17 +21,22 @@ module.exports = function(app) {
 		    if (err) {
 		      return done(err);
 		    }
-		    if (user.length == 0) {
-		      return done(null, false, {
-		        message: 'Incorrect username.'
-		      });
-		    }
-		    else if (user[0].Password != password) {
-		      return done(null, false, {
-		      	message: 'Invalid password.'
-		      });
-		    }
-		    return done(null, user[0]);
+
+		    bcrypt.compare(password, user[0].Password, function(err, res) {
+		    	if (err) throw err;
+
+			    if (user.length == 0) {
+			      return done(null, false, {
+			        message: 'Incorrect username.'
+			      });
+			    }
+			    else if (!res) {
+			      return done(null, false, {
+			      	message: 'Invalid password.'
+			      });
+			    }
+			    return done(null, user[0]);
+		    });
 		  });			
 		});
 	}));	

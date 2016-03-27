@@ -11,7 +11,7 @@ block content
           .container-fluid
             ul.nav.nav-pills
               li.dropdown.active
-                a.dropdown-toggle(data-toggle='dropdown' href='/' role='button' aria-haspopup='true' aria-expanded='false') All Classes
+                a.dropdown-toggle(data-toggle='dropdown' href='/' role='button' aria-haspopup='true' aria-expanded='false')= thisSemester.Year + ' - ' + thisSemester.Season + ' - ' + thisSemester.Term + ' - ' + thisSemester.Level + ' - ' + thisSemester.Section
                   span.caret
                 ul.dropdown-menu
                   li

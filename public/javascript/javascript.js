@@ -14,7 +14,7 @@ function checkPass()
   var badColor = "#ff6666";
   //Compare the values in the password field 
   //and the confirmation field
-  if(pass1.value == pass2.value){
+  if((pass1.value == pass2.value) && (pass1.value != null) && (pass2.value!=null)){
       //The passwords match. 
       //Set the color to the good color and inform
       //the user that they have entered the correct password 
@@ -72,5 +72,24 @@ $('#Student_number').keypress(function(e) {
 
   if (digits.indexOf(k) < 0) {
     e.preventDefault();
+  }
+})
+
+$('#Test_Date').val(function(){
+  var hidden_date = $('#hidden_date').val();
+  var date = new Date(hidden_date);
+  var day = ("0" + date.getDate()).slice(-2);
+  var month = ("0" + (date.getMonth() + 1)).slice(-2);
+  var year = date.getFullYear();
+  return year + '-' + month + '-' + day;
+})
+
+$('#change_username').submit(function(event) {
+  var err = $('.err');
+  if ($('#username').val().length==0) {
+    err.prepend($('<div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span>  Username cannot be empty!</div>'));
+    event.preventDefault();
+  } else {
+    return;
   }
 })

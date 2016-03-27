@@ -31,10 +31,12 @@ block content
           bold Do your want to ..
           ul
             li
-              a(href='#') Change username
+              a(href='/users/change_username/#{userid}') Change Username
             li
-              a(href='#') Change password
+              a(href='/users/change_password/#{userid}') Change Password
             li
-              a(href='#') Change user group
+              a(href='/users/change_user_group/#{userid}') Change User Group
             li
-              a(href='#') Contact Administrator
+              a(href='/users/change_email/#{userid}') Change Email Address
+            li
+              a(href='mailto:admin@cuw.edu') Contact Administrator

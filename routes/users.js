@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var bcrypt = require('bcrypt-nodejs');
 
 //tools.js contains global functions
 var tools = require('./tools')();
@@ -68,9 +69,70 @@ router.get('/delete/:userid', isVerified, isAdmin, function(req, res) {
 //get student account page
 router.get('/:userid', function(req, res) {
 	renderScreen(req, res, 'users/user', {
-		title: 'User Account'
+		title: 'User Account',
+		userid: req.params.userid
 	});
 });
 
+router.get('/change_username/:userid', function(req, res) {
+	connection.query('SELECT * FROM Users WHERE UserID = ?', [req.params.userid], function(err, result) {
+		if (err) throw err;
+
+		renderScreen(req, res, 'users/change_username', {
+			title: 'Change Username',
+			userid: req.params.userid,
+			user: result[0]
+		});		
+	});
+});
+
+router.post('/change_username/:userid', function(req, res) {
+	connection.query('UPDATE Users SET ? WHERE UserID = ?', [{Username: req.body.Username}, req.params.userid], function(err, result) {
+		if (err) throw err;
+
+		res.redirect('/users/' + req.params.userid);
+	})
+})
+
+router.get('/change_password/:userid', function(req, res) {
+	renderScreen(req, res, 'users/change_password', {
+		title: 'Change Password',
+		userid: req.params.userid
+	});
+});
+
+router.post('/change_password/:userid', function(req, res) {
+	var userid = req.params.userid;
+	connection.query('SELECT * FROM Users WHERE UserID = ?', [userid], function(err, result) {
+		if (err) throw err;
+
+		bcrypt.compare(req.body.o_password, result[0].Password, function(err, result) {
+			if (err) throw err;
+
+			if (!result) {
+				req.session.error_message = 'Unable to change password. Your original password is not correct!';
+				res.redirect('back');
+			}
+			else if (!req.body.password1) {
+				req.session.error_message = 'Unable to change password. Your new password cannot be empty!';
+				res.redirect('back');
+			}
+			else if (req.body.password1 != req.body.password2) {
+				req.session.error_message = 'Unable to change password. Your new passwords do not match!';
+				res.redirect('back');
+			}
+			else {
+				bcrypt.hash(req.body.password1, null, null, function(err, hash) {
+					console.log('here')
+					connection.query('UPDATE Users SET Password = ? WHERE UserID = ?', [hash, userid], function(err, result) {
+						if (err) throw err;
+
+						res.redirect('/users/' + req.params.userid);
+					})
+				});
+			}
+		})
+	});
+});
 
 module.exports = router;

@@ -3,15 +3,14 @@ var router = express.Router();
 
 //define semester class
 /*
+CREATE TABLE Semesters (
 Semester_id int NOT NULL AUTO_INCREMENT,
-Year int(4),
-Season varchar(10),
-Term varchar(10),
-Level varchar(10),
-Section varchar(10),
+Semester_info_id int,
 Student_id int,
 PRIMARY KEY (Semester_id),
+FOREIGN KEY (Semester_info_id) REFERENCES Semester_info(Semester_info_id),
 FOREIGN KEY (Student_id) REFERENCES Students(Student_id)
+);
 */
 
 //define Semester Info class
@@ -178,6 +177,20 @@ IsVerified bool,
 Semester_id int,
 Person_in_charge varchar(255),
 PRIMARY KEY (Timed_writing_id),
+FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
+*/
+
+//exit criteria report
+/*
+Exit_report_id int NOT NULL AUTO_INCREMENT,
+Semester_id int UNIQUE,
+Teacher_recommendation int,
+Timed_writing int,
+Grades int,
+Interview int,
+Toefl int,
+Result int,
+PRIMARY KEY (Exit_report_id),
 FOREIGN KEY (Semester_id) REFERENCES Semesters(Semester_id)
 */
 

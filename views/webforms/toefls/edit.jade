@@ -66,6 +66,11 @@ block content
               input#Grammar.form-control(type='number' name='Grammar' value=result.Grammar)
             
             .form-group
+              label(for='Test_Date') Test Date
+              input#hidden_date(hidden value= result.Test_Date)
+              input#Test_Date.form-control(type='date' name = 'Test_Date')
+
+            .form-group
               .row
                 .col-md-6
                   input.btn.btn-primary.btn-block(type='submit', value='Update')

@@ -823,6 +823,7 @@ router.post('/toefls/create/:Semester_id', function(req, res) {
 		Grammar: req.body.Grammar,
 		Listening: req.body.Listening,
 		Reading: req.body.Reading,
+		Test_Date: req.body.Test_Date,
 		IsVerified: false,
 		Semester_id: req.params.Semester_id
 	};
@@ -837,7 +838,7 @@ router.post('/toefls/create/:Semester_id', function(req, res) {
 });
 
 router.get('/toefls/edit/:ID', function(req, res) {
-	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
+	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge, Toefls.Test_Date FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
 
 	connection.query(query, [req.params.ID], function(err, results) {
 		if (err) throw err;
@@ -859,6 +860,7 @@ router.post('/toefls/edit/:ID', function(req, res) {
 		Grammar: req.body.Grammar,
 		Listening: req.body.Listening,
 		Reading: req.body.Reading,
+		Test_Date: req.body.Test_Date,
 		IsVerified: false
 	};
 

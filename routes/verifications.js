@@ -389,6 +389,7 @@ router.post('/toefls/:ID', function(req, res) {
 		Listening: req.body.Listening,
 		Reading: req.body.Reading,
 		Grammar: req.body.Grammar,
+		Test_Date: req.body.Test_Date,
 		IsVerified: 1
 	};
 
