@@ -90,6 +90,8 @@ router.post('/change_username/:userid', function(req, res) {
 	connection.query('UPDATE Users SET ? WHERE UserID = ?', [{Username: req.body.Username}, req.params.userid], function(err, result) {
 		if (err) throw err;
 
+		req.session.okay_message='Your have changed your username successfully.'
+
 		res.redirect('/users/' + req.params.userid);
 	})
 })
@@ -123,9 +125,11 @@ router.post('/change_password/:userid', function(req, res) {
 			}
 			else {
 				bcrypt.hash(req.body.password1, null, null, function(err, hash) {
-					console.log('here')
+					
 					connection.query('UPDATE Users SET Password = ? WHERE UserID = ?', [hash, userid], function(err, result) {
 						if (err) throw err;
+
+						req.session.okay_message = 'You have changed your password successfully!';
 
 						res.redirect('/users/' + req.params.userid);
 					})
@@ -133,6 +137,42 @@ router.post('/change_password/:userid', function(req, res) {
 			}
 		})
 	});
+});
+
+router.get('/change_user_group_email/:userid', function(req, res) {
+	connection.query('SELECT * FROM Users WHERE UserID = ?', [req.params.userid], function(err, result) {
+		if (err) throw err;
+
+		renderScreen(req, res, 'users/change_user_group', {
+			title: 'Change Password',
+			userid: req.params.userid,
+			result: result[0]
+		});
+	});
+});
+
+router.post('/change_user_group_email/:userid', function(req, res) {
+	var userid = req.params.userid;
+	var email = req.body.email;
+	var user_group = req.body.user_group;
+	if (email == '') {
+		req.session.error_message = 'Email address cannot be empty.'
+		res.redirect('back');
+	} else {
+		var option = [
+		{
+			email: email,
+			User_group: user_group,
+			isVerified: 0
+		}, userid
+		];
+		connection.query('UPDATE Users SET ? WHERE UserID = ?', option, function(err, result) {
+			if (err) throw err;
+
+			req.session.okay_message = 'You have changed your profile information successfully. You have to wait for administrator to verify your account before using the system.';
+			res.redirect('/users/' + req.params.userid);
+		});		
+	}
 });
 
 module.exports = router;

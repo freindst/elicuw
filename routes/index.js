@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcrypt-nodejs');
 
+var api_key = 'key-cab7a7d36a235e99a4321b91f553263c';
+var domain = 'sandboxcced55001fb74d878f9619f7737e995c.mailgun.org';
+var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+
 //tools.js contains global functions
 var tools = require('./tools.js')();
 
@@ -13,11 +17,8 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/test/:aa', function(req, res) {
-    var aa = req.params.aa;
-    bcrypt.hash(aa, null, null, function(err, hash) {
-        res.send(hash);
-    })
+router.get('/test/', function(req, res) {
+    res.send('test')
 });
 
 //User sign up view
@@ -66,5 +67,48 @@ router.get('/return', function(req, res) {
     }
     res.redirect(returnUrl);
 });
+
+router.get('/reset_password', function(req, res) {
+    renderScreen(req, res, 'reset_password', {
+        title: 'Reset Password'
+    });
+});
+
+router.post('/reset_password', function(req, res) {
+    var email = req.body.email;
+    if (email == null) {
+        req.session.error_message = 'You cannot use an empty string as Email Address.';
+        res.redirect('back');
+    } else {
+        connection.query('SELECT * FROM Users WHERE email = ?', [req.body.email], function(err, result) {
+            if (err) throw err;
+
+            if (result.length == 0) {
+                req.session.error_message = "There is no registered user using this E-mail address. Please try again.";
+                res.redirect('back');
+            } else {
+                var new_passwrod = makePassword(6);
+                var data = {
+                  from: 'ELI-CUW administrator <admin@elicuw>',
+                  to: result[0].email,
+                  subject: 'ELI-CUW password reset',
+                  text: 'Your account in ELI-CUW has reset. Your account name is ' + result[0].Username + '. Your new password is ' + new_passwrod + '. Please login and change this new password as soon as possible.'
+                };
+                mailgun.messages().send(data, function (error, body) {
+                    if (error) throw error;
+                });
+                bcrypt.hash(new_passwrod, null, null, function(err, hash) {
+                    connection.query('UPDATE Users SET password = ? WHERE UserID = ?', [hash, result[0].UserID], function(err, result) {
+                        if (err) throw err;
+
+                        req.session.okay_message = 'Your password has reset successfully. Please check your mailbox and try login.';
+                        res.redirect('/');
+                    })
+                })
+            }
+        });        
+    }
+});
+
 
 module.exports = router;
