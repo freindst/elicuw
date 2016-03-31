@@ -1,7 +1,9 @@
+//confirmation alert
 $('.confirmation').on('click', function () {
     return confirm('Are you sure?');
 });
 
+//sign up password client side validation check
 function checkPass()
 {
   //Store the password field objects into variables ...
@@ -31,18 +33,22 @@ function checkPass()
   }
 }
 
+//sign up webpage validation check
 $("#sign_up").submit(function( event ) {
 	var err = $('.err')
+  //username must not be empty
 	if ($('#username').val().length==0) {
 		err.prepend($('<div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span>  Username cannot be empty!</div>'));
 		event.preventDefault();
-		
+		//email cannot be empty
 	} else if ($('#email').val().length==0) {
 		err.prepend($('<div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span>  E-mail cannot be empty!</div>'));
 		event.preventDefault();
+    //password cannot be empty
 	} else if ($('#password').val().length==0) {
 		err.prepend($('<div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span>  Password cannot be emty!</div>'));
 		event.preventDefault();
+    //password must match
 	} else if ($('#password').val() != $('#re_password').val()) {
 		err.prepend($('<div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span>  Passwords do not match!</div>'));
 		event.preventDefault();
@@ -51,6 +57,7 @@ $("#sign_up").submit(function( event ) {
 	}
 })
 
+//student number validation check.
 $('#Student_number').keypress(function(e) {
   var Student_number = $('#Student_number');
   var message = $('#checkID');
@@ -61,6 +68,7 @@ $('#Student_number').keypress(function(e) {
   }
 
   var k = e.which;
+  //length must be 8
   if (Student_number.val().length < 7) {
     message.css('color', "red");
     message.text('This is a incorrect student ID. It is must be 8 digits.');
@@ -69,12 +77,13 @@ $('#Student_number').keypress(function(e) {
     message.text('Correct!');
   }
   
-
+  //all char must be number
   if (digits.indexOf(k) < 0) {
     e.preventDefault();
   }
 })
 
+//pass date-time object into input box, convert date into acceptable string
 $('#Test_Date').val(function(){
   var hidden_date = $('#hidden_date').val();
   var date = new Date(hidden_date);
@@ -84,8 +93,10 @@ $('#Test_Date').val(function(){
   return year + '-' + month + '-' + day;
 })
 
+//change username validation
 $('#change_username').submit(function(event) {
   var err = $('.err');
+  //username cannot be empty
   if ($('#username').val().length==0) {
     err.prepend($('<div role="alert" class="alert alert-danger"><span aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span>  Username cannot be empty!</div>'));
     event.preventDefault();

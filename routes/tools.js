@@ -36,6 +36,7 @@ module.exports = function() {
 		}
 	}
 
+	//function to generate a random password
 	this.makePassword = function(number) {
 		var text = "";
 	    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -69,7 +70,7 @@ module.exports = function() {
 			options.error_message = req.session.error_message;
 			delete req.session.error_message;
 		}
-
+		//stop from displaying whole student id
 		if (options.hasOwnProperty('rows')) {
 			if (options.rows.length != 0 ) {
 				for (var i in options.rows) {
@@ -125,6 +126,7 @@ module.exports = function() {
 	PRIMARY KEY (ID)
 	);*/
 
+	//function to change unverified statistic table
 	this.Count_unverified_change = function(TableName, option) {
 		var query = 'UPDATE Count_unverified SET ' + TableName + '=' +  TableName + option + '1 WHERE ID = 0';
 		connection.query(query, function(err, result) {
@@ -174,6 +176,7 @@ module.exports = function() {
 		return score;
 	}
 
+	//code for update interview and final interview table
 	this.Update_Result_Interview = function(Semester_id) {
 		//update score in final_interviews and Exit_report
 		connection.query('SELECT Recommendation FROM Interviews WHERE Semester_id = ? AND IsVerified = 1', [Semester_id], function(err, Recommendations) {
@@ -207,6 +210,7 @@ module.exports = function() {
 		});
 	}
 
+	//update score in recommendation and final recommendation table
 	this.Update_Result_Recommendation = function(Semester_id) {
 		connection.query('SELECT Recommendation_level FROM Recommendations WHERE Semester_id = ? AND IsVerified = 1', [Semester_id], function(err, results) {
 
@@ -242,6 +246,7 @@ module.exports = function() {
 		});
 	}
 
+	//convert from 4.0 grade to exit criteria score
 	this.Convert_Grades = function(TableName, Score, grades) {
 		var Raw_grade = 0;
 		var count = 0;
@@ -275,9 +280,7 @@ module.exports = function() {
 			Raw_grade = Raw_grade / count;			
 		}
 
-
-
-		var ranges = [0, 0.80, 0.96, 1.10, 1.30, 1.50, 1.70, 1.80, 2.00, 2.10, 2.20, 2.50, 2.70, 2.80, 3.00, 3.10, 3.50, 3,70, 3.80, 3.90, 4.00];
+		var ranges = [0, 0.80, 0.96, 1.10, 1.30, 1.50, 1.70, 1.80, 2.00, 2.10, 2.20, 2.50, 2.70, 2.80, 3.00, 3.10, 3.50, 3.70, 3.80, 3.90, 4.00];
 
 		var Final_grade = 20;
 		for (var i = 1; i <= 20; i++)
@@ -293,7 +296,7 @@ module.exports = function() {
 			Final_grade: Final_grade
 		};
 	}
-
+	//convert timed writing raw score
 	this.Convert_Score_TWE = function(RawScore) {
 		var Final_score = 20;
 		var ranges = [0.0, 1.0, 2.0, 3.0, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
@@ -306,7 +309,7 @@ module.exports = function() {
 		}
 		return Final_score;
 	}
-
+	//convert toefl score
 	this.Convert_Score_Toefl = function(Degree, item) {
 		var convertedScore = 20;
 		var RawScore = Math.ceil((parseInt(item.Listening) + parseInt(item.Reading) + parseInt(item.Grammar)) * 10 / 3);
@@ -328,7 +331,7 @@ module.exports = function() {
 		}
 		return convertedScore;
 	}
-
+	//convert recommendation score
 	this.Convert_Sore_Recommendation = function(RawScore) {
 		var convertedScore = 20;
 		var ranges = [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
@@ -346,7 +349,6 @@ module.exports = function() {
 		}
 		return convertedScore;
 	}
-
 
 
 };

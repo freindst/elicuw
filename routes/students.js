@@ -6,10 +6,13 @@ var tools = require('./tools')();
 
 //A Router-level middleware check user's authentication before using it
 router.use(function (req, res, next) {
+	//if not logged in, go back to login screen
   isAuthenticated(req, res, next);
 }, function(req, res, next) {
+	//if not verified, reject
 	isVerified(req, res, next)
 }, function(req, res, next) {
+	//if not verified, reject
 	isAdmin(req, res, next) 
 });
 

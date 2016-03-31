@@ -9,10 +9,12 @@ router.use(function (req, res, next) {
   isAuthenticated(req, res, next);
 });
 
+//A router-level middleware check user if he is a verified user
 router.use(function (req, res, next) {
 	isVerified(req, res, next);
 });
 
+//check if he is a administrator, otherwise, reject request
 router.use(function (req, res, next) {
 	isAdmin(req, res, next);
 });
@@ -33,6 +35,7 @@ router.get('/', function(req, res) {
 	});
 });
 
+//get to choose a specific group of student in one semester
 router.get('/semester/:Semester_info_id', function(req, res) {
 	var Semester_info_id = req.params.Semester_info_id;
 	var query1 = 'SELECT * FROM Semester_info WHERE Semester_info_id = ?';
@@ -55,7 +58,7 @@ router.get('/semester/:Semester_info_id', function(req, res) {
 });
 
 
-//get individual report
+//get individual exit report
 router.get('/individual/:Semester_id', function(req, res) {
 	var query = 'SELECT * FROM Semester_info AS si INNER JOIN Semesters AS se ON si.Semester_info_id = se.Semester_info_id INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Toefls AS t ON t.Semester_id = se.Semester_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
 	connection.query(query , [req.params.Semester_id], function(err, result) {
@@ -67,6 +70,7 @@ router.get('/individual/:Semester_id', function(req, res) {
 	});
 });
 
+//get grades report of one student
 router.get('/grades/:Semester_id', function(req, res) {
 	var query = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN Final_Grade ON Final_Grade.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
 	connection.query(query, [req.params.Semester_id], function(err, result) {
@@ -84,6 +88,7 @@ router.get('/grades/:Semester_id', function(req, res) {
 	});
 });
 
+//get interview report of one student
 router.get('/interviews/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var query1 = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Final_interview ON Final_interview.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
@@ -108,6 +113,8 @@ router.get('/interviews/:Semester_id', function(req, res) {
 	});
 });
 
+
+//get recommendation report of one student
 router.get('/recommendations/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var query1 = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Final_Recommendation ON Final_Recommendation.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
@@ -133,6 +140,7 @@ router.get('/recommendations/:Semester_id', function(req, res) {
 	});
 });
 
+//get timed writing exam report of one student
 router.get('/timed_writings/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var query = 'SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Timed_writings ON Timed_writings.Semester_id = Semesters.Semester_id INNER JOIN Exit_reports ON Exit_reports.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?';
@@ -152,6 +160,7 @@ router.get('/timed_writings/:Semester_id', function(req, res) {
 	});
 });
 
+//get toefl report of one student
 router.get('/toefls/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Exit_reports ON Exit_reports.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?', [Semester_id], function(err, semester) {

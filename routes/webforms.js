@@ -123,7 +123,7 @@ router.get('/:webformType', function(req, res, next) {
 	})
 });
 
-
+//create a new record according to webform and a student record
 router.get('/:webformType/create/:Semester_id', function(req, res, next) {
 	var webformType = req.params.webformType;
 	var Semester_id = req.params.Semester_id;
@@ -188,6 +188,7 @@ router.post('/:webformType/create/:Semester_id', function(req, res, next) {
 	}
 });
 
+//edit a webform record based on its id
 router.get('/:webformType/edit/:ID', function(req, res, next) {
 	var webformType = req.params.webformType;
 	var ID = req.params.ID;
@@ -336,6 +337,7 @@ router.post('/:webformType/edit/:ID', function(req, res, next) {
 	}
 });
 
+//delete a record
 router.get('/:webformType/delete/:ID', function(req, res, next) {
 	var webformType = req.params.webformType;
 	var ID = req.params.ID;
@@ -425,6 +427,9 @@ router.get('/:webformType/delete/:ID', function(req, res, next) {
 	}
 });
 
+//if it is grades or toefl,
+//if records not exsit, go to edit page
+//otherwise go to create page
 router.get('/:webformType/:Semester_id', function(req, res, next) {
 	var webformType = req.params.webformType;
 	var Semester_id = req.params.Semester_id;
@@ -447,6 +452,7 @@ router.get('/:webformType/:Semester_id', function(req, res, next) {
 	}
 });
 
+//if it is interview, timed writing, or recommendation, directly go to semester page
 router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 	var webformType = req.params.webformType;
 	var Semester_info_id = req.params.Semester_info_id;
@@ -562,6 +568,7 @@ router.get('/:webformType/semester/:Semester_info_id', function(req, res) {
 	});
 });
 
+//get all waiting for filled student list of a specific class of student
 router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, res) {
 	var webformType = req.params.webformType;
 	var Semester_info_id = req.params.Semester_info_id;
@@ -800,7 +807,7 @@ router.get('/interviews/delete/:Interview_id', function(req, res) {
 });
 
 
-
+//crate toefl record
 router.get('/toefls/create/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?"
@@ -837,6 +844,7 @@ router.post('/toefls/create/:Semester_id', function(req, res) {
 	});
 });
 
+//edit toefl record
 router.get('/toefls/edit/:ID', function(req, res) {
 	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, Toefls.Toefl_id AS ID, Toefls.Listening, Toefls.Reading, Toefls.Grammar, Toefls.IsVerified, Toefls.Person_in_charge, Toefls.Test_Date FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Toefls ON Semesters.Semester_id = Toefls.Semester_id WHERE Toefls.Toefl_id = ?";
 
@@ -901,6 +909,7 @@ router.post('/toefls/edit/:ID', function(req, res) {
 
 });
 
+//delete toefl record
 router.get('/toefls/delete/:ID', function(req, res) {
     var ID = req.params.ID;
 	connection.query("SELECT IsVerified, Semester_id FROM Toefls WHERE Toefl_id = ?", [ID], function(err, result) {
@@ -938,6 +947,7 @@ router.get('/toefls/delete/:ID', function(req, res) {
 	});
 });
 
+//list all recommendations to a student
 router.get('/recommendations/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var userQuery = 'SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?';
@@ -959,6 +969,7 @@ router.get('/recommendations/:Semester_id', function(req, res) {
 	});
 });
 
+//create recommendation record
 router.get('/recommendations/create/:Semester_id', function(req, res) {
 	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.* FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id WHERE Semesters.Semester_id = ?"
 	connection.query(query, [req.params.Semester_id], function(err, results) {
@@ -1005,6 +1016,7 @@ router.post('/recommendations/create/:Semester_id', function(req, res) {
 	});
 });
 
+//edit recommendation record
 router.get('/recommendations/edit/:Recommendation_id', function(req, res) {
 	var ID = req.params.Recommendation_id;
 	var query = "SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id=Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Recommendations ON Semesters.Semester_id = Recommendations.Semester_id WHERE Recommendations.Recommendation_id = ?";
@@ -1051,6 +1063,7 @@ router.post('/recommendations/edit/:Recommendation_id', function(req, res) {
 	});
 });
 
+//delete recommendation record
 router.get('/recommendations/delete/:Recommendation_id', function(req, res) {
 	var ID = req.params.Recommendation_id;
 	connection.query("SELECT * FROM Recommendations WHERE Recommendation_id = ?", [ID], function(err, result) {

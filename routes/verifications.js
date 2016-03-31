@@ -13,10 +13,11 @@ router.use(function (req, res, next) {
 	isAdmin(req, res, next);
 });
 
+//get to main page
 router.get('/', function(req, res) {
 	connection.query("SELECT * FROM Count_unverified WHERE ID = 0", function(err, result) {
 		if (err) throw err;
-
+		//count total unverified record number
 		var all = 0;
 		for (var key in result[0]) {
 			all += result[0][key];
@@ -32,6 +33,7 @@ router.get('/', function(req, res) {
 
 });
 
+//go to each different webform type verification page
 router.get('/:webformType', function(req, res) {
 	var webformType = req.params.webformType;
 	var query = "SELECT Students.*, Semesters.Semester_id, Semester_info.*, ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN ?? ON Semesters.Semester_id = ?? WHERE ?? = FALSE ORDER BY Semester_info.Year DESC, Semester_info.Season DESC";
@@ -67,6 +69,7 @@ router.get('/:webformType', function(req, res) {
 	});
 });
 
+//go to a unverified record with its ID and webform type
 router.get('/:webformType/:ID', function(req, res) {
 	var webformType = req.params.webformType;
 	var ID = req.params.ID;
@@ -175,6 +178,7 @@ router.post('/:webformType/:ID', function(req, res, next) {
 	var ID = req.params.ID;
 	var TableName = webformType.substring(0,1).toUpperCase() + webformType.slice(1);
 	var IndexName = webformType.substring(0,1).toUpperCase() + webformType.substring(1, webformType.length - 1) + '_id';
+	//if it is grades, in this function. otherwise jump to next
 	if (webformType == 'interviews' || webformType ==  'timed_writings' || webformType == 'toefls' || webformType == 'recommendations') {
 		next();
 	} 

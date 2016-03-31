@@ -11,7 +11,7 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', function(req, res) {
-
+	res.send('/users')
 });
 
 /* GET users listing. */
@@ -34,6 +34,7 @@ router.get('/userlist', isVerified, isAdmin, function(req, res) {
 	});
 });
 
+//get all unverified users
 router.get('/unverifiedUsers', isVerified, isAdmin, function(req, res) {
 	var query = "SELECT * FROM Users WHERE isVerified = 0";
 	connection.query(query, function (err, results) {
@@ -46,6 +47,7 @@ router.get('/unverifiedUsers', isVerified, isAdmin, function(req, res) {
 	});
 });
 
+//change a user between unverified status and verified status
 router.get('/changeStatus/:userid/:isVerified', isVerified, isAdmin, function(req, res) {
 	var query = "UPDATE Users SET isVerified = ? WHERE UserID = ?";
 	var changedStatus = (req.params.isVerified == 1) ? '0' : '1';
@@ -56,6 +58,7 @@ router.get('/changeStatus/:userid/:isVerified', isVerified, isAdmin, function(re
 	})
 });
 
+//delete a user
 router.get('/delete/:userid', isVerified, isAdmin, function(req, res) {
 	var query = "DELETE FROM Users WHERE UserID = ?";
 	connection.query(query, [req.params.userid], function(err, result) {
@@ -74,6 +77,7 @@ router.get('/:userid', function(req, res) {
 	});
 });
 
+//change username
 router.get('/change_username/:userid', function(req, res) {
 	connection.query('SELECT * FROM Users WHERE UserID = ?', [req.params.userid], function(err, result) {
 		if (err) throw err;
@@ -103,11 +107,13 @@ router.get('/change_password/:userid', function(req, res) {
 	});
 });
 
+//change password
 router.post('/change_password/:userid', function(req, res) {
 	var userid = req.params.userid;
 	connection.query('SELECT * FROM Users WHERE UserID = ?', [userid], function(err, result) {
 		if (err) throw err;
 
+		//compare encrypted password with input
 		bcrypt.compare(req.body.o_password, result[0].Password, function(err, result) {
 			if (err) throw err;
 
@@ -139,6 +145,7 @@ router.post('/change_password/:userid', function(req, res) {
 	});
 });
 
+//change user group and/or email
 router.get('/change_user_group_email/:userid', function(req, res) {
 	connection.query('SELECT * FROM Users WHERE UserID = ?', [req.params.userid], function(err, result) {
 		if (err) throw err;
@@ -163,6 +170,7 @@ router.post('/change_user_group_email/:userid', function(req, res) {
 		{
 			email: email,
 			User_group: user_group,
+			//after such change, has to be verified again
 			isVerified: 0
 		}, userid
 		];
