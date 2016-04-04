@@ -50,7 +50,7 @@ block content
             td= result.Count
           tr
             th Raw Score
-            td= result.Raw_score
+            td= Math.round(result.Raw_score * 10) /10
           tr
             th Coverted Score
             td= result.Final_score

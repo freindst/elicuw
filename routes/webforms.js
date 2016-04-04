@@ -135,7 +135,7 @@ router.get('/:webformType/create/:Semester_id', function(req, res, next) {
 		case 'writings':
 			title = 'Writing & Grammar';
 			break;
-		case  'speaksings':
+		case  'speakßings':
 			title = 'Speaking & Listening';
 			break;
 		case 'toefl_preps':
@@ -202,7 +202,7 @@ router.get('/:webformType/edit/:ID', function(req, res, next) {
 		case 'writings':
 			title = 'Writing & Grammar';
 			break;
-		case  'speaksings':
+		case  'speakings':
 			title = 'Speaking & Listening';
 			break;
 		case 'toefl_preps':
@@ -623,7 +623,7 @@ router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, 
 					});			
 				});
 			}
-			else if (webformType == 'readings' || webformType == 'writings' || webformType == 'speaksings' || webformType == 'Toefl_preps' || webformType == 'extensive_listenings') {
+			else if (webformType == 'readings' || webformType == 'writings' || webformType == 'speakings' || webformType == 'Toefl_preps' || webformType == 'extensive_listenings') {
 				var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ?? WHERE Semester_info.Semester_info_id = ? AND ?? IS NULL'
 
 				var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id', Semester_info_id, TableName + '.Score'];
@@ -673,7 +673,6 @@ router.get('/interviews/:Semester_id', function(req, res) {
 router.get('/interviews/create/:Semester_id', function(req, res) {
 	var Semester_id = req.params.Semester_id;
 	var queryNumber = 'SELECT COUNT(*) AS Number FROM Interviews WHERE Semester_id = ?';
-	console.log(req.originalUrl);
 	connection.query(queryNumber, [Semester_id], function(err, count) {
 		if (err) throw err;
 

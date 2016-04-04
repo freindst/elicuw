@@ -12,9 +12,9 @@ a {
 	color: red;
 	font-weight: bold;
 }
-.footer_eli {
-	color: LightGray;
-	text-align: right;
+footer {
+	font-family: : "Times New Roman", Times, serif;
+	font-style: : italic;
 }
 .alert {
 	margin-top: 20px;
@@ -29,4 +29,17 @@ td.no {
 }
 .warning {
 	color: orange;
+}
+
+.report {	
+	font-family: "Times New Roman", Times, serif;
+}
+.explain {
+	font: 10px;
+	font-weight: bold;
+}
+.signiture {
+	font: 10px;
+	text-align: right;
+	font-style: italic;
 }

@@ -36,7 +36,7 @@ html(lang='en')
               a(href='/students') Student List
             li.dropdown(class= url == '/webforms' ? 'active': '')
               if isInterviewer
-                a(href='webforms/interviews') Interview
+                a(href='/webforms/interviews') Interview
               else
                 a.dropdown-toggle(href='/webforms' data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false") Fill Forms
                 ul.dropdown-menu
@@ -130,14 +130,6 @@ html(lang='en')
     block scripts
   footer
     hr
-    .row
-      .col-md-8
-        h2 Our Mission
-        p Concordia University Wisconsin is a Lutheran higher education community committed to helping students develop in mind, body, and spirit for service to Christ in the Church and the World.
-      .col-md-4
-      .footer_eli
-        br
-        br
-        p Timothy Fojtik
-        p Director of ELI Office
-        p Concordia University Wisconsin
+
+    h3 CUW Mission
+    p Concordia University Wisconsin is a Lutheran higher education community committed to helping students develop in mind, body, and spirit for service to Christ in the Church and the World.
