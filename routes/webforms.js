@@ -623,7 +623,7 @@ router.get('/:webformType/semester/:Semester_info_id/unfinished', function(req, 
 					});			
 				});
 			}
-			else if (webformType == 'readings' || webformType == 'writings' || webformType == 'speakings' || webformType == 'Toefl_preps' || webformType == 'extensive_listenings') {
+			else if (webformType == 'readings' || webformType == 'writings' || webformType == 'speakings' || webformType == 'toefl_preps' || webformType == 'extensive_listenings') {
 				var query = 'SELECT Students.*, Semester_info.*, Semesters.Semester_id, ??, ?? , ?? AS ID FROM Students INNER JOIN Semesters ON Students.Student_id = Semesters.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id LEFT JOIN ?? ON Semesters.Semester_id = ?? WHERE Semester_info.Semester_info_id = ? AND ?? IS NULL'
 
 				var option = [TableName + '.Score', TableName + '.IsVerified', TableName + '.' + IndexName, TableName, TableName + '.Semester_id', Semester_info_id, TableName + '.Score'];
