@@ -40,14 +40,14 @@ block content
         .panel-heading
           h4 Interview Record
         .panel-body
-          form(action='/webforms/interviews/create/' + result.Semester_id, method='post')
+          form#create_interview(action='/webforms/interviews/create/' + result.Semester_id, method='post')
             .form-group
               label(for='Person_in_charge') Interviewer Name
               input#Person_in_charge.form-control(type='text' name='Person_in_charge')
             .form-group
               label Speaking-Pronunciation
               br
-              input(type='radio', name='Pronunciation', value='0', checked='')
+              input(type='radio', name='Pronunciation', value='0')
               | 0 Constant pronunciation and stress errors that cause speech to be completely unintelligible.
               br
               input(type='radio', name='Pronunciation', value='1')
@@ -62,7 +62,7 @@ block content
             .form-group
               label Speaking-Fluency
               br
-              input(type='radio', name='Fluency', value='0', checked='')
+              input(type='radio', name='Fluency', value='0')
               | 0 Speech is so slow or fragmented that speech is completely unintelligible.
               br
               input(type='radio', name='Fluency', value='1')
@@ -77,7 +77,7 @@ block content
             .form-group
               label Listening-Initial Comprehension
               br
-              input(type='radio', name='Comprehension', value='0', checked='')
+              input(type='radio', name='Comprehension', value='0')
               | 0 Student understands 0%-50% of what is initially said.
               br
               input(type='radio', name='Comprehension', value='1')
@@ -92,7 +92,7 @@ block content
             .form-group
               label Listening-Need for Repetition
               br
-              input(type='radio', name='Repetition', value='0', checked='')
+              input(type='radio', name='Repetition', value='0')
               | 0 Student needs constant repetition.
               br
               input(type='radio', name='Repetition', value='1')
@@ -110,10 +110,10 @@ block content
               bold If you would like to add any more information, please do so here.  Thanks a lot for your help!
               textarea.form-control#Comments(rows="3" name="Comments")
             hr
-            .form-group
+            .form-group#required
               label Final Interview Recommendation [REQUIRED].
               br
-              input(type='radio', name='Recommendation', value='0', checked='')
+              input(type='radio', name='Recommendation', value='0')
               | 0 is clearly not ready for academic study.
               br
               input(type='radio', name='Recommendation', value='1')

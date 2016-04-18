@@ -104,3 +104,21 @@ $('#change_username').submit(function(event) {
     return;
   }
 })
+
+//validation for create recommendation form
+$('#create_recommendation').submit(function(event) {
+  var selected = $("#required input[type='radio']:checked");
+  if (!selected.val()) {
+    event.preventDefault();
+    alert('You have to pick up a score for required field at option "Recommendation Of Subsequent Student"');
+  }
+})
+
+//validation for create interview form
+$('#create_interview').submit(function(event) {
+  var selected = $("#required input[type='radio']:checked");
+  if (!selected.val()) {
+    event.preventDefault();
+    alert('You have to pick up a score for required field at option "Final Interview Recommendation"');
+  }
+})
