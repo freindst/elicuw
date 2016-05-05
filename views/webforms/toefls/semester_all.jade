@@ -38,9 +38,9 @@ block content
                 th Term
                 th Level
                 th Section
-                th Listening
-                th Reading
                 th Grammar
+                th Listening
+                th Reading                
                 th Verified
                 th                 
             tbody
@@ -63,9 +63,9 @@ block content
                     td= row.Term
                     td= row.Level
                     td= row.Section
+                    td= row.Grammar
                     td= row.Listening
                     td= row.Reading
-                    td= row.Grammar
                     if (row.IsVerified == '1')
                       td.yes Pass
                     else if (row.IsVerified == '0')

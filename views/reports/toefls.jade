@@ -67,16 +67,16 @@ block content
               thead
                 tr
                   th No.
+                  th Grammar
                   th Listening
                   th Reading
-                  th Grammar
                   th Total Score
               tbody
                 tr
                   td= count
+                  td= item.Grammar
                   td= item.Listening
                   td= item.Reading
-                  td= item.Grammar
                   td= Math.round((item.Listening + item.Reading + item.Grammar) * 10 / 3)
             table.table
               tr

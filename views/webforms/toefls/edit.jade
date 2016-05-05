@@ -54,16 +54,16 @@ block content
             hr
 
             .form-group
+              label(for='Grammar') Grammar Raw Score
+              input#Grammar.form-control(type='number' name='Grammar' value=result.Grammar)
+
+            .form-group
               label(for='Listening') Listening Raw Score
               input#Listening.form-control(type='number' name='Listening' value= result.Listening)
 
             .form-group
               label(for='Reading') Reading Raw Score
               input#Reading.form-control(type='number' name='Reading' value=result.Reading)
-
-            .form-group
-              label(for='Grammar') Grammar Raw Score
-              input#Grammar.form-control(type='number' name='Grammar' value=result.Grammar)
             
             .form-group
               label(for='Test_Date') Test Date

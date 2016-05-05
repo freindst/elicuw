@@ -60,14 +60,32 @@ router.get('/semester/:Semester_info_id', function(req, res) {
 
 //get individual exit report
 router.get('/individual/:Semester_id', function(req, res) {
-	var query = 'SELECT * FROM Semester_info AS si INNER JOIN Semesters AS se ON si.Semester_info_id = se.Semester_info_id INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Toefls AS t ON t.Semester_id = se.Semester_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
-	connection.query(query , [req.params.Semester_id], function(err, result) {
-		renderScreen(req, res,'reports/individual', {
-			result: result[0],
-			title: 'Individual Report',
-			url: '/reports'
-		});
+	var Semester_id = req.params.Semester_id;
+	connection.query('SELECT * FROM Semesters WHERE Semesters.Semester_id = ?', [Semester_id], function(err, student_id_result) {
+		var Student_id = student_id_result[0].Student_id;
+		connection.query('SELECT * FROM Toefls INNER JOIN Semesters ON Toefls.Semester_id = Semesters.Semester_id INNER JOIN Students ON Students.Student_id = Semesters.Student_id WHERE Students.Student_id = ?', [Student_id], function(err, Toefls_result) {
+			var toefl = Toefls_result[0];
+			var tempTotal = 0;
+			for (var i in Toefls_result) {
+				curTotal = Toefls_result[i].Listening + Toefls_result[i].Reading + Toefls_result[i].Grammar;
+				if (curTotal > tempTotal) {
+					tempTotal = curTotal;
+					toefl = Toefls_result[i];
+				}
+			}
+			var query = 'SELECT * FROM Semester_info AS si INNER JOIN Semesters AS se ON si.Semester_info_id = se.Semester_info_id INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
+			connection.query(query , [req.params.Semester_id], function(err, result) {
+				renderScreen(req, res,'reports/individual', {
+					result: result[0],
+					toefl: toefl,
+					title: 'Individual Report',
+					url: '/reports'
+				});
+			});
+		})
 	});
+
+
 });
 
 //get grades report of one student

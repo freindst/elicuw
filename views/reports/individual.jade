@@ -47,17 +47,17 @@ block content
              th Subject
              th Converted Score
            tr
+             th Grammar
+             td= toefl.Grammar
+           tr
              th Listening
-             td= result.Listening
+             td= toefl.Listening
            tr
              th Reading
-             td= result.Reading
-           tr
-             th Grammar
-             td= result.Grammar
+             td= toefl.Reading
            tr
              th Total Score
-             td= Math.round((result.Listening + result.Reading + result.Grammar)*10/3)
+             td= Math.round((toefl.Listening + toefl.Reading + toefl.Grammar)*10/3)
       .col-md-6
         h3 Concordia Unversity Wsiconsin ELI Exit Criteria
         table.table
