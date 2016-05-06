@@ -305,7 +305,7 @@ router.post('/timed_writings/:ID', function(req, res) {
 
 		connection.query("SELECT * FROM Exit_reports WHERE Semester_id = ?", [Semester_id], function(err, result2) {
 			if (result2.length == 0) {
-				connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Timed_writings: convertedScore, Result: convertedScore}], function(err, result) {
+				connection.query("INSERT INTO Exit_reports SET ?", [{Semester_id: Semester_id, Timed_writing: convertedScore, Result: convertedScore}], function(err, result) {
 					if (err) throw err;
 				})
 			}
