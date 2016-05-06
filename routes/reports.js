@@ -192,7 +192,7 @@ var Semester_id = req.params.Semester_id;
 			req.session.error_message = 'There is no fitting verified Toefl Score for this student right now.';
 		}
 	})*/
-	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Exit_reports ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?', [Semester_id], function(err, semester) {
+	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Exit_reports ON Exit_reports.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?', [Semester_id], function(err, semester) {
 		if (err) throw err;
 
 		if (semester.length == 0) {
@@ -202,12 +202,17 @@ var Semester_id = req.params.Semester_id;
 			connection.query('SELECT * FROM Toefls INNER JOIN Semesters ON Toefls.Semester_id = Semesters.Semester_id WHERE Semesters.Student_id = ? ORDER BY (Toefls.Listening + Toefls.Reading + Toefls.Grammar) DESC', [semester[0].Student_id], function(err, results) {
 				if (err) throw err;
 
-				renderScreen(req, res, 'reports/toefls', {
-					result: semester[0],
-					results: results,
-					title: 'TOEFL',
-					url: '/reports'
-				});
+				if (results.length == 0) {
+					req.session.error_message = 'There is no fitting verified Toefl Score right now.';
+					res.redirect('back');
+				} else {
+					renderScreen(req, res, 'reports/toefls', {
+						result: semester[0],
+						results: results,
+						title: 'TOEFL',
+						url: '/reports'
+					});					
+				}
 			});
 		}
 	});
