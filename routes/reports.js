@@ -64,15 +64,21 @@ router.get('/individual/:Semester_id', function(req, res) {
 	connection.query('SELECT * FROM Semesters WHERE Semesters.Semester_id = ?', [Semester_id], function(err, student_id_result) {
 		var Student_id = student_id_result[0].Student_id;
 		connection.query('SELECT * FROM Toefls INNER JOIN Semesters ON Toefls.Semester_id = Semesters.Semester_id INNER JOIN Students ON Students.Student_id = Semesters.Student_id WHERE Students.Student_id = ?', [Student_id], function(err, Toefls_result) {
-			var toefl = Toefls_result[0];
-			var tempTotal = 0;
-			for (var i in Toefls_result) {
-				curTotal = Toefls_result[i].Listening + Toefls_result[i].Reading + Toefls_result[i].Grammar;
-				if (curTotal > tempTotal) {
-					tempTotal = curTotal;
-					toefl = Toefls_result[i];
-				}
+			if (Toefls_result.length != 0)
+			{
+				var toefl = Toefls_result[0];
+				var tempTotal = 0;
+				for (var i in Toefls_result) {
+					curTotal = Toefls_result[i].Listening + Toefls_result[i].Reading + Toefls_result[i].Grammar;
+					if (curTotal > tempTotal) {
+						tempTotal = curTotal;
+						toefl = Toefls_result[i];
+					}
+				}				
+			} else {
+				var toefl = {Grammar: 0, Listening: 0, Reading: 0}
 			}
+
 			var query = 'SELECT * FROM Semester_info AS si INNER JOIN Semesters AS se ON si.Semester_info_id = se.Semester_info_id INNER JOIN Students AS s ON se.Student_id = s.Student_id LEFT JOIN Exit_reports ON Exit_reports.Semester_id = se.Semester_id WHERE se.Semester_id = ?'
 			connection.query(query , [req.params.Semester_id], function(err, result) {
 				renderScreen(req, res,'reports/individual', {
@@ -180,12 +186,17 @@ router.get('/timed_writings/:Semester_id', function(req, res) {
 
 //get toefl report of one student
 router.get('/toefls/:Semester_id', function(req, res) {
-	var Semester_id = req.params.Semester_id;
-	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Exit_reports ON Exit_reports.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?', [Semester_id], function(err, semester) {
+/*	var Semester_id = req.params.Semester_id;
+	connection.query('SELECT * FROM Toefls WHERE Toefls.Semester_id = ?', [Semester_id], function(err, result) {
+		if (result.length == 0) {
+			req.session.error_message = 'There is no fitting verified Toefl Score for this student right now.';
+		}
+	})*/
+	connection.query('SELECT * FROM Semesters INNER JOIN Students ON Semesters.Student_id = Students.Student_id INNER JOIN Semester_info ON Semester_info.Semester_info_id = Semesters.Semester_info_id INNER JOIN Exit_reports ON Exit_reports.Semester_id = Semesters.Semester_id INNER JOIN Toefls ON Toefls.Semester_id = Semesters.Semester_id WHERE Semesters.Semester_id = ?', [Semester_id], function(err, semester) {
 		if (err) throw err;
 
 		if (semester.length == 0) {
-			req.session.error_message = 'There is no fitting verified Timed Writing Exam record right now.';
+			req.session.error_message = 'There is no fitting verified Toefl Score right now.';
 			res.redirect('back');
 		} else {
 			connection.query('SELECT * FROM Toefls INNER JOIN Semesters ON Toefls.Semester_id = Semesters.Semester_id WHERE Semesters.Student_id = ? ORDER BY (Toefls.Listening + Toefls.Reading + Toefls.Grammar) DESC', [semester[0].Student_id], function(err, results) {
