@@ -186,8 +186,8 @@ router.get('/timed_writings/:Semester_id', function(req, res) {
 
 //get toefl report of one student
 router.get('/toefls/:Semester_id', function(req, res) {
-/*	var Semester_id = req.params.Semester_id;
-	connection.query('SELECT * FROM Toefls WHERE Toefls.Semester_id = ?', [Semester_id], function(err, result) {
+var Semester_id = req.params.Semester_id;
+/*	connection.query('SELECT * FROM Toefls WHERE Toefls.Semester_id = ?', [Semester_id], function(err, result) {
 		if (result.length == 0) {
 			req.session.error_message = 'There is no fitting verified Toefl Score for this student right now.';
 		}
