@@ -91,6 +91,28 @@ block content
                   default
                     td 0 Speech is so slow or fragmented that speech is completely unintelligible.
               tr
+                th Speaking-Active Vocabulary
+                case item.Vocabulary
+                  when 0
+                    td 0 Extremely basic vocabulary; words are frequently incorrect; student is completely unintelligible.
+                  when 1
+                    td 1 Limited vocabulary; words are often incorrect; student is occasionally unintelligible.
+                  when 2
+                    td 2 Sufficient range of vocabulary; words are occasionally incorrect; student is intelligible.
+                  when 3
+                    td 3 Wide range of vocabulary; some word forms are incorrect; student is consistently intelligible.
+              tr
+                th Speaking-Circumlocution
+                case item.Circumlocution
+                  when 0
+                    td 0 Inability to repair breakdowns in conversation or restate words/concepts for clarity.
+                  when 1
+                    td 1 Limited ability to repair breakdowns in conversation or restate words/concepts for clarity.
+                  when 2
+                    td 2 Satisfactory ability to repair breakdowns in conversation and restate words/ concepts for clarity.
+                  when 3
+                    td 3 Consistent ability to repair breakdowns in conversation and restate words/ concepts for clarity.
+              tr
                 th Listening-Initial Comprehension
                 case item.Comprehension
                   when 0

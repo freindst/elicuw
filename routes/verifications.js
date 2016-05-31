@@ -268,6 +268,8 @@ router.post('/interviews/:Interview_id', function(req, res) {
 		Person_in_charge: req.body.Person_in_charge,
 		Pronunciation: req.body.Pronunciation,
 		Fluency: req.body.Fluency,
+		Vocabulary: req.body.Vocabulary,
+		Circumlocution: req.body.Circumlocution,
 		Comprehension: req.body.Comprehension,
 		Repetition: req.body.Repetition,
 		Comments: req.body.Comments,
